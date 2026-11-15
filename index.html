@@ -1,0 +1,1330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lost and Found Information System</title>
+  
+  <!-- Favicons -->
+  <link href="uploads/logo.png" rel="icon">
+  <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+  <link href="assets/vendor/quill/quill.snow.css" rel="stylesheet">
+  <link href="assets/vendor/quill/quill.bubble.css" rel="stylesheet">
+  <link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet">
+  <link href="assets/vendor/simple-datatables/style.css" rel="stylesheet">
+  <link href="assets/vendor/select2-4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
+
+  <!-- Template Main CSS File -->
+  <link href="assets/css/style.css" rel="stylesheet">
+  <link href="assets/css/custom.css" rel="stylesheet">
+  <link href="assets/css/homepage.css" rel="stylesheet">
+
+  <!-- Scripts -->
+  <script src="assets/js/jquery-3.6.4.min.js"></script>
+  <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/vendor/select2-4.1.0-rc.0/dist/js/select2.min.js"></script>
+  <script src="assets/vendor/simple-datatables/simple-datatables.js"></script>
+  <script src="assets/js/main.js"></script>
+
+  <!-- Database & Logic -->
+  <script src="database/schema.js"></script>
+  <script src="database/seed.js"></script>
+  <script src="database/db.js"></script>
+  <script src="scripts/storage.js"></script>
+  <script src="scripts/otp.js"></script>
+  <script src="scripts/otp-ui.js"></script>
+  <script src="scripts/auth.js"></script>
+  <script src="scripts/categories.js"></script>
+  <script src="scripts/items.js"></script>
+  <script src="scripts/inquiries.js"></script>
+  <script src="scripts/cms.js"></script>
+  <script src="scripts/admin.js"></script>
+  <script src="scripts/app.js"></script>
+</head>
+<body class="toggle-sidebar">
+  <style>
+    #banner-slider {
+      height: 400px;
+    }
+    #banner-slider .carousel-inner {
+      height: 100%;
+    }
+    #banner-slider img.d-block.w-100 {
+      object-fit: cover;
+      object-position: center center;
+    }
+    .lf-image {
+      width: 400px;
+      height: 300px;
+      margin: 1em auto;
+      background: #000;
+      box-shadow: 1px 1px 10px #00000069;
+    }
+    .lf-image > img {
+      width: 100%;
+      height: 100%;
+      object-fit: scale-down;
+      object-position: center center;
+    }
+    img#cimg {
+      height: 15vh;
+      width: 15vh;
+      object-fit: cover;
+      border-radius: 100% 100%;
+    }
+  </style>
+
+  <!-- ======= Header ======= -->
+  <header id="header" class="header fixed-top d-flex align-items-center">
+    <div class="container-lg d-flex justify-content-between px-4">
+      <div class="d-flex align-items-center justify-content-between">
+        <a href="./" class="logo d-flex align-items-center">
+          <img src="uploads/logo.png" alt="System Logo">
+          <span class="d-none d-lg-block" data-sys-short-name>PHP - LFIS</span>
+        </a>
+      </div><!-- End Logo -->
+      <nav class="header-nav me-auto">
+        <ul class="d-flex align-items-center h-100">
+          <li class="nav-item pe-3">
+              <a href="./" class="nav-link" id="nav-link-home">Home</a>
+          </li>
+          <li class="nav-item pe-3">
+              <a href="./?page=items" class="nav-link" id="nav-link-items">Lost and Found</a>
+          </li>
+          <li class="nav-item pe-3">
+              <a href="./?page=found" class="nav-link" id="nav-link-found">Post an Item</a>
+          </li>
+          <li class="nav-item pe-3">
+              <a href="./?page=about" class="nav-link" id="nav-link-about">About</a>
+          </li>
+          <li class="nav-item pe-3">
+              <a href="./?page=contact" class="nav-link" id="nav-link-contact">Contact Us</a>
+          </li>
+        </ul>
+      </nav><!-- End Icons Navigation -->
+      <div class="d-flex align-items-center justify-content-between gap-2" id="nav-auth-container">
+        <button type="button" class="btn btn-primary btn-sm rounded-pill px-3 shadow-sm d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#otpLoginModal">
+          <i class="bi bi-phone me-1"></i>
+          <span>Login / Register</span>
+        </button>
+        <a href="admin/login.html" class="btn btn-outline-secondary btn-sm rounded-circle ms-1" title="Admin Portal" style="width: 32px; height: 32px; padding: 0; display: inline-flex; align-items: center; justify-content: center;">
+          <i class="bi bi-shield-lock" style="font-size: 0.85rem;"></i>
+        </a>
+      </div>
+    </div>
+  </header><!-- End Header -->
+
+  <!-- Content Wrapper. Contains page content -->
+  <main id="main" class="main p-0">
+    <div id="homepage-full-container"></div>
+    <div class="container-xl px-4 pt-4" id="standard-page-container">
+      <div id="msg-container"></div>
+      <div id="page-content-area"></div>
+    </div>
+  </main>
+
+  <!-- Modals -->
+  <div class="modal fade" id="uni_modal" role="dialog">
+    <div class="modal-dialog modal-md modal-dialog-centered rounded-0" role="document">
+      <div class="modal-content rounded-0">
+        <div class="modal-header">
+          <h5 class="modal-title"></h5>
+        </div>
+        <div class="modal-body"></div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary bg-gradient-teal border-0 rounded-0" id="submit" onclick="$('#uni_modal form').submit()">Save</button>
+          <button type="button" class="btn btn-secondary rounded-0" data-bs-dismiss="modal">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="uni_modal_right" role="dialog">
+    <div class="modal-dialog modal-full-height modal-md rounded-0" role="document">
+      <div class="modal-content rounded-0">
+        <div class="modal-header">
+          <h5 class="modal-title"></h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="confirm_modal" role="dialog">
+    <div class="modal-dialog modal-md modal-dialog-centered rounded-0" role="document">
+      <div class="modal-content rounded-0">
+        <div class="modal-header">
+          <h5 class="modal-title">Confirmation</h5>
+        </div>
+        <div class="modal-body">
+          <div id="delete_content"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary bg-gradient-teal border-0 rounded-0" id="confirm">Continue</button>
+          <button type="button" class="btn btn-secondary rounded-0" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="viewer_modal" role="dialog">
+    <div class="modal-dialog modal-md" role="document">
+      <div class="modal-content">
+        <button type="button" class="btn-close p-2 ms-auto" data-bs-dismiss="modal"></button>
+        <div class="p-2 text-center">
+          <img src="" alt="" class="img-fluid">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- Phase 1: Mobile OTP Authentication Modal -->
+  <!-- ======================================================== -->
+  <div class="modal fade" id="otpLoginModal" tabindex="-1" aria-labelledby="otpLoginModalLabel" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title d-flex align-items-center" id="otpLoginModalLabel">
+            <i class="bi bi-shield-lock me-2"></i>
+            <span id="modalHeaderTitle">Login / Register</span>
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body p-4">
+          <div id="otpAlertContainer"></div>
+
+          <!-- STEP 1: Enter Mobile Number -->
+          <form id="stepMobileForm">
+            <div class="text-center mb-4">
+              <div class="display-6 text-primary mb-2"><i class="bi bi-phone"></i></div>
+              <h6 class="fw-bold">Sign In with Mobile</h6>
+              <p class="text-muted small">Enter your 10-digit Indian mobile number. An OTP will be generated for quick and secure access.</p>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Mobile Number</label>
+              <div class="input-group">
+                <span class="input-group-text bg-light fw-bold text-muted">+91</span>
+                <input type="tel" class="form-control" id="inputMobileNumber" name="mobile" placeholder="9876543210" maxlength="10" pattern="^[6-9]\d{9}$" required autofocus>
+              </div>
+              <div class="form-text">Must be a valid 10-digit Indian number starting with 6, 7, 8, or 9.</div>
+            </div>
+
+            <div class="d-grid mt-4">
+              <button type="submit" class="btn btn-primary btn-lg" id="btnSendOtp">
+                <span class="spinner-border spinner-border-sm d-none me-2" role="status"></span>
+                <i class="bi bi-send me-1"></i> Send Verification Code
+              </button>
+            </div>
+
+            <div class="text-center mt-3 pt-3 border-top">
+              <span class="text-muted small">Are you an administrator?</span>
+              <a href="admin/login.html" class="btn btn-link btn-sm text-decoration-none fw-semibold">Admin Login <i class="bi bi-arrow-right"></i></a>
+            </div>
+          </form>
+
+          <!-- STEP 2: Enter OTP Code -->
+          <form id="stepOtpForm" class="d-none">
+            <div class="text-center mb-3">
+              <div class="display-6 text-success mb-2"><i class="bi bi-chat-left-dots"></i></div>
+              <h6 class="fw-bold">Verify OTP Code</h6>
+              <p class="text-muted small mb-1">Code sent to: <strong id="displayTargetMobile" class="text-dark"></strong></p>
+              <a href="javascript:void(0)" id="btnChangeMobile" class="text-primary small text-decoration-none"><i class="bi bi-pencil-square"></i> Change Number</a>
+            </div>
+
+            <!-- Demo Mode Visual Banner -->
+            <div id="demoOtpBanner" class="alert alert-warning border-warning d-flex align-items-center mb-3 p-2">
+              <i class="bi bi-info-circle-fill fs-5 text-warning me-2"></i>
+              <div class="flex-grow-1 small">
+                <strong>DEMO OTP MODE:</strong> Your test code is <span id="demoOtpCodeText" class="badge bg-dark fs-6 font-monospace">------</span>
+              </div>
+              <button type="button" class="btn btn-sm btn-outline-dark ms-2 py-0 px-2" id="btnQuickFillOtp" title="Autofill OTP">Fill</button>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Enter 6-Digit OTP</label>
+              <input type="text" class="form-control text-center font-monospace fs-4 tracking-wider" id="inputOtpCode" name="otp" placeholder="------" maxlength="6" pattern="\d{6}" required autocomplete="one-time-code">
+              <div class="d-flex justify-content-between align-items-center mt-2 small">
+                <span class="text-muted" id="otpExpireTimerText"><i class="bi bi-clock"></i> Valid for: <span id="otpTimerSeconds">05:00</span></span>
+                <span id="resendCountdownContainer">
+                  <button type="button" class="btn btn-link btn-sm p-0 text-decoration-none disabled" id="btnResendOtp">Resend OTP</button>
+                  <span class="text-muted" id="resendTimerSpan">(in <span id="resendSeconds">60</span>s)</span>
+                </span>
+              </div>
+            </div>
+
+            <div class="d-grid mt-4">
+              <button type="submit" class="btn btn-success btn-lg" id="btnVerifyOtp">
+                <span class="spinner-border spinner-border-sm d-none me-2" role="status"></span>
+                <i class="bi bi-check2-circle me-1"></i> Verify & Sign In
+              </button>
+            </div>
+          </form>
+
+          <!-- STEP 3: Complete Profile (New Users Only) -->
+          <form id="stepProfileForm" class="d-none">
+            <div class="text-center mb-3">
+              <div class="display-6 text-primary mb-2"><i class="bi bi-person-badge"></i></div>
+              <h6 class="fw-bold">Complete Your Profile</h6>
+              <p class="text-muted small">Welcome! Tell us your name so other users and administrators can identify your claims and reports.</p>
+            </div>
+
+            <div class="row g-2 mb-3">
+              <div class="col-6">
+                <label class="form-label fw-semibold">First Name *</label>
+                <input type="text" class="form-control" id="inputFirstName" name="firstname" placeholder="First Name" required>
+              </div>
+              <div class="col-6">
+                <label class="form-label fw-semibold">Last Name</label>
+                <input type="text" class="form-control" id="inputLastName" name="lastname" placeholder="Last Name">
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Email (Optional)</label>
+              <input type="email" class="form-control" id="inputEmail" name="email" placeholder="name@example.com">
+            </div>
+
+            <div class="d-grid mt-4">
+              <button type="submit" class="btn btn-primary btn-lg" id="btnCompleteProfile">
+                <span class="spinner-border spinner-border-sm d-none me-2" role="status"></span>
+                <i class="bi bi-person-check me-1"></i> Finish & Continue
+              </button>
+            </div>
+          </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======= Footer ======= -->
+  <footer id="footer" class="footer">
+    <div class="copyright">
+      &copy; Copyright <strong><span data-sys-name>Lost and Found Information System</span></strong>. All Rights Reserved
+    </div>
+  </footer><!-- End Footer -->
+
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+  <script>
+    // Unregister any stale Service Worker to guarantee fresh live development
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(regs => {
+        for (let r of regs) r.unregister();
+      });
+    }
+    if (window.caches) {
+      caches.keys().then(keys => keys.forEach(k => caches.delete(k)));
+    }
+
+    $(document).ready(async function() {
+      // Phase 1: Render dynamic navigation authentication state immediately
+      function renderNavAuth() {
+        const currentUser = window.AuthManager.getCurrentUser();
+        if (currentUser) {
+          const userName = window.AuthManager.getUserDisplayName();
+          const isAdmin = Number(currentUser.type) === 1;
+          $('#nav-auth-container').html(`
+            <div class="dropdown">
+              <button class="btn btn-outline-primary btn-sm rounded-pill dropdown-toggle d-flex align-items-center px-3" type="button" id="userMenuDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-person-circle fs-6 me-1"></i>
+                <span class="fw-semibold text-truncate" style="max-width: 140px;">${userName}</span>
+              </button>
+              <ul class="dropdown-menu dropdown-menu-end shadow border-0" aria-labelledby="userMenuDropdown">
+                <li class="dropdown-header text-start">
+                  <h6 class="mb-0 text-dark">${userName}</h6>
+                  <span class="small text-muted">+91 ${currentUser.mobile || ''}</span>
+                  <span class="badge ${isAdmin ? 'bg-danger' : 'bg-success'} ms-1">${isAdmin ? 'Admin' : 'Verified User'}</span>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                ${isAdmin ? `
+                  <li>
+                    <a class="dropdown-item py-2" href="admin/">
+                      <i class="bi bi-shield-lock text-danger me-2"></i>Admin Dashboard
+                    </a>
+                  </li>
+                ` : ''}
+                <li>
+                  <a class="dropdown-item py-2" href="./?page=found">
+                    <i class="bi bi-plus-circle text-primary me-2"></i>Post an Item
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item py-2" href="./?page=items">
+                    <i class="bi bi-search text-secondary me-2"></i>Browse Catalog
+                  </a>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                  <a class="dropdown-item py-2 text-danger" href="javascript:void(0)" onclick="window.AuthManager.logout('./')">
+                    <i class="bi bi-box-arrow-right me-2"></i>Logout
+                  </a>
+                </li>
+              </ul>
+            </div>
+          `);
+        } else {
+          $('#nav-auth-container').html(`
+            <button type="button" class="btn btn-primary btn-sm rounded-pill px-3 shadow-sm d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#otpLoginModal">
+              <i class="bi bi-phone me-1"></i>
+              <span>Login / Register</span>
+            </button>
+            <a href="admin/login.html" class="btn btn-outline-secondary btn-sm rounded-circle ms-1" title="Admin Portal" style="width: 32px; height: 32px; padding: 0; display: inline-flex; align-items: center; justify-content: center;">
+              <i class="bi bi-shield-lock" style="font-size: 0.85rem;"></i>
+            </a>
+          `);
+        }
+      }
+      renderNavAuth();
+
+      try {
+        start_loader();
+        await window.db.init();
+        const sysInfo = await window.syncSystemBranding('');
+        renderNavAuth();
+
+        // Route handling
+        const urlParams = new URLSearchParams(window.location.search);
+        const page = urlParams.get('page') || 'home';
+
+        // Highlight active nav
+        $('[id^="nav-link-"]').removeClass('active');
+        if (page === 'home') $('#nav-link-home').addClass('active');
+        else if (page.startsWith('items')) $('#nav-link-items').addClass('active');
+        else if (page === 'found') $('#nav-link-found').addClass('active');
+        else if (page === 'about') $('#nav-link-about').addClass('active');
+        else if (page === 'contact') $('#nav-link-contact').addClass('active');
+
+        if (page === 'home') {
+          $('#standard-page-container').hide();
+          $('#homepage-full-container').show();
+          await renderHomePage(sysInfo);
+        } else {
+          $('#homepage-full-container').hide().empty();
+          $('#standard-page-container').show();
+          if (page === 'items') {
+            await renderItemsPage(urlParams.get('cid'), urlParams.get('search'), urlParams.get('location'));
+          } else if (page === 'items/view' || page === 'item') {
+            await renderItemViewPage(urlParams.get('id'));
+          } else if (page === 'found') {
+            await renderFoundPage();
+          } else if (page === 'about') {
+            renderAboutPage(sysInfo);
+          } else if (page === 'contact') {
+            renderContactPage(sysInfo);
+          } else {
+            render404Page();
+          }
+        }
+      } catch (err) {
+        console.error('Initialization error:', err);
+      } finally {
+        end_loader();
+      }
+    });
+
+    // 1. Render Premium iLost-Inspired Homepage (9 Dynamic CMS Sections)
+    async function renderHomePage(sysInfo = {}) {
+      let sections = {};
+      let partners = [];
+      let testimonials = [];
+      let faqs = [];
+      let categories = [];
+
+      try {
+        sections = (await window.CMSManager.getSections(false)) || {};
+        partners = (await window.CMSManager.getPartners(false)) || [];
+        testimonials = (await window.CMSManager.getTestimonials(false)) || [];
+        faqs = (await window.CMSManager.getFaqs(false)) || [];
+        categories = (await window.CategoryManager.getAll(true)) || [];
+      } catch (err) {
+        console.warn('CMS load error in renderHomePage:', err);
+      }
+
+      if (!sections || Object.keys(sections).length === 0) {
+        sections = {};
+        if (window.SEED_DATA && window.SEED_DATA.cms_sections) {
+          window.SEED_DATA.cms_sections.forEach(s => {
+            let extra = {};
+            try { extra = JSON.parse(s.extra_data); } catch(e) {}
+            sections[s.section_key] = { ...s, extra_data_parsed: extra };
+          });
+        }
+      }
+      if (!partners || partners.length === 0) {
+        partners = (window.SEED_DATA && window.SEED_DATA.cms_partners) ? window.SEED_DATA.cms_partners : [];
+      }
+      if (!testimonials || testimonials.length === 0) {
+        testimonials = (window.SEED_DATA && window.SEED_DATA.cms_testimonials) ? window.SEED_DATA.cms_testimonials : [];
+      }
+      if (!faqs || faqs.length === 0) {
+        faqs = (window.SEED_DATA && window.SEED_DATA.cms_faqs) ? window.SEED_DATA.cms_faqs : [];
+      }
+      if (!categories || categories.length === 0) {
+        categories = (window.SEED_DATA && window.SEED_DATA.categories) ? window.SEED_DATA.categories : [];
+      }
+
+      const catOptions = categories.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+
+      let sectionsHtml = '';
+
+      for (const [key, sec] of Object.entries(sections)) {
+        const extra = sec.extra_data_parsed || {};
+
+        if (key === 'hero') {
+          const heroBg = sec.image_path ? (sec.image_path.startsWith('data:') ? sec.image_path : sec.image_path) : 'uploads/cms/hero_bg.jpg';
+          const reclaimText = extra.reclaim_btn_text || 'Reclaim Your Item';
+          const reclaimLink = extra.reclaim_btn_link || './?page=items';
+          const foundText = extra.found_btn_text || 'I Found Something';
+          const foundLink = extra.found_btn_link || './?page=found';
+          const howText = extra.how_btn_text || 'How It Works';
+          const showSearch = extra.show_search !== false;
+          const hasEmbeddedText = extra.has_embedded_text !== false; // default true for graphic banner
+          const overlayOpacity = extra.overlay_opacity !== undefined ? extra.overlay_opacity : 0;
+
+          sectionsHtml += `
+            <section class="hero-section" id="hero-section">
+              <div class="hero-media-wrapper">
+                <img src="${heroBg}" class="hero-banner-img" alt="Lost & Found Platform" id="hero-banner-img">
+                <div class="hero-overlay" style="opacity: ${overlayOpacity};"></div>
+
+                ${hasEmbeddedText ? `
+                <!-- Hotspot Interactive Layer for embedded graphic buttons -->
+                <div class="hero-embedded-interactive-layer">
+                  <a href="${reclaimLink}" class="hero-hotspot-btn hero-hotspot-reclaim" title="${reclaimText}" aria-label="${reclaimText}"></a>
+                  <a href="#how-it-works" class="hero-hotspot-btn hero-hotspot-how" title="${howText}" aria-label="${howText}"></a>
+                </div>
+                ` : `
+                <!-- Standard HTML Text Overlay if the uploaded image does not have baked-in text -->
+                <div class="hero-content-overlay">
+                  <div class="container-xl hero-container px-4">
+                    <div class="row align-items-center">
+                      <div class="col-lg-9 col-md-11">
+                        <div class="hero-badge">
+                          <i class="bi bi-shield-check text-success"></i>
+                          <span>OFFICIAL VERIFIED LOST & FOUND NETWORK</span>
+                        </div>
+                        <h1 class="hero-title">
+                          ${sec.title ? (sec.title.includes('Get it back fast!') ? sec.title.replace('Get it back fast!', '<span class="highlight-coral">Get it back fast!</span>') : sec.title) : 'Lost something? <br><span class="highlight-coral">Get it back fast!</span>'}
+                        </h1>
+                        <p class="hero-subtitle">
+                          ${sec.subtitle || 'We help you reconnect with your lost items easily through smart matching and verified recovery.'}
+                        </p>
+                        <div class="hero-buttons">
+                          <a href="${reclaimLink}" class="btn-hero-reclaim">
+                            <i class="bi bi-search"></i> ${reclaimText}
+                          </a>
+                          <a href="#how-it-works" class="btn-hero-how">
+                            <span class="play-icon"><i class="bi bi-play-fill"></i></span> ${(extra.how_btn_text || 'HOW IT WORKS').toUpperCase()}
+                          </a>
+                          <a href="${foundLink}" class="btn-hero-found">
+                            <i class="bi bi-plus-circle"></i> ${foundText}
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                `}
+              </div>
+
+              ${showSearch ? `
+              <!-- Working Multi-Field Search Bar positioned below the full banner -->
+              <div class="hero-search-bar-wrap">
+                <div class="container-xl px-4">
+                  <div class="hero-search-card shadow">
+                    <form id="hero-search-form" class="hero-search-form">
+                      <div class="search-field-group">
+                        <i class="bi bi-search"></i>
+                        <input type="text" id="hero-search-q" placeholder="What are you looking for? (e.g. Wallet, iPhone)">
+                      </div>
+                      <div class="search-field-group">
+                        <i class="bi bi-tag"></i>
+                        <select id="hero-search-cid">
+                          <option value="">All Categories</option>
+                          ${catOptions}
+                        </select>
+                      </div>
+                      <div class="search-field-group">
+                        <i class="bi bi-geo-alt"></i>
+                        <input type="text" id="hero-search-loc" placeholder="City, station or campus...">
+                      </div>
+                      <button type="submit" class="btn-search-submit">
+                        <i class="bi bi-arrow-right"></i> Search
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+              ` : ''}
+            </section>
+          `;
+        } else if (key === 'partners' && partners.length > 0) {
+          const partnersList = partners.map(p => {
+            const logoSrc = p.logo_path.startsWith('data:') ? p.logo_path : p.logo_path;
+            return `
+              <a href="${p.website_url || '#'}" target="_blank" class="partner-logo-item text-decoration-none" title="${p.name}">
+                <img src="${logoSrc}" alt="${p.name}">
+              </a>
+            `;
+          }).join('');
+
+          sectionsHtml += `
+            <section class="partners-section">
+              <div class="container-xl px-4">
+                <div class="section-heading-center">
+                  ${extra.badge ? `<span class="section-eyebrow">${extra.badge}</span>` : ''}
+                  <h2>${sec.title || 'Trusted by these companies'}</h2>
+                  <p>${sec.subtitle || 'Used by the world\'s leading teams & startups'}</p>
+                </div>
+              </div>
+              <div class="partners-ticker-wrap">
+                <div class="partners-ticker-track">
+                  ${partnersList}
+                  ${partnersList}
+                </div>
+              </div>
+            </section>
+          `;
+        } else if (key === 'how_it_works') {
+          const steps = extra.steps || [
+            { step: 1, title: 'Report or Search', desc: 'Finders register found items with precise details. Owners search our live catalog.', icon: 'bi-search' },
+            { step: 2, title: 'Smart Verification', desc: 'Claimants provide unique identifying characteristics and proof of ownership.', icon: 'bi-shield-check' },
+            { step: 3, title: 'Safe Return & Delivery', desc: 'Coordinate secure venue pickup or scheduled courier delivery.', icon: 'bi-box-seam' }
+          ];
+
+          sectionsHtml += `
+            <section class="how-section" id="how-it-works">
+              <div class="container-xl px-4">
+                <div class="section-heading-center">
+                  <span class="section-eyebrow">SIMPLE & VERIFIED</span>
+                  <h2>${sec.title || 'How It Works'}</h2>
+                  <p>${sec.subtitle || 'Reuniting belongings safely in three easy steps'}</p>
+                </div>
+                <div class="row g-4 mt-2">
+                  ${steps.map(st => `
+                    <div class="col-lg-4 col-md-6">
+                      <div class="process-card">
+                        <div class="process-step-num">${String(st.step).padStart(2, '0')}</div>
+                        <div class="process-icon-wrap">
+                          <i class="bi ${st.icon || 'bi-search'}"></i>
+                        </div>
+                        <h4>${st.title}</h4>
+                        <p>${st.desc}</p>
+                      </div>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            </section>
+          `;
+        } else if (key === 'testimonials' && testimonials.length > 0) {
+          const testSlides = testimonials.map((t, idx) => {
+            const avatarSrc = t.avatar_path.startsWith('data:') ? t.avatar_path : t.avatar_path;
+            return `
+              <div class="col-lg-6 col-md-6 testimonial-slide-item ${idx > 1 ? 'd-none' : ''}" data-index="${idx}">
+                <div class="testimonial-card">
+                  <img src="${avatarSrc}" alt="${t.author_name}" class="testimonial-avatar">
+                  <div class="testimonial-content">
+                    <div>
+                      <div class="testimonial-headline">${t.headline}</div>
+                      <p class="testimonial-quote">${t.review_text}</p>
+                      <div class="testimonial-stars">
+                        ${'<i class="bi bi-star-fill"></i> '.repeat(t.rating || 5)}
+                      </div>
+                    </div>
+                    <div>
+                      <div class="testimonial-author-name">${t.author_name}</div>
+                      <div class="testimonial-author-role">${t.author_role}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            `;
+          }).join('');
+
+          sectionsHtml += `
+            <section class="testimonials-section" id="testimonials">
+              <div class="container-xl px-4">
+                <div class="section-heading-center">
+                  ${extra.badge ? `<span class="section-eyebrow">${extra.badge}</span>` : ''}
+                  <h2>${sec.title || 'Our clients feedback'}</h2>
+                  <p>${sec.subtitle || 'We provide all the advantage that can simplify all your financial and banking support without any further issues'}</p>
+                </div>
+
+                <div class="row g-4 justify-content-center" id="testimonials-row">
+                  ${testSlides}
+                </div>
+
+                <div class="carousel-controls-wrapper">
+                  <button type="button" class="carousel-nav-btn" id="btn-prev-test" title="Previous"><i class="bi bi-chevron-left"></i></button>
+                  <div class="carousel-progress-bar">
+                    <div class="carousel-progress-fill" id="test-progress-fill" style="width: ${(1 / testimonials.length) * 100}%;"></div>
+                  </div>
+                  <span class="carousel-page-indicator" id="test-page-indicator">1 / ${testimonials.length}</span>
+                  <button type="button" class="carousel-nav-btn" id="btn-next-test" title="Next"><i class="bi bi-chevron-right"></i></button>
+                </div>
+              </div>
+            </section>
+          `;
+        } else if (key === 'stats') {
+          const counters = extra.counters || [
+            { label: 'Items Reunited', value: '15,000+', icon: 'bi-award' },
+            { label: 'Claim Accuracy', value: '98.4%', icon: 'bi-patch-check' },
+            { label: 'Verified Venues', value: '450+', icon: 'bi-building' },
+            { label: 'Average Recovery', value: '< 48 hrs', icon: 'bi-clock-history' }
+          ];
+
+          sectionsHtml += `
+            <section class="stats-section">
+              <div class="container-xl px-4">
+                <div class="row g-4">
+                  ${counters.map(cnt => `
+                    <div class="col-lg-3 col-md-6">
+                      <div class="stat-metric-card">
+                        <div class="stat-metric-icon"><i class="bi ${cnt.icon || 'bi-award'}"></i></div>
+                        <div class="stat-metric-val">${cnt.value}</div>
+                        <div class="stat-metric-label">${cnt.label}</div>
+                      </div>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            </section>
+          `;
+        } else if (key === 'trust') {
+          const badges = extra.badges || [
+            { title: '100% Local Data Privacy', desc: 'All sensitive claimant credentials and identifying details remain securely protected.', icon: 'bi-lock' },
+            { title: 'Proof Verification Guard', desc: 'Unique secret marks and validation questions protect owners from fraudulent claims.', icon: 'bi-person-check' },
+            { title: 'Verified Venue Network', desc: 'Integrated directly with partner transport desks, university campuses, and event centers.', icon: 'bi-geo-alt' }
+          ];
+
+          sectionsHtml += `
+            <section class="trust-section">
+              <div class="container-xl px-4">
+                <div class="section-heading-center">
+                  <span class="section-eyebrow">GUARANTEED INTEGRITY</span>
+                  <h2>${sec.title || 'Enterprise Security & Community Trust'}</h2>
+                  <p>${sec.subtitle || 'Built from the ground up with data confidentiality and fraud prevention safeguards.'}</p>
+                </div>
+                <div class="row g-4 mt-2">
+                  ${badges.map(b => `
+                    <div class="col-lg-4 col-md-6">
+                      <div class="trust-badge-card">
+                        <div class="trust-badge-icon"><i class="bi ${b.icon || 'bi-shield-check'}"></i></div>
+                        <div>
+                          <h5>${b.title}</h5>
+                          <p>${b.desc}</p>
+                        </div>
+                      </div>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            </section>
+          `;
+        } else if (key === 'footer') {
+          const quick = extra.quick_links || [
+            { label: 'Search Lost Items', url: './?page=items' },
+            { label: 'Report Found Item', url: './?page=found' },
+            { label: 'How It Works', url: '#how-it-works' },
+            { label: 'About Us', url: './?page=about' },
+            { label: 'Contact Support', url: './?page=contact' }
+          ];
+          const legal = extra.legal_links || [
+            { label: 'Privacy Policy', url: '#' },
+            { label: 'Terms of Service', url: '#' },
+            { label: 'Security Guidelines', url: '#' },
+            { label: 'Community Rules', url: '#' }
+          ];
+
+          sectionsHtml += `
+            <footer class="site-footer-modern">
+              <div class="container-xl px-4">
+                <div class="row g-4">
+                  <div class="col-lg-4 col-md-6">
+                    <h5 class="d-flex align-items-center gap-2">
+                      <img src="uploads/logo.png" alt="Logo" style="height: 32px;">
+                      <span>${sec.title || 'Lost & Found System'}</span>
+                    </h5>
+                    <p class="text-muted pe-lg-4 mt-3">
+                      ${sec.subtitle || 'Connecting people, places, and lost belongings with integrity and intelligence.'}
+                    </p>
+                  </div>
+                  <div class="col-lg-2 col-md-6">
+                    <h5>Quick Links</h5>
+                    <ul>
+                      ${quick.map(q => `<li><a href="${q.url}">${q.label}</a></li>`).join('')}
+                    </ul>
+                  </div>
+                  <div class="col-lg-2 col-md-6">
+                    <h5>Legal & Trust</h5>
+                    <ul>
+                      ${legal.map(l => `<li><a href="${l.url}">${l.label}</a></li>`).join('')}
+                    </ul>
+                  </div>
+                  <div class="col-lg-4 col-md-6">
+                    <h5>Contact Support</h5>
+                    <ul class="text-muted">
+                      <li class="d-flex gap-2 mb-2"><i class="bi bi-geo-alt text-primary"></i> <span>${extra.address || '4226 Florence Street, Arlington, Texas'}</span></li>
+                      <li class="d-flex gap-2 mb-2"><i class="bi bi-telephone text-primary"></i> <span>${extra.phone || '903-436-9356'}</span></li>
+                      <li class="d-flex gap-2 mb-2"><i class="bi bi-envelope text-primary"></i> <span>${extra.email || 'support@lfis.local'}</span></li>
+                    </ul>
+                  </div>
+                </div>
+                <div class="footer-bottom-bar">
+                  <div>© ${new Date().getFullYear()} Lost and Found Information System. All Rights Reserved.</div>
+                  <div class="d-flex gap-3">
+                    <a href="#" class="text-muted"><i class="bi bi-twitter"></i></a>
+                    <a href="#" class="text-muted"><i class="bi bi-facebook"></i></a>
+                    <a href="#" class="text-muted"><i class="bi bi-linkedin"></i></a>
+                  </div>
+                </div>
+              </div>
+            </footer>
+          `;
+        }
+      }
+
+      // Add Floating FAQ Drawer
+      sectionsHtml += `
+        <button type="button" class="floating-faq-btn" data-bs-toggle="offcanvas" data-bs-target="#faqDrawerJS">
+          <i class="bi bi-question-circle-fill"></i>
+          <span>Help & FAQs</span>
+        </button>
+
+        <div class="offcanvas offcanvas-end" tabindex="-1" id="faqDrawerJS" style="width: 440px; max-width: 90vw;">
+          <div class="offcanvas-header border-bottom bg-light">
+            <div>
+              <h5 class="offcanvas-title fw-bold mb-0"><i class="bi bi-chat-dots-fill text-primary me-2"></i>Help & FAQs</h5>
+              <small class="text-muted">Instant answers to common recovery questions</small>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body p-4">
+            <div class="mb-3">
+              <div class="input-group">
+                <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+                <input type="text" class="form-control border-start-0" id="faq-search-input-js" placeholder="Search questions (e.g. claim, handover)...">
+              </div>
+            </div>
+
+            <div class="accordion" id="accordionPublicFaqsJS">
+              ${faqs.map((fq, fidx) => `
+                <div class="accordion-item mb-2 border rounded faq-accordion-item-js" data-q="${(fq.question + ' ' + fq.answer).toLowerCase()}">
+                  <h2 class="accordion-header" id="faqHJS${fq.id}">
+                    <button class="accordion-button ${fidx === 0 ? '' : 'collapsed'} py-3" type="button" data-bs-toggle="collapse" data-bs-target="#faqCJS${fq.id}">
+                      <span class="badge bg-light text-primary border me-2" style="font-size: 0.7rem;">${fq.category || 'General'}</span>
+                      <span class="fw-semibold small">${fq.question}</span>
+                    </button>
+                  </h2>
+                  <div id="faqCJS${fq.id}" class="accordion-collapse collapse ${fidx === 0 ? 'show' : ''}" data-bs-parent="#accordionPublicFaqsJS">
+                    <div class="accordion-body small text-muted">
+                      ${(fq.answer || '').replace(/\\n/g, '<br>')}
+                    </div>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+
+            <div class="border-top pt-3 mt-4 text-center">
+              <p class="small text-muted mb-2">Can't find what you are looking for?</p>
+              <a href="./?page=contact" class="btn btn-outline-primary btn-sm rounded-pill px-3">
+                <i class="bi bi-envelope me-1"></i> Contact Support
+              </a>
+            </div>
+          </div>
+        </div>
+      `;
+
+      $('#homepage-full-container').html(`
+        <div class="homepage-wrapper">
+          ${sectionsHtml}
+        </div>
+      `);
+
+      // Search Form Handler
+      $('#hero-search-form').on('submit', function(e) {
+        e.preventDefault();
+        const q = $('#hero-search-q').val().trim();
+        const cid = $('#hero-search-cid').val();
+        const loc = $('#hero-search-loc').val().trim();
+        let url = './?page=items';
+        if (cid) url += `&cid=${encodeURIComponent(cid)}`;
+        if (q) url += `&search=${encodeURIComponent(q)}`;
+        if (loc) url += `&location=${encodeURIComponent(loc)}`;
+        window.location.href = url;
+      });
+
+      // Testimonial Carousel Handler
+      const totalTestimonials = testimonials.length;
+      let currentTestIndex = 0;
+
+      function updateTestimonialViewJS() {
+        $('.testimonial-slide-item').addClass('d-none');
+        $(`.testimonial-slide-item[data-index="${currentTestIndex}"]`).removeClass('d-none');
+        if (totalTestimonials > 1) {
+          const nextIdx = (currentTestIndex + 1) % totalTestimonials;
+          $(`.testimonial-slide-item[data-index="${nextIdx}"]`).removeClass('d-none');
+        }
+
+        const currentNum = currentTestIndex + 1;
+        $('#test-page-indicator').text(`${currentNum} / ${totalTestimonials}`);
+        const pct = (currentNum / totalTestimonials) * 100;
+        $('#test-progress-fill').css('width', `${pct}%`);
+      }
+
+      $('#btn-next-test').on('click', function() {
+        if (totalTestimonials > 0) {
+          currentTestIndex = (currentTestIndex + 1) % totalTestimonials;
+          updateTestimonialViewJS();
+        }
+      });
+
+      $('#btn-prev-test').on('click', function() {
+        if (totalTestimonials > 0) {
+          currentTestIndex = (currentTestIndex - 1 + totalTestimonials) % totalTestimonials;
+          updateTestimonialViewJS();
+        }
+      });
+
+      // FAQ Live Search
+      $('#faq-search-input-js').on('input', function() {
+        const query = $(this).val().toLowerCase().trim();
+        $('.faq-accordion-item-js').each(function() {
+          const text = $(this).data('q');
+          $(this).toggle(text.includes(query));
+        });
+      });
+    }
+
+    // 2. Render Items Page (Lost and Found catalog with search & location filters)
+    async function renderItemsPage(cid, searchParam = '', locationParam = '') {
+      $('#site-header-container').empty();
+      const categories = await window.CategoryManager.getAll(true);
+      const selectedCatId = cid ? Number(cid) : null;
+      const selectedCat = selectedCatId ? categories.find(c => Number(c.id) === selectedCatId) : null;
+
+      let items = await window.ItemManager.getAll({
+        status: 1, // Published items
+        categoryId: selectedCatId,
+        sortByTitle: true
+      });
+
+      // Filter by search keyword and location if provided
+      if (searchParam) {
+        const s = searchParam.toLowerCase();
+        items = items.filter(it => 
+          (it.title && it.title.toLowerCase().includes(s)) ||
+          (it.brand && it.brand.toLowerCase().includes(s)) ||
+          (it.description && it.description.toLowerCase().includes(s)) ||
+          (it.fullname && it.fullname.toLowerCase().includes(s))
+        );
+      }
+      if (locationParam) {
+        const l = locationParam.toLowerCase();
+        items = items.filter(it => it.location && it.location.toLowerCase().includes(l));
+      }
+
+      let catListHtml = categories.map(cat => `
+        <a href="./?page=items&cid=${cat.id}" class="list-group-item list-group-item-action ${selectedCatId === Number(cat.id) ? 'active' : ''}">${cat.name}</a>
+      `).join('');
+
+      let itemsCardsHtml = '';
+      if (items.length > 0) {
+        itemsCardsHtml = items.map(row => {
+          const imgUrl = window.StorageManager.getImageUrl(row.image_path, 'uploads/logo.png');
+          const cleanDesc = (row.description || '').replace(/<[^>]*>?/gm, '');
+          return `
+            <a href="./?page=items/view&id=${row.id}" class="item-item text-decoration-none text-reset">
+              <div class="card">
+                <div class="item-card-img">
+                  <img src="${imgUrl}" alt="${row.title}">
+                </div>
+                <div class="card-body pt-3">
+                  <h4 class="card-title">${row.title}</h4>
+                  <p class="truncate-3">${cleanDesc}</p>
+                </div>
+              </div>
+            </a>
+          `;
+        }).join('');
+      } else {
+        itemsCardsHtml = '<div class="text-muted text-center py-4">No items matched your search criteria.</div>';
+      }
+
+      $('#page-content-area').html(`
+        <h1 class="pageTitle text-center titleTxt">Lost and Found Items</h1>
+        <hr class="mx-auto bg-primary border-primary opacity-100" style="width:50px">
+
+        <div class="container-sm">
+          <div class="row">
+            <div class="col-lg-3 col-md-4 col-sm-12 col-12">
+              <div class="list-group mb-4">
+                <a href="./?page=items" class="list-group-item list-group-item-action ${!selectedCatId ? 'active' : ''}">All Categories</a>
+                ${catListHtml}
+              </div>
+            </div>
+            <div class="col-lg-9 col-md-8 col-sm-12 col-12">
+              ${selectedCat ? `<h3 class="titleTxt">${selectedCat.name}</h3>` : ''}
+              ${selectedCat && selectedCat.description ? `<div>${selectedCat.description.replace(/\\n/g, '<br>')}</div>` : ''}
+              
+              <div class="mb-3">
+                <input type="text" id="item-search" class="form-control" placeholder="Search items by title, description, or founder..." value="${searchParam || ''}">
+              </div>
+
+              <div id="item-list">
+                ${itemsCardsHtml}
+              </div>
+            </div>
+          </div>
+        </div>
+      `);
+
+      // Realtime search
+      $('#item-search').on('input', function() {
+        const query = $(this).val().toLowerCase().trim();
+        $('.item-item').each(function() {
+          const text = $(this).text().toLowerCase();
+          $(this).toggle(text.includes(query));
+        });
+      });
+    }
+
+    // 3. Render Item View Page
+    async function renderItemViewPage(id) {
+      $('#site-header-container').empty();
+      if (!id) {
+        alert('Item ID is Required.');
+        window.location.href = './?page=items';
+        return;
+      }
+
+      const item = await window.ItemManager.getById(id);
+      if (!item) {
+        alert('Item ID is not valid.');
+        window.location.href = './?page=items';
+        return;
+      }
+
+      const imgUrl = window.StorageManager.getImageUrl(item.image_path, 'uploads/logo.png');
+      const descHtml = (item.description || '').replace(/\n/g, '<br>');
+
+      $('#page-content-area').html(`
+        <div class="row mt-lg-n4 mt-md-n4 justify-content-center">
+          <div class="col-lg-10 col-md-12 col-sm-12 col-xs-12">
+            <div class="card rounded-0">
+              <div class="card-body">
+                <div class="container-fluid mt-4">
+                  <div class="lf-image">
+                    <img src="${imgUrl}" alt="${item.title}">
+                  </div>
+                  <h2 class="titleTxt">${item.title} <span>| ${item.category}</span></h2>
+                  <dl>
+                    <dt class="text-muted">Founder Name</dt>
+                    <dd class="ps-4">${item.fullname}</dd>
+                    <dt class="text-muted">Contact No.</dt>
+                    <dd class="ps-4">${item.contact}</dd>
+                    <dt class="text-muted">Description</dt>
+                    <dd class="ps-4">${descHtml}</dd>
+                  </dl>
+                </div>
+              </div>
+              <div class="card-footer py-2 text-center">
+                <a href="./?page=items" class="btn btn-light btn-sm border rounded-0"><i class="bi bi-arrow-left"></i> Back to Items</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      `);
+    }
+
+    // 4. Render Found Item submission form (Phase 1 Auth Protected)
+    async function renderFoundPage() {
+      $('#site-header-container').empty();
+      const currentUser = window.AuthManager.getCurrentUser();
+
+      // Enforce mandatory authentication route guard
+      if (!currentUser) {
+        $('#page-content-area').html(`
+          <div class="row justify-content-center py-5">
+            <div class="col-lg-6 col-md-8 col-sm-10 text-center">
+              <div class="card shadow border-0 p-4">
+                <div class="display-4 text-primary mb-3"><i class="bi bi-shield-lock"></i></div>
+                <h3 class="fw-bold mb-2">Authentication Compulsory</h3>
+                <p class="text-muted mb-4">To protect our community and ensure integrity, posting lost or found items requires verified mobile login.</p>
+                <div class="d-grid gap-2 col-8 mx-auto">
+                  <button type="button" class="btn btn-primary btn-lg rounded-pill shadow-sm" data-bs-toggle="modal" data-bs-target="#otpLoginModal">
+                    <i class="bi bi-phone me-1"></i> Sign In with Mobile Number
+                  </button>
+                  <a href="./?page=items" class="btn btn-light rounded-pill border">
+                    <i class="bi bi-arrow-left me-1"></i> Return to Catalog
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        `);
+        return;
+      }
+
+      const userName = window.AuthManager.getUserDisplayName();
+      const userMobile = currentUser.mobile || '';
+      const categories = await window.CategoryManager.getAll(true);
+      const catOptions = categories.map(cat => `<option value="${cat.id}">${cat.name}</option>`).join('');
+
+      $('#page-content-area').html(`
+        <h1 class="pageTitle text-center">Post Found Item</h1>
+        <hr class="mx-auto bg-primary border-primary opacity-100" style="width:50px">
+        <div class="row justify-content-center">
+          <div class="col-lg-8 col-md-8 col-sm-12 col-12">
+            <div class="card shadow-sm border-0">
+              <div class="card-body py-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <h4 class="pageTitle mb-0">Please fill all the required fields</h4>
+                  <span class="badge bg-light text-primary border"><i class="bi bi-person-check me-1"></i> Logged in as: ${userName}</span>
+                </div>
+                <form action="" id="item-form">
+                  <input type="hidden" name="id" value="">
+                  <input type="hidden" name="founder" value="true">
+                  <input type="hidden" name="item_type" value="2">
+                  <input type="hidden" name="user_id" value="${currentUser.id}">
+
+                  <div class="row">
+                    <div class="form-group col-lg-12 col-md-12 col-sm-12 col-xs-12 mb-3">
+                      <label for="category_id" class="form-label fw-semibold">Category *</label>
+                      <select name="category_id" id="category_id" class="form-select" required>
+                        <option value="" disabled selected>Please Select Here</option>
+                        ${catOptions}
+                      </select>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="form-group col-lg-12 col-md-12 col-sm-12 col-xs-12 mb-3">
+                      <label for="fullname" class="control-label fw-semibold">Founder Name *</label>
+                      <input type="text" name="fullname" id="fullname" class="form-control rounded-0" value="${userName}" required/>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="form-group col-lg-12 col-md-12 col-sm-12 col-xs-12 mb-3">
+                      <label for="title" class="control-label fw-semibold">Title *</label>
+                      <input type="text" name="title" id="title" class="form-control rounded-0" placeholder="e.g. Black Leather Wallet, iPhone 14 Pro" required/>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="form-group col-lg-12 col-md-12 col-sm-12 col-xs-12 mb-3">
+                      <label for="contact" class="control-label fw-semibold">Contact # *</label>
+                      <input type="text" name="contact" id="contact" class="form-control rounded-0" value="${userMobile}" required/>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="form-group col-lg-12 col-md-12 col-sm-12 col-xs-12 mb-3">
+                      <label for="description" class="control-label fw-semibold">Description *</label>
+                      <textarea rows="5" name="description" id="description" class="form-control rounded-0" placeholder="Provide general details about where and how the item was found..." required></textarea>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="form-group mb-3">
+                      <label for="customFile" class="control-label fw-semibold">Item Image</label>
+                      <div class="custom-file">
+                        <input type="file" class="form-control" id="customFile" name="image" accept="image/png, image/jpeg">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="form-group d-flex justify-content-center mb-3">
+                      <img src="uploads/logo.png" alt="preview" id="cimg" class="img-fluid img-thumbnail" style="max-height: 200px; max-width: 200px; object-fit: cover;">
+                    </div>
+                  </div>
+                </form>
+              </div>
+              <div class="card-footer bg-white border-top py-3">
+                <div class="col-lg-4 col-md-6 col-sm-10 col-12 mx-auto">
+                  <button class="btn btn-primary btn-lg w-100 rounded-pill shadow-sm" form="item-form"><i class="bi bi-send me-1"></i> Submit Found Item</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `);
+
+      // Initialize select2 if available
+      $('#category_id').select2({
+        placeholder: 'Please Select Here',
+        width: '100%'
+      });
+
+      let uploadedImageData = '';
+
+      // Image preview
+      $('#customFile').on('change', async function() {
+        if (this.files && this.files[0]) {
+          const file = this.files[0];
+          const val = window.StorageManager.validateImage(file);
+          if (!val.valid) {
+            alert(val.error);
+            $(this).val('');
+            return;
+          }
+          uploadedImageData = await window.StorageManager.fileToDataURL(file);
+          $('#cimg').attr('src', uploadedImageData);
+        } else {
+          uploadedImageData = '';
+          $('#cimg').attr('src', 'uploads/logo.png');
+        }
+      });
+
+      // Submit handler
+      $('#item-form').on('submit', async function(e) {
+        e.preventDefault();
+        start_loader();
+        const data = {
+          founder: true,
+          item_type: 2,
+          user_id: currentUser.id,
+          category_id: $('#category_id').val(),
+          fullname: $('#fullname').val(),
+          title: $('#title').val(),
+          contact: $('#contact').val(),
+          description: $('#description').val(),
+          image_path: uploadedImageData
+        };
+
+        const resp = await window.ItemManager.save(data);
+        end_loader();
+        if (resp.status === 'success') {
+          alert_toast(resp.msg, 'success');
+          setTimeout(() => {
+            window.location.href = './?page=found';
+          }, 1500);
+        } else {
+          alert_toast(resp.msg || 'An error occurred.', 'danger');
+        }
+      });
+    }
+
+    // 5. Render About Us Page
+    function renderAboutPage(sysInfo = {}) {
+      sysInfo = sysInfo || {};
+      $('#site-header-container').empty();
+      const content = sysInfo.about || '<p>About Lost and Found Information System.</p>';
+      $('#page-content-area').html(`
+        <div class="col-12">
+          <div class="card shadow-sm border-0">
+            <div class="card-body pt-4">
+              <div class="container-fluid page-content">
+                ${content}
+              </div>
+            </div>
+          </div>
+        </div>
+      `);
+    }
+
+    // 6. Render Contact Us Page
+    function renderContactPage(sysInfo = {}) {
+      sysInfo = sysInfo || {};
+      $('#site-header-container').empty();
+      $('#page-content-area').html(`
+        <h1 class="pageTitle text-center">Our Contact Information</h1>
+        <hr class="mx-auto bg-primary border-primary opacity-100" style="width:50px">
+        <div class="row">
+          <div class="col-lg-7 col-md-6 col-sm-12 col-12">
+            <div class="card shadow-sm border-0">
+              <div class="card-body py-4">
+                <dl>
+                  <dt><b>Our Main Office is Located at:</b></dt>
+                  <dd class="ps-4">${sysInfo.address || '4226 Florence Street, Arlington, Texas, 76011'}</dd>
+                  <dt><b>Email us:</b></dt>
+                  <dd class="ps-4">${sysInfo.email || 'info@simpleorganization.org'}</dd>
+                  <dt><b>Telephone #:</b></dt>
+                  <dd class="ps-4">${sysInfo.phone || '903-436-9356'}</dd>
+                  <dt><b>Mobile #:</b></dt>
+                  <dd class="ps-4">${sysInfo.mobile || '0917-351-8047'}</dd>
+                </dl>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-5 col-md-6 col-sm-12 col-12">
+            <div class="card shadow-sm border-0">
+              <div class="card-body py-4">
+                <h4 class="pageTitle">Send us a Message</h4>
+                <form action="" id="inquiry-form">
+                  <input type="hidden" name="visitor" value="true">
+                  <div class="mb-3">
+                    <label for="fullname" class="form-label fw-semibold">Fullname *</label>
+                    <input type="text" class="form-control" id="fullname" name="fullname" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="email" class="form-label fw-semibold">Email *</label>
+                    <input type="email" class="form-control" id="email" name="email" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="contact" class="form-label fw-semibold">Contact No. *</label>
+                    <input type="text" class="form-control" id="contact" name="contact" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="message" class="form-label fw-semibold">Message *</label>
+                    <textarea rows="5" class="form-control" id="message" name="message" required></textarea>
+                  </div>
+                </form>
+              </div>
+              <div class="card-footer bg-white border-top py-3">
+                <div class="col-lg-6 col-md-8 col-sm-10 col-12 mx-auto">
+                  <button class="btn btn-primary w-100 rounded-pill shadow-sm" form="inquiry-form"><i class="bi bi-send me-1"></i> Send Message</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `);
+
+      $('#inquiry-form').on('submit', async function(e) {
+        e.preventDefault();
+        start_loader();
+        const data = {
+          visitor: true,
+          fullname: $('#fullname').val(),
+          email: $('#email').val(),
+          contact: $('#contact').val(),
+          message: $('#message').val()
+        };
+        const resp = await window.InquiryManager.save(data);
+        end_loader();
+        if (resp.status === 'success') {
+          alert_toast(resp.msg, 'success');
+          $('#inquiry-form')[0].reset();
+        } else {
+          alert_toast(resp.msg || 'An error occurred.', 'danger');
+        }
+      });
+    }
+
+    // 7. Render 404 Page
+    function render404Page() {
+      $('#site-header-container').empty();
+      $('#page-content-area').html(`
+        <div class="text-center py-5">
+          <h1 class="display-1 fw-bold text-primary">404</h1>
+          <p class="fs-3"><span class="text-danger">Oops!</span> Page not found.</p>
+          <p class="lead">The page you're looking for doesn't exist or has been moved.</p>
+          <a href="./" class="btn btn-primary">Go Home</a>
+        </div>
+      `);
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>LFIS Test Suite</title>
+  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <script src="assets/js/jquery-3.6.4.min.js"></script>
+  <script src="database/schema.js"></script>
+  <script src="database/seed.js"></script>
+  <script src="database/db.js"></script>
+  <script src="scripts/storage.js"></script>
+  <script src="scripts/auth.js"></script>
+  <script src="scripts/categories.js"></script>
+  <script src="scripts/items.js"></script>
+  <script src="scripts/inquiries.js"></script>
+  <script src="scripts/admin.js"></script>
+  <script src="scripts/app.js"></script>
+</head>
+<body class="p-4 bg-light">
+  <div class="container">
+    <div class="card shadow-sm">
+      <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+        <h4 class="mb-0">Lost & Found JavaScript + IndexedDB Automated Test Suite</h4>
+        <button id="run-btn" class="btn btn-light btn-sm fw-bold">Re-run Tests</button>
+      </div>
+      <div class="card-body">
+        <div class="alert alert-info py-2" id="summary">Running tests...</div>
+        <table class="table table-bordered table-striped" id="test-table">
+          <thead>
+            <tr>
+              <th style="width: 50px;">#</th>
+              <th>Test Case</th>
+              <th style="width: 120px;">Status</th>
+              <th>Details</th>
+            </tr>
+          </thead>
+          <tbody id="test-results"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const tests = [
+      {
+        name: 'IndexedDB Initialization and Seeding',
+        run: async () => {
+          await window.db.init();
+          const cats = await window.db.getAll('category_list');
+          const items = await window.db.getAll('item_list');
+          const inqs = await window.db.getAll('inquiry_list');
+          const users = await window.db.getAll('users');
+          const info = await window.db.getSystemInfo();
+
+          if (cats.length < 3) throw new Error('Expected at least 3 categories, got ' + cats.length);
+          if (items.length < 4) throw new Error('Expected at least 4 items, got ' + items.length);
+          if (inqs.length < 1) throw new Error('Expected at least 1 inquiry, got ' + inqs.length);
+          if (users.length < 2) throw new Error('Expected at least 2 users, got ' + users.length);
+          if (!info.name || !info.short_name) throw new Error('System info missing name or short_name');
+          return `Seeded: ${cats.length} categories, ${items.length} items, ${users.length} users, ${inqs.length} inquiries`;
+        }
+      },
+      {
+        name: 'Authentication: Admin Valid Login',
+        run: async () => {
+          const res = await window.AuthManager.login('admin', 'admin123');
+          if (res.status !== 'success') throw new Error('Admin login failed');
+          if (!window.AuthManager.isAdmin()) throw new Error('User is not identified as Admin');
+          return `Logged in as ${res.user.username} (type: ${res.user.type})`;
+        }
+      },
+      {
+        name: 'Authentication: Invalid Password Rejection',
+        run: async () => {
+          const res = await window.AuthManager.login('admin', 'wrong_pass_123');
+          if (res.status === 'success') throw new Error('Invalid login should have failed');
+          return 'Correctly rejected invalid credentials';
+        }
+      },
+      {
+        name: 'Authentication: User Registration',
+        run: async () => {
+          const testUsername = 'testuser_' + Date.now();
+          const res = await window.AuthManager.register({
+            firstname: 'Test',
+            lastname: 'User',
+            username: testUsername,
+            password: 'testpassword',
+            type: 2
+          });
+          if (res.status !== 'success') throw new Error(res.msg);
+          const loginRes = await window.AuthManager.login(testUsername, 'testpassword');
+          if (loginRes.status !== 'success') throw new Error('Login with newly registered user failed');
+          return `Registered and logged in with ${testUsername}`;
+        }
+      },
+      {
+        name: 'Categories: List and Filter Active',
+        run: async () => {
+          const allCats = await window.CategoryManager.getAll(false);
+          const activeCats = await window.CategoryManager.getAll(true);
+          if (!Array.isArray(allCats) || allCats.length === 0) throw new Error('No categories found');
+          return `Found ${allCats.length} total categories (${activeCats.length} active)`;
+        }
+      },
+      {
+        name: 'Categories: Add, Update, and Delete CRUD',
+        run: async () => {
+          const addRes = await window.CategoryManager.save({
+            name: 'Test Category ' + Date.now(),
+            description: '<p>Test description</p>',
+            status: 1
+          });
+          if (addRes.status !== 'success') throw new Error(addRes.msg);
+
+          const fetched = await window.CategoryManager.getById(addRes.sid);
+          if (!fetched) throw new Error('Failed to fetch newly added category');
+
+          const updateRes = await window.CategoryManager.save({
+            id: addRes.sid,
+            name: fetched.name + ' Updated',
+            description: '<p>Updated description</p>',
+            status: 0
+          });
+          if (updateRes.status !== 'success') throw new Error(updateRes.msg);
+
+          const delRes = await window.CategoryManager.delete(addRes.sid);
+          if (delRes.status !== 'success') throw new Error(delRes.msg);
+
+          const postDel = await window.CategoryManager.getById(addRes.sid);
+          if (postDel) throw new Error('Category still exists after deletion');
+          return 'Add, update, and delete executed successfully';
+        }
+      },
+      {
+        name: 'Items: Query and Filtering by Category',
+        run: async () => {
+          const allItems = await window.ItemManager.getAll();
+          const catItems = await window.ItemManager.getAll({ categoryId: 1 });
+          if (!Array.isArray(allItems)) throw new Error('Item list is not an array');
+          return `Total items: ${allItems.length}, Category 1 items: ${catItems.length}`;
+        }
+      },
+      {
+        name: 'Items: Search by Keyword',
+        run: async () => {
+          const results = await window.ItemManager.getAll({ query: 'Park' });
+          if (results.length === 0) throw new Error('Search for "Park" should return Central Park keys');
+          return `Search for "Park" returned item: "${results[0].title}"`;
+        }
+      },
+      {
+        name: 'Items: Public Found Item Report Submission',
+        run: async () => {
+          const res = await window.ItemManager.save({
+            founder: true,
+            category_id: 1,
+            fullname: 'Public Citizen',
+            title: 'Lost Backpack at Library',
+            contact: '09991234567',
+            description: 'Black backpack left on study desk 4',
+            image_path: ''
+          });
+          if (res.status !== 'success') throw new Error(res.msg);
+
+          const item = await window.ItemManager.getById(res.iid);
+          if (Number(item.status) !== 0) throw new Error('Founder submitted item must be pending (status 0)');
+          return `Item created with id ${res.iid} and verified as Pending (status 0)`;
+        }
+      },
+      {
+        name: 'Items: Admin Status Update (Approve -> Claim)',
+        run: async () => {
+          const addRes = await window.ItemManager.save({
+            category_id: 2,
+            fullname: 'Admin Tester',
+            title: 'Status Test Item',
+            contact: '123456',
+            description: 'Testing status transitions',
+            status: 0
+          });
+
+          await window.ItemManager.updateStatus(addRes.iid, 1); // Published
+          let item = await window.ItemManager.getById(addRes.iid);
+          if (Number(item.status) !== 1) throw new Error('Expected status 1 (Published)');
+
+          await window.ItemManager.updateStatus(addRes.iid, 2); // Claimed
+          item = await window.ItemManager.getById(addRes.iid);
+          if (Number(item.status) !== 2) throw new Error('Expected status 2 (Claimed)');
+
+          await window.ItemManager.delete(addRes.iid);
+          return 'Item successfully transitioned from Pending -> Published -> Claimed';
+        }
+      },
+      {
+        name: 'Inquiries: Submit and Mark Read',
+        run: async () => {
+          const res = await window.InquiryManager.save({
+            visitor: true,
+            fullname: 'Inquiry Tester',
+            contact: '555-0199',
+            email: 'testinquiry@example.com',
+            message: 'Have you found a blue wallet?'
+          });
+          if (res.status !== 'success') throw new Error(res.msg);
+
+          // Fetch inquiry and verify marked as read
+          const inq = await window.InquiryManager.getById(res.id, true);
+          if (Number(inq.status) !== 1) throw new Error('Viewing inquiry should mark it as read (status 1)');
+
+          await window.InquiryManager.delete(res.id);
+          return 'Inquiry submitted, marked as read, and cleaned up';
+        }
+      },
+      {
+        name: 'Dashboard: Metrics Calculation',
+        run: async () => {
+          const stats = await window.AdminManager.getDashboardStats();
+          if (typeof stats.activeCategories !== 'number' || typeof stats.pendingItems !== 'number') {
+            throw new Error('Stats format invalid');
+          }
+          return `Active Cats: ${stats.activeCategories}, Pending Items: ${stats.pendingItems}, Published: ${stats.publishedItems}`;
+        }
+      },
+      {
+        name: 'System Info: Update Settings & Pages',
+        run: async () => {
+          const original = await window.db.getSystemInfo();
+          await window.AdminManager.updatePageContent('about', '<p>Test about content update</p>');
+          const updated = await window.db.getSystemInfo();
+          if (updated.about !== '<p>Test about content update</p>') throw new Error('Page content update did not persist');
+
+          // Restore original
+          await window.AdminManager.updatePageContent('about', original.about);
+          return 'Page content update and persistence verified';
+        }
+      },
+      {
+        name: 'Image Storage: Validation & Resolution',
+        run: async () => {
+          const fakeFile = new File(['dummy content'], 'test.png', { type: 'image/png' });
+          const val = window.StorageManager.validateImage(fakeFile);
+          if (!val.valid) throw new Error('PNG file should be valid');
+
+          const badFile = new File(['dummy content'], 'test.exe', { type: 'application/x-msdownload' });
+          const badVal = window.StorageManager.validateImage(badFile);
+          if (badVal.valid) throw new Error('EXE file should be rejected');
+
+          const url = window.StorageManager.getImageUrl('uploads/logo.png?v=123', 'uploads/logo.png', '../');
+          if (url !== '../uploads/logo.png') throw new Error('Image URL resolution unexpected: ' + url);
+
+          return 'Validation and URL resolution functioning properly';
+        }
+      }
+    ];
+
+    async function executeAllTests() {
+      const tbody = document.getElementById('test-results');
+      tbody.innerHTML = '';
+      let passed = 0;
+      let failed = 0;
+
+      for (let i = 0; i < tests.length; i++) {
+        const test = tests[i];
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${i + 1}</td>
+          <td><b>${test.name}</b></td>
+          <td><span class="badge bg-secondary">Running...</span></td>
+          <td class="text-muted">In progress</td>
+        `;
+        tbody.appendChild(row);
+
+        try {
+          const detail = await test.run();
+          row.querySelector('td:nth-child(3)').innerHTML = '<span class="badge bg-success">PASS</span>';
+          row.querySelector('td:nth-child(4)').innerHTML = `<span class="text-success">${detail || 'OK'}</span>`;
+          passed++;
+          try {
+            fetch('http://localhost:5500/?step_pass=' + (i+1));
+          } catch(e){}
+        } catch (err) {
+          row.querySelector('td:nth-child(3)').innerHTML = '<span class="badge bg-danger">FAIL</span>';
+          row.querySelector('td:nth-child(4)').innerHTML = `<span class="text-danger fw-bold">${err.message}</span>`;
+          failed++;
+          try {
+            fetch('http://localhost:5500/?step_fail=' + (i+1) + '&err=' + encodeURIComponent(err.message));
+          } catch(e){}
+        }
+      }
+
+      const summary = document.getElementById('summary');
+      let resultReport = '';
+      if (failed === 0) {
+        summary.className = 'alert alert-success py-2 fw-bold';
+        summary.textContent = `All ${passed} test cases passed successfully! IndexedDB, Auth, and CRUD fully functional.`;
+        resultReport = `SUCCESS_ALL_${passed}_TESTS_PASSED`;
+      } else {
+        summary.className = 'alert alert-danger py-2 fw-bold';
+        summary.textContent = `${passed} passed, ${failed} failed. Please review errors.`;
+        resultReport = `FAILURE_${failed}_FAILED`;
+      }
+      try {
+        fetch('http://localhost:5500/?test_report=' + resultReport);
+      } catch (e) {}
+    }
+
+    document.getElementById('run-btn').addEventListener('click', executeAllTests);
+    window.addEventListener('load', executeAllTests);
+  </script>
+</body>
+</html>

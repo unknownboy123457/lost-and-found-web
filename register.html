@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en" style="height: auto;">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Create an Account | Lost and Found Information System</title>
+  
+  <!-- Favicons -->
+  <link href="uploads/logo.png" rel="icon">
+  <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+
+  <!-- Template Main CSS File -->
+  <link href="assets/css/style.css" rel="stylesheet">
+  <link href="assets/css/custom.css" rel="stylesheet">
+
+  <style>
+    body {
+      background-image: url("uploads/cover.png");
+      background-size: cover;
+      background-repeat: no-repeat;
+      backdrop-filter: brightness(.7);
+      overflow-x: hidden;
+    }
+    .logo img {
+      max-height: 55px;
+      margin-right: 25px;
+    }
+    .logo span {
+      color: #fff;
+      text-shadow: 0px 0px 10px #000;
+    }
+    img#cimg {
+      height: 12vh;
+      width: 12vh;
+      object-fit: cover;
+      border-radius: 100% 100%;
+    }
+  </style>
+
+  <!-- Scripts -->
+  <script src="assets/js/jquery-3.6.4.min.js"></script>
+  <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/js/main.js"></script>
+
+  <!-- Database & Logic -->
+  <script src="database/schema.js"></script>
+  <script src="database/seed.js"></script>
+  <script src="database/db.js"></script>
+  <script src="scripts/storage.js"></script>
+  <script src="scripts/auth.js"></script>
+  <script src="scripts/app.js"></script>
+</head>
+<body>
+  <main>
+    <div class="container py-4">
+      <section class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center">
+        <div class="container">
+          <div class="row justify-content-center">
+            <div class="col-lg-5 col-md-8 d-flex flex-column align-items-center justify-content-center">
+
+              <div class="d-flex justify-content-center py-3">
+                <a href="./" class="logo d-flex align-items-center w-auto">
+                  <img src="uploads/logo.png" alt="Logo">
+                  <span class="d-none d-lg-block text-center" data-sys-name>Lost and Found Information System</span>
+                </a>
+              </div><!-- End Logo -->
+
+              <div class="card mb-3 w-100 shadow">
+                <div class="card-body">
+                  <div class="pt-4 pb-2">
+                    <h5 class="card-title text-center pb-0 fs-4">Create an Account</h5>
+                    <p class="text-center small">Enter your personal details to register</p>
+                  </div>
+
+                  <div id="register-err-container"></div>
+
+                  <form class="row g-3 needs-validation" novalidate id="register-frm">
+                    <div class="col-12 col-md-6">
+                      <label for="firstname" class="form-label">First Name</label>
+                      <input type="text" name="firstname" class="form-control" id="firstname" required>
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                      <label for="lastname" class="form-label">Last Name</label>
+                      <input type="text" name="lastname" class="form-control" id="lastname" required>
+                    </div>
+
+                    <div class="col-12">
+                      <label for="username" class="form-label">Username</label>
+                      <div class="input-group has-validation">
+                        <span class="input-group-text">@</span>
+                        <input type="text" name="username" class="form-control" id="username" required>
+                      </div>
+                    </div>
+
+                    <div class="col-12">
+                      <label for="password" class="form-label">Password</label>
+                      <input type="password" name="password" class="form-control" id="password" required>
+                    </div>
+
+                    <div class="col-12">
+                      <label for="type" class="form-label">Account Role</label>
+                      <select name="type" id="type" class="form-select" required>
+                        <option value="2" selected>Staff</option>
+                        <option value="1">Administrator</option>
+                      </select>
+                    </div>
+
+                    <div class="col-12">
+                      <label for="avatarFile" class="form-label">Avatar (Optional)</label>
+                      <input type="file" class="form-control" id="avatarFile" accept="image/png, image/jpeg">
+                    </div>
+
+                    <div class="col-12 d-flex justify-content-center">
+                      <img src="uploads/user_avatar.jpg" alt="Avatar Preview" id="cimg" class="img-fluid img-thumbnail">
+                    </div>
+
+                    <div class="col-12">
+                      <button class="btn btn-primary w-100" type="submit">Create Account</button>
+                    </div>
+
+                    <div class="col-12 text-center">
+                      <p class="small mb-0">Already have an account? <a href="admin/login.html">Log in</a></p>
+                    </div>
+                  </form>
+
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    $(document).ready(async function() {
+      await window.db.init();
+      const sysInfo = await window.db.getSystemInfo();
+      if (sysInfo) {
+        if (sysInfo.name) {
+          $('[data-sys-name]').text(sysInfo.name);
+          document.title = 'Register | ' + sysInfo.name;
+        }
+        if (sysInfo.logo) {
+          const logoUrl = window.StorageManager.getImageUrl(sysInfo.logo, 'uploads/logo.png');
+          $('.logo img').attr('src', logoUrl);
+          $('link[rel="icon"]').attr('href', logoUrl);
+        }
+        if (sysInfo.cover) {
+          const coverUrl = window.StorageManager.getImageUrl(sysInfo.cover, 'uploads/cover.png');
+          $('body').css('background-image', `url("${coverUrl}")`);
+        }
+      }
+
+      let avatarData = 'uploads/user_avatar.jpg';
+
+      $('#avatarFile').on('change', async function() {
+        if (this.files && this.files[0]) {
+          const file = this.files[0];
+          const val = window.StorageManager.validateImage(file);
+          if (!val.valid) {
+            alert(val.error);
+            $(this).val('');
+            return;
+          }
+          avatarData = await window.StorageManager.fileToDataURL(file);
+          $('#cimg').attr('src', avatarData);
+        } else {
+          avatarData = 'uploads/user_avatar.jpg';
+          $('#cimg').attr('src', avatarData);
+        }
+      });
+
+      $('#register-frm').on('submit', async function(e) {
+        e.preventDefault();
+        $('#register-err-container').empty();
+        start_loader();
+
+        const firstname = $('#firstname').val().trim();
+        const lastname = $('#lastname').val().trim();
+        const username = $('#username').val().trim();
+        const password = $('#password').val();
+        const type = $('#type').val();
+
+        if (!firstname || !lastname || !username || !password) {
+          $('#register-err-container').html("<div class='alert alert-danger'>All fields are required.</div>");
+          end_loader();
+          return;
+        }
+
+        const resp = await window.AuthManager.register({
+          firstname,
+          lastname,
+          username,
+          password,
+          type,
+          avatar: avatarData
+        });
+
+        end_loader();
+
+        if (resp.status === 'success') {
+          $('#register-err-container').html("<div class='alert alert-success'>Account successfully created! Redirecting to dashboard...</div>");
+          setTimeout(() => {
+            window.location.replace('admin/');
+          }, 1200);
+        } else {
+          $('#register-err-container').html(`<div class='alert alert-danger'>${resp.msg}</div>`);
+        }
+      });
+    });
+  </script>
+</body>
+</html>
+

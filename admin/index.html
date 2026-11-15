@@ -1,0 +1,2923 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin Dashboard | Lost and Found Information System</title>
+  
+  <!-- Favicons -->
+  <link href="../uploads/logo.png" rel="icon">
+  <link href="../assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="../assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+  <link href="../assets/vendor/simple-datatables/style.css" rel="stylesheet">
+  <link href="../assets/vendor/select2-4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
+
+  <!-- Template Main CSS File -->
+  <link href="../assets/css/style.css" rel="stylesheet">
+  <link href="../assets/css/custom.css" rel="stylesheet">
+
+  <style>
+    .sidebar-nav .nav-content a i {
+      font-size: .9rem;
+    }
+    #banner-slider {
+      height: 400px;
+    }
+    #banner-slider .carousel-inner {
+      height: 100%;
+    }
+    #banner-slider img.d-block.w-100 {
+      object-fit: cover;
+      object-position: center center;
+    }
+    .user-avatar {
+      width: 3rem;
+      height: 3rem;
+      object-fit: scale-down;
+      object-position: center center;
+    }
+    img#cimg {
+      height: 15vh;
+      width: 15vh;
+      object-fit: cover;
+      border-radius: 100% 100%;
+    }
+    img#cimg2 {
+      height: 30vh;
+      width: 100%;
+      object-fit: contain;
+    }
+    .lf-image {
+      width: 400px;
+      height: 300px;
+      margin: 1em auto;
+      background: #000;
+      box-shadow: 1px 1px 10px #00000069;
+    }
+    .lf-image > img {
+      width: 100%;
+      height: 100%;
+      object-fit: scale-down;
+      object-position: center center;
+    }
+  </style>
+
+  <!-- Scripts -->
+  <script src="../assets/js/jquery-3.6.4.min.js"></script>
+  <script src="../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="../assets/vendor/simple-datatables/simple-datatables.js"></script>
+  <script src="../assets/vendor/select2-4.1.0-rc.0/dist/js/select2.min.js"></script>
+  <script src="../assets/js/main.js"></script>
+
+  <!-- Database & Logic -->
+  <script src="../database/schema.js"></script>
+  <script src="../database/seed.js"></script>
+  <script src="../database/db.js"></script>
+  <script src="../scripts/storage.js"></script>
+  <script src="../scripts/otp.js"></script>
+  <script src="../scripts/auth.js"></script>
+  <script src="../scripts/categories.js"></script>
+  <script src="../scripts/items.js"></script>
+  <script src="../scripts/inquiries.js"></script>
+  <script src="../scripts/cms.js"></script>
+  <script src="../scripts/admin.js"></script>
+  <script src="../scripts/app.js"></script>
+</head>
+<body>
+
+  <!-- ======= Header ======= -->
+  <header id="header" class="header fixed-top d-flex align-items-center">
+    <div class="d-flex align-items-center justify-content-between">
+      <a href="./" class="logo d-flex align-items-center">
+        <img src="../uploads/logo.png" alt="System Logo">
+        <span class="d-none d-lg-block" data-sys-short-name>PHP - LFIS</span>
+      </a>
+      <i class="bi bi-list toggle-sidebar-btn"></i>
+    </div><!-- End Logo -->
+
+    <nav class="header-nav ms-auto">
+      <ul class="d-flex align-items-center">
+        <li class="nav-item me-3">
+          <a href="../" class="btn btn-sm btn-outline-secondary" target="_blank" title="View Public Website">
+            <i class="bi bi-globe"></i> View Website
+          </a>
+        </li>
+        <li class="nav-item dropdown pe-3">
+          <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+            <img src="../uploads/user_avatar.jpg" alt="Profile" class="rounded-circle" id="header-avatar" style="width:36px;height:36px;object-fit:cover;">
+            <span class="d-none d-md-block dropdown-toggle ps-2" id="header-username">Admin</span>
+          </a><!-- End Profile Image Icon -->
+
+          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+            <li class="dropdown-header">
+              <h6 id="header-fullname">Administrator</h6>
+              <span id="header-role">Administrator</span>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+            <li>
+              <a class="dropdown-item d-flex align-items-center" href="./?page=user">
+                <i class="bi bi-gear"></i>
+                <span>Account Settings</span>
+              </a>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+            <li>
+              <a class="dropdown-item d-flex align-items-center" href="javascript:void(0)" onclick="window.AuthManager.logout('login.html')">
+                <i class="bi bi-box-arrow-right"></i>
+                <span>Sign Out</span>
+              </a>
+            </li>
+          </ul><!-- End Profile Dropdown Items -->
+        </li><!-- End Profile Nav -->
+      </ul>
+    </nav><!-- End Icons Navigation -->
+  </header><!-- End Header -->
+
+  <!-- ======= Sidebar ======= -->
+  <aside id="sidebar" class="sidebar">
+    <ul class="sidebar-nav" id="sidebar-nav">
+      <li class="nav-item">
+        <a class="nav-link" id="side-dashboard" href="./">
+          <i class="bi bi-grid"></i>
+          <span>Dashboard</span>
+        </a>
+      </li><!-- End Dashboard Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#categories-nav" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-menu-button-wide"></i><span>Categories</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="categories-nav" class="nav-content collapse" data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="./?page=categories/manage_category" id="side-cat-add">
+              <i class="bi bi-plus-lg" style="font-size:.9rem"></i><span>Add New</span>
+            </a>
+          </li>
+          <li>
+            <a href="./?page=categories" id="side-cat-list">
+              <i class="bi bi-circle"></i><span>List</span>
+            </a>
+          </li>
+        </ul>
+      </li><!-- End Categories Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#items-nav" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-question-octagon"></i><span>Items</span>
+          <span class="badge rounded-pill bg-danger text-light ms-4" id="badge-pending-items" style="display:none;">0</span>
+          <i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="items-nav" class="nav-content collapse" data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="./?page=items/manage_item" id="side-item-add">
+              <i class="bi bi-plus-lg" style="font-size:.9rem"></i><span>Add New</span>
+            </a>
+          </li>
+          <li>
+            <a href="./?page=items" id="side-item-list">
+              <i class="bi bi-circle"></i><span>List</span>
+            </a>
+          </li>
+        </ul>
+      </li><!-- End Items Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" id="side-cms" href="./?page=cms">
+          <i class="bi bi-layout-text-window-reverse"></i>
+          <span>Homepage Builder</span>
+          <span class="badge bg-primary text-light ms-auto font-monospace" style="font-size:0.7rem;">CMS</span>
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#pages-nav" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-window-sidebar"></i><span>Pages</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="pages-nav" class="nav-content collapse" data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="./?page=pages/welcome_page" id="side-page-welcome">
+              <i class="bi bi-circle"></i><span>Welcome Page</span>
+            </a>
+          </li>
+          <li>
+            <a href="./?page=pages/about_page" id="side-page-about">
+              <i class="bi bi-circle"></i><span>About Page</span>
+            </a>
+          </li>
+        </ul>
+      </li><!-- End Pages Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" id="side-messages" href="./?page=inquiries">
+          <i class="bi bi-inbox"></i>
+          <span>Messages</span>
+          <span class="badge rounded-pill bg-danger text-light ms-4" id="badge-unread-msgs" style="display:none;">0</span>
+        </a>
+      </li><!-- End Messages Nav -->
+
+      <div id="maintenance-nav-group" style="display:none;">
+        <li class="nav-heading">Maintenance</li>
+
+        <li class="nav-item">
+          <a class="nav-link collapsed" id="side-users" href="./?page=user/list">
+            <i class="bi bi-people"></i>
+            <span>Users</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link collapsed" id="side-contact-info" href="./?page=system_info/contact_information">
+            <i class="bi bi-telephone"></i>
+            <span>Contact Information</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link collapsed" id="side-sys-info" href="./?page=system_info">
+            <i class="bi bi-gear"></i>
+            <span>System Information</span>
+          </a>
+        </li>
+      </div>
+
+    </ul>
+  </aside><!-- End Sidebar-->
+
+  <!-- Content Wrapper -->
+  <main id="main" class="main">
+    <div class="pagetitle">
+      <h1 id="page-heading-title">Dashboard</h1>
+      <nav>
+        <ol class="breadcrumb" id="breadcrumb-list">
+          <li class="breadcrumb-item"><a href="./">Dashboard</a></li>
+        </ol>
+      </nav>
+    </div>
+
+    <div id="msg-container"></div>
+    <div id="admin-content-area"></div>
+  </main>
+
+  <!-- Common Modals -->
+  <div class="modal fade" id="uni_modal" role="dialog">
+    <div class="modal-dialog modal-md modal-dialog-centered rounded-0" role="document">
+      <div class="modal-content rounded-0">
+        <div class="modal-header">
+          <h5 class="modal-title"></h5>
+        </div>
+        <div class="modal-body"></div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary bg-gradient-teal border-0 rounded-0" id="submit" onclick="$('#uni_modal form').submit()">Save</button>
+          <button type="button" class="btn btn-secondary rounded-0" data-bs-dismiss="modal">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="confirm_modal" role="dialog">
+    <div class="modal-dialog modal-md modal-dialog-centered rounded-0" role="document">
+      <div class="modal-content rounded-0">
+        <div class="modal-header">
+          <h5 class="modal-title">Confirmation</h5>
+        </div>
+        <div class="modal-body">
+          <div id="delete_content"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary bg-gradient-teal border-0 rounded-0" id="confirm">Continue</button>
+          <button type="button" class="btn btn-secondary rounded-0" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======= Footer ======= -->
+  <footer id="footer" class="footer">
+    <div class="copyright">
+      &copy; Copyright <strong><span data-sys-name>Lost and Found Information System</span></strong>. All Rights Reserved
+    </div>
+  </footer><!-- End Footer -->
+
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('../service-worker.js').catch(err => {
+          console.log('ServiceWorker registration note:', err);
+        });
+      });
+    }
+
+    let currentUser = null;
+
+    $(document).ready(async function() {
+      try {
+        start_loader();
+        await window.db.init();
+
+        // Enforce auth
+        currentUser = window.AuthManager.getCurrentUser();
+        if (!currentUser) {
+          window.location.replace('login.html');
+          return;
+        }
+
+        // Populate user in header
+        $('#header-username').text(currentUser.username);
+        $('#header-fullname').text(`${currentUser.firstname} ${currentUser.lastname}`);
+        $('#header-role').text(Number(currentUser.type) === 1 ? 'Administrator' : 'Staff');
+        if (currentUser.avatar) {
+          const avatarUrl = window.StorageManager.getImageUrl(currentUser.avatar, '../uploads/user_avatar.jpg', '../');
+          $('#header-avatar').attr('src', avatarUrl);
+        }
+
+        // Show maintenance menu for Admin
+        if (Number(currentUser.type) === 1) {
+          $('#maintenance-nav-group').show();
+        }
+
+        // Sync system branding
+        const sysInfo = await window.syncSystemBranding('../');
+
+        // Update badge counts
+        await updateSidebarBadges();
+
+        // Route based on ?page=
+        const urlParams = new URLSearchParams(window.location.search);
+        const page = urlParams.get('page') || 'home';
+        const id = urlParams.get('id');
+
+        await routeAdminPage(page, id, sysInfo);
+      } catch (err) {
+        console.error('Admin init error:', err);
+      } finally {
+        end_loader();
+      }
+    });
+
+    async function updateSidebarBadges() {
+      const stats = await window.AdminManager.getDashboardStats();
+      if (stats.pendingItems > 0) {
+        $('#badge-pending-items').text(stats.pendingItems).show();
+      } else {
+        $('#badge-pending-items').hide();
+      }
+
+      if (stats.unreadMessages > 0) {
+        $('#badge-unread-msgs').text(stats.unreadMessages).show();
+      } else {
+        $('#badge-unread-msgs').hide();
+      }
+    }
+
+    async function routeAdminPage(page, id, sysInfo) {
+      // Set active navs
+      $('.sidebar-nav a').addClass('collapsed');
+      $('.sidebar-nav .collapse').removeClass('show');
+
+      if (page === 'home') {
+        $('#side-dashboard').removeClass('collapsed');
+        $('#page-heading-title').text('Dashboard');
+        $('#breadcrumb-list').html('<li class="breadcrumb-item active">Dashboard</li>');
+        renderAdminHome();
+      } else if (page === 'categories') {
+        $('#categories-nav').addClass('show').prev().removeClass('collapsed');
+        $('#side-cat-list').addClass('active');
+        $('#page-heading-title').text('Category List');
+        $('#breadcrumb-list').html('<li class="breadcrumb-item"><a href="./">Dashboard</a></li><li class="breadcrumb-item active">Categories</li>');
+        renderAdminCategories();
+      } else if (page === 'categories/manage_category') {
+        $('#categories-nav').addClass('show').prev().removeClass('collapsed');
+        $('#side-cat-add').addClass('active');
+        $('#page-heading-title').text(id ? 'Update Category Details' : 'New Category Entry');
+        $('#breadcrumb-list').html('<li class="breadcrumb-item"><a href="./">Dashboard</a></li><li class="breadcrumb-item"><a href="./?page=categories">Categories</a></li><li class="breadcrumb-item active">Manage Category</li>');
+        renderManageCategory(id);
+      } else if (page === 'categories/view_category') {
+        $('#categories-nav').addClass('show').prev().removeClass('collapsed');
+        $('#page-heading-title').text('Category Details');
+        $('#breadcrumb-list').html('<li class="breadcrumb-item"><a href="./">Dashboard</a></li><li class="breadcrumb-item"><a href="./?page=categories">Categories</a></li><li class="breadcrumb-item active">View Category</li>');
+        renderViewCategory(id);
+      } else if (page === 'items') {
+        $('#items-nav').addClass('show').prev().removeClass('collapsed');
+        $('#side-item-list').addClass('active');
+        $('#page-heading-title').text('Item List');
+        $('#breadcrumb-list').html('<li class="breadcrumb-item"><a href="./">Dashboard</a></li><li class="breadcrumb-item active">Items</li>');
+        renderAdminItems();
+      } else if (page === 'items/manage_item') {
+        $('#items-nav').addClass('show').prev().removeClass('collapsed');
+        $('#side-item-add').addClass('active');
+        $('#page-heading-title').text(id ? 'Update Item Details' : 'New Item Entry');
+        $('#breadcrumb-list').html('<li class="breadcrumb-item"><a href="./">Dashboard</a></li><li class="breadcrumb-item"><a href="./?page=items">Items</a></li><li class="breadcrumb-item active">Manage Item</li>');
+        renderManageItem(id);
+      } else if (page === 'items/view_item') {
+        $('#items-nav').addClass('show').prev().removeClass('collapsed');
+        $('#page-heading-title').text('Item Details');
+        $('#breadcrumb-list').html('<li class="breadcrumb-item"><a href="./">Dashboard</a></li><li class="breadcrumb-item"><a href="./?page=items">Items</a></li><li class="breadcrumb-item active">View Item</li>');
+        renderViewItem(id);
+      } else if (page === 'inquiries') {
+        $('#side-messages').removeClass('collapsed');
+        $('#page-heading-title').text('Inquiries List');
+        $('#breadcrumb-list').html('<li class="breadcrumb-item"><a href="./">Dashboard</a></li><li class="breadcrumb-item active">Inquiries</li>');
+        renderAdminInquiries();
+      } else if (page === 'inquiries/view_inquiry') {
+        $('#side-messages').removeClass('collapsed');
+        $('#page-heading-title').text('Inquiry Details');
+        $('#breadcrumb-list').html('<li class="breadcrumb-item"><a href="./">Dashboard</a></li><li class="breadcrumb-item"><a href="./?page=inquiries">Inquiries</a></li><li class="breadcrumb-item active">View Inquiry</li>');
+        renderViewInquiry(id);
+      } else if (page === 'user/list') {
+        $('#side-users').removeClass('collapsed');
+        $('#page-heading-title').text('User List');
+        $('#breadcrumb-list').html('<li class="breadcrumb-item"><a href="./">Dashboard</a></li><li class="breadcrumb-item active">Users</li>');
+        renderUserList();
+      } else if (page === 'user/manage_user') {
+        $('#side-users').removeClass('collapsed');
+        $('#page-heading-title').text(id ? 'Update User Details' : 'New User Entry');
+        $('#breadcrumb-list').html('<li class="breadcrumb-item"><a href="./">Dashboard</a></li><li class="breadcrumb-item"><a href="./?page=user/list">Users</a></li><li class="breadcrumb-item active">Manage User</li>');
+        renderManageUser(id);
+      } else if (page === 'user') {
+        $('#page-heading-title').text('User Profile');
+        $('#breadcrumb-list').html('<li class="breadcrumb-item"><a href="./">Dashboard</a></li><li class="breadcrumb-item active">Profile</li>');
+        renderUserProfile();
+      } else if (page === 'cms') {
+        $('#side-cms').removeClass('collapsed');
+        $('#page-heading-title').text('Homepage Builder (CMS)');
+        $('#breadcrumb-list').html('<li class="breadcrumb-item"><a href="./">Dashboard</a></li><li class="breadcrumb-item active">Homepage Builder</li>');
+        await renderCMSBuilderPage();
+      } else if (page === 'pages/welcome_page') {
+        $('#pages-nav').addClass('show').prev().removeClass('collapsed');
+        $('#side-page-welcome').addClass('active');
+        $('#page-heading-title').text('Welcome Page Content');
+        $('#breadcrumb-list').html('<li class="breadcrumb-item"><a href="./">Dashboard</a></li><li class="breadcrumb-item active">Welcome Page</li>');
+        renderPageEditor('welcome');
+      } else if (page === 'pages/about_page') {
+        $('#pages-nav').addClass('show').prev().removeClass('collapsed');
+        $('#side-page-about').addClass('active');
+        $('#page-heading-title').text('About Page Content');
+        $('#breadcrumb-list').html('<li class="breadcrumb-item"><a href="./">Dashboard</a></li><li class="breadcrumb-item active">About Page</li>');
+        renderPageEditor('about');
+      } else if (page === 'system_info') {
+        $('#side-sys-info').removeClass('collapsed');
+        $('#page-heading-title').text('System Information');
+        $('#breadcrumb-list').html('<li class="breadcrumb-item"><a href="./">Dashboard</a></li><li class="breadcrumb-item active">System Information</li>');
+        renderSystemInfo();
+      } else if (page === 'system_info/contact_information') {
+        $('#side-contact-info').removeClass('collapsed');
+        $('#page-heading-title').text('Contact Information');
+        $('#breadcrumb-list').html('<li class="breadcrumb-item"><a href="./">Dashboard</a></li><li class="breadcrumb-item active">Contact Information</li>');
+        renderContactInfo();
+      } else {
+        renderAdmin404();
+      }
+    }
+
+    // 1. Admin Home (Dashboard)
+    async function renderAdminHome() {
+      const stats = await window.AdminManager.getDashboardStats();
+
+      let carouselItems = '';
+      if (stats.bannerImages && stats.bannerImages.length > 0) {
+        carouselItems = stats.bannerImages.map((fname, idx) => {
+          const imgUrl = window.StorageManager.getImageUrl(fname, '../uploads/cover.png', '../');
+          return `
+            <div class="carousel-item ${idx === 0 ? 'active' : ''}">
+              <img src="${imgUrl}" class="d-block w-100" alt="Banner Image ${idx + 1}">
+            </div>
+          `;
+        }).join('');
+      } else {
+        carouselItems = '<div class="text-muted text-center py-4">No Banner has been set</div>';
+      }
+
+      $('#admin-content-area').html(`
+        <section class="section dashboard">
+          <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-12">
+              <div class="row">
+                <!-- Active Categories -->
+                <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                  <div class="card info-card">
+                    <div class="card-body">
+                      <h5 class="card-title">Categories <span>| Active</span></h5>
+                      <div class="d-flex align-items-center justify-content-between">
+                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-success bg-opacity-25 text-success">
+                          <i class="bi bi-menu-button-wide"></i>
+                        </div>
+                        <div class="ps-3">
+                          <h6>${format_num(stats.activeCategories)}</h6>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Inactive Categories -->
+                <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                  <div class="card info-card">
+                    <div class="card-body">
+                      <h5 class="card-title">Categories <span>| Inactive</span></h5>
+                      <div class="d-flex align-items-center justify-content-between">
+                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-dark bg-opacity-25 text-dark">
+                          <i class="bi bi-menu-button-wide"></i>
+                        </div>
+                        <div class="ps-3">
+                          <h6>${format_num(stats.inactiveCategories)}</h6>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Item Entry | Pending -->
+                <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                  <div class="card info-card">
+                    <div class="card-body">
+                      <h5 class="card-title">Item Entry <span>| Pending</span></h5>
+                      <div class="d-flex align-items-center justify-content-between">
+                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-dark bg-opacity-25 text-dark">
+                          <i class="bi bi-question-octagon"></i>
+                        </div>
+                        <div class="ps-3">
+                          <h6>${format_num(stats.pendingItems)}</h6>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Item Entry | Published -->
+                <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                  <div class="card info-card">
+                    <div class="card-body">
+                      <h5 class="card-title">Item Entry <span>| Published</span></h5>
+                      <div class="d-flex align-items-center justify-content-between">
+                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-primary bg-opacity-25 text-primary">
+                          <i class="bi bi-question-octagon"></i>
+                        </div>
+                        <div class="ps-3">
+                          <h6>${format_num(stats.publishedItems)}</h6>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Banner Carousel -->
+                <div class="col-12">
+                  <div class="card">
+                    <div class="card-body pt-3">
+                      <div id="banner-slider" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-inner">
+                          ${carouselItems}
+                        </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#banner-slider" data-bs-slide="prev">
+                          <span class="carousel-control-prev-icon"></span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#banner-slider" data-bs-slide="next">
+                          <span class="carousel-control-next-icon"></span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </section>
+      `);
+    }
+
+    // 2. Categories List
+    async function renderAdminCategories() {
+      const categories = await window.CategoryManager.getAll(false);
+      let rowsHtml = '';
+      categories.forEach((cat, idx) => {
+        const cleanDesc = (cat.description || '').replace(/<[^>]*>?/gm, '');
+        rowsHtml += `
+          <tr>
+            <td class="text-center align-middle">${idx + 1}</td>
+            <td class="align-middle">${formatDate(cat.created_at)}</td>
+            <td class="align-middle">${cat.name}</td>
+            <td class="align-middle text-end"><p class="truncate-1 mb-0" style="max-width:150px">${cleanDesc}</p></td>
+            <td class="text-center align-middle">
+              ${cat.status == 1 ? '<span class="badge bg-success px-3 rounded-pill">Active</span>' : '<span class="badge bg-danger px-3 rounded-pill">Inactive</span>'}
+            </td>
+            <td class="text-center align-middle">
+              <div class="dropdown">
+                <button type="button" class="btn btn-flat p-1 btn-default btn-sm border dropdown-toggle dropdown-icon" data-bs-toggle="dropdown">Action</button>
+                <div class="dropdown-menu">
+                  <a class="dropdown-item" href="./?page=categories/view_category&id=${cat.id}"><span class="bi bi-card-text text-dark"></span> View</a>
+                  <div class="dropdown-divider"></div>
+                  <a class="dropdown-item" href="./?page=categories/manage_category&id=${cat.id}"><span class="bi bi-pencil-square text-primary"></span> Edit</a>
+                  <div class="dropdown-divider"></div>
+                  <a class="dropdown-item delete_cat_btn" href="javascript:void(0)" data-id="${cat.id}"><span class="bi bi-trash text-danger"></span> Delete</a>
+                </div>
+              </div>
+            </td>
+          </tr>
+        `;
+      });
+
+      $('#admin-content-area').html(`
+        <div class="card card-outline rounded-0 card-navy">
+          <div class="card-header">
+            <div class="card-tools d-flex justify-content-end">
+              <a href="./?page=categories/manage_category" class="btn btn-flat btn-primary bg-gradient-teal border-0 rounded-0"><i class="bi bi-plus-lg"></i> Create New</a>
+            </div>
+          </div>
+          <div class="card-body pt-3">
+            <div class="table-responsive">
+              <table class="table table-sm table-hover table-striped table-bordered" id="cat-list-tbl">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Date Created</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${rowsHtml}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      `);
+
+      new simpleDatatables.DataTable('#cat-list-tbl');
+
+      $('.delete_cat_btn').on('click', function() {
+        const catId = $(this).attr('data-id');
+        window._conf('Are you sure to delete this category permanently?', async function() {
+          start_loader();
+          await window.CategoryManager.delete(catId);
+          end_loader();
+          alert_toast('Category successfully deleted.', 'success');
+          renderAdminCategories();
+        });
+      });
+    }
+
+    // 3. Manage Category (Add / Edit)
+    async function renderManageCategory(id) {
+      let cat = { name: '', description: '', status: 1 };
+      if (id) {
+        cat = await window.CategoryManager.getById(id);
+        if (!cat) {
+          alert('Category not found.');
+          window.location.href = './?page=categories';
+          return;
+        }
+      }
+
+      $('#admin-content-area').html(`
+        <div class="row mt-lg-n4 mt-md-n4 justify-content-center">
+          <div class="col-lg-8 col-md-10 col-sm-12 col-xs-12">
+            <div class="card rounded-0">
+              <div class="card-header py-0">
+                <div class="card-title py-1"><b>${id ? "Update Category Details" : "New Category Entry"}</b></div>
+              </div>
+              <div class="card-body">
+                <div class="container-fluid mt-3">
+                  <div id="cat-err-msg"></div>
+                  <form action="" id="category-form">
+                    <input type="hidden" name="id" value="${id || ''}">
+                    <div class="row mb-3">
+                      <div class="form-group col-12">
+                        <label for="name" class="control-label">Category Name</label>
+                        <input type="text" name="name" id="name" class="form-control form-control-sm rounded-0" value="${cat.name || ''}" autofocus required/>
+                      </div>
+                    </div>
+                    <div class="row mb-3">
+                      <div class="form-group col-12">
+                        <label for="description" class="control-label">Description</label>
+                        <textarea rows="4" name="description" id="description" class="form-control form-control-sm rounded-0" required>${cat.description || ''}</textarea>
+                      </div>
+                    </div>
+                    <div class="row mb-3">
+                      <div class="form-group col-12">
+                        <label for="status" class="control-label">Status</label>
+                        <select name="status" id="status" class="form-select form-select-sm rounded-0" required>
+                          <option value="1" ${cat.status == 1 ? 'selected' : ''}>Active</option>
+                          <option value="0" ${cat.status == 0 ? 'selected' : ''}>Inactive</option>
+                        </select>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+              <div class="card-footer py-2 text-center">
+                <button class="btn btn-primary btn-sm bg-gradient-teal btn-flat border-0" form="category-form"><i class="bi bi-save"></i> Save</button>
+                <a class="btn btn-light btn-sm bg-gradient-light border btn-flat" href="./?page=categories"><i class="bi bi-x-lg"></i> Cancel</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      `);
+
+      $('#category-form').on('submit', async function(e) {
+        e.preventDefault();
+        $('#cat-err-msg').empty();
+        start_loader();
+        const data = {
+          id: id,
+          name: $('#name').val(),
+          description: $('#description').val(),
+          status: $('#status').val()
+        };
+        const resp = await window.CategoryManager.save(data);
+        end_loader();
+        if (resp.status === 'success') {
+          alert_toast(resp.msg, 'success');
+          setTimeout(() => {
+            window.location.href = './?page=categories/view_category&id=' + resp.sid;
+          }, 1000);
+        } else {
+          $('#cat-err-msg').html(`<div class="alert alert-danger">${resp.msg}</div>`);
+        }
+      });
+    }
+
+    // 4. View Category
+    async function renderViewCategory(id) {
+      if (!id) {
+        window.location.href = './?page=categories';
+        return;
+      }
+      const cat = await window.CategoryManager.getById(id);
+      if (!cat) {
+        alert('Category not found.');
+        window.location.href = './?page=categories';
+        return;
+      }
+
+      $('#admin-content-area').html(`
+        <div class="row mt-lg-n4 mt-md-n4 justify-content-center">
+          <div class="col-lg-10 col-md-12 col-sm-12 col-xs-12">
+            <div class="card rounded-0">
+              <div class="card-body">
+                <div class="container-fluid mt-4">
+                  <h2 class="titleTxt"><b>${cat.name}</b></h2>
+                  <div class="my-3">${cat.description || ''}</div>
+                  <dl>
+                    <dt class="text-muted">Status</dt>
+                    <dd class="ps-4">
+                      ${cat.status == 1 ? '<span class="badge bg-success px-3 rounded-pill">Active</span>' : '<span class="badge bg-danger px-3 rounded-pill">Inactive</span>'}
+                    </dd>
+                  </dl>
+                </div>
+              </div>
+              <div class="card-footer py-2 text-center">
+                <button class="btn btn-danger btn-sm bg-gradient-danger rounded-0" type="button" id="delete_cat_view_btn"><i class="bi bi-trash"></i> Delete</button>
+                <a class="btn btn-primary btn-sm bg-gradient-teal rounded-0" href="./?page=categories/manage_category&id=${cat.id}"><i class="bi bi-pencil-square"></i> Edit</a>
+                <a class="btn btn-light btn-sm bg-gradient-light border rounded-0" href="./?page=categories"><i class="bi bi-chevron-left"></i> Back to List</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      `);
+
+      $('#delete_cat_view_btn').on('click', function() {
+        window._conf('Are you sure to delete this Category permanently?', async function() {
+          start_loader();
+          await window.CategoryManager.delete(id);
+          end_loader();
+          alert_toast('Category successfully deleted.', 'success');
+          window.location.href = './?page=categories';
+        });
+      });
+    }
+
+    // 5. Items List
+    async function renderAdminItems() {
+      const items = await window.ItemManager.getAll();
+      let rowsHtml = '';
+      items.forEach((item, idx) => {
+        let statusBadge = '<span class="badge bg-secondary px-3 rounded-pill">Pending</span>';
+        if (Number(item.status) === 1) statusBadge = '<span class="badge bg-primary px-3 rounded-pill">Published</span>';
+        else if (Number(item.status) === 2) statusBadge = '<span class="badge bg-success px-3 rounded-pill">Claimed</span>';
+
+        rowsHtml += `
+          <tr>
+            <td class="text-center align-middle">${idx + 1}</td>
+            <td class="align-middle">${formatDate(item.created_at)}</td>
+            <td class="align-middle">${item.fullname}</td>
+            <td class="align-middle"><p class="mb-0 truncate-1" style="max-width:250px">${item.title}</p></td>
+            <td class="text-center align-middle">${statusBadge}</td>
+            <td class="text-center align-middle">
+              <div class="dropdown">
+                <button type="button" class="btn btn-flat p-1 btn-default btn-sm border dropdown-toggle dropdown-icon" data-bs-toggle="dropdown">Action</button>
+                <div class="dropdown-menu">
+                  <a class="dropdown-item" href="./?page=items/view_item&id=${item.id}"><span class="bi bi-card-text text-dark"></span> View</a>
+                  <div class="dropdown-divider"></div>
+                  <a class="dropdown-item" href="./?page=items/manage_item&id=${item.id}"><span class="bi bi-pencil-square text-primary"></span> Edit</a>
+                  <div class="dropdown-divider"></div>
+                  <a class="dropdown-item delete_item_btn" href="javascript:void(0)" data-id="${item.id}"><span class="bi bi-trash text-danger"></span> Delete</a>
+                </div>
+              </div>
+            </td>
+          </tr>
+        `;
+      });
+
+      $('#admin-content-area').html(`
+        <div class="card card-outline rounded-0 card-navy">
+          <div class="card-header">
+            <div class="card-tools d-flex justify-content-end">
+              <a href="./?page=items/manage_item" class="btn btn-flat btn-primary bg-gradient-teal border-0 rounded-0"><i class="bi bi-plus-lg"></i> Create New</a>
+            </div>
+          </div>
+          <div class="card-body pt-3">
+            <div class="table-responsive">
+              <table class="table table-sm table-hover table-striped table-bordered" id="item-list-tbl">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Date Created</th>
+                    <th>Founder</th>
+                    <th>Title</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${rowsHtml}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      `);
+
+      new simpleDatatables.DataTable('#item-list-tbl');
+
+      $('.delete_item_btn').on('click', function() {
+        const itemId = $(this).attr('data-id');
+        window._conf('Are you sure to delete this item permanently?', async function() {
+          start_loader();
+          await window.ItemManager.delete(itemId);
+          await updateSidebarBadges();
+          end_loader();
+          alert_toast('Item Data successfully deleted.', 'success');
+          renderAdminItems();
+        });
+      });
+    }
+
+    // 6. Manage Item (Add / Edit)
+    async function renderManageItem(id) {
+      let item = { category_id: '', fullname: '', title: '', contact: '', description: '', status: 0, image_path: '' };
+      if (id) {
+        item = await window.ItemManager.getById(id);
+        if (!item) {
+          alert('Item not found.');
+          window.location.href = './?page=items';
+          return;
+        }
+      }
+
+      const categories = await window.CategoryManager.getAll(true);
+      const catOptions = categories.map(cat => `
+        <option value="${cat.id}" ${Number(item.category_id) === Number(cat.id) ? 'selected' : ''}>${cat.name}</option>
+      `).join('');
+
+      let uploadedItemImage = item.image_path || '';
+      const initialImgUrl = window.StorageManager.getImageUrl(item.image_path, '../uploads/logo.png', '../');
+
+      $('#admin-content-area').html(`
+        <div class="row mt-lg-n4 mt-md-n4 justify-content-center">
+          <div class="col-lg-8 col-md-10 col-sm-12 col-xs-12">
+            <div class="card rounded-0">
+              <div class="card-header py-0">
+                <div class="card-title py-1"><b>${id ? "Update Item Details" : "New Item Entry"}</b></div>
+              </div>
+              <div class="card-body">
+                <div class="container-fluid mt-3">
+                  <div id="item-err-msg"></div>
+                  <form action="" id="items-form">
+                    <input type="hidden" name="id" value="${id || ''}">
+                    <div class="row mb-3">
+                      <div class="form-group col-12">
+                        <label for="category_id" class="form-label">Category</label>
+                        <select name="category_id" id="category_id" class="form-select" required>
+                          <option value="" disabled ${!item.category_id ? 'selected' : ''}>Please Select Here</option>
+                          ${catOptions}
+                        </select>
+                      </div>
+                    </div>
+                    <div class="row mb-3">
+                      <div class="form-group col-12">
+                        <label for="fullname" class="control-label">Founder Name</label>
+                        <input type="text" name="fullname" id="fullname" class="form-control form-control-sm rounded-0" value="${item.fullname || ''}" required/>
+                      </div>
+                    </div>
+                    <div class="row mb-3">
+                      <div class="form-group col-12">
+                        <label for="title" class="control-label">Title</label>
+                        <input type="text" name="title" id="title" class="form-control form-control-sm rounded-0" value="${item.title || ''}" required/>
+                      </div>
+                    </div>
+                    <div class="row mb-3">
+                      <div class="form-group col-12">
+                        <label for="contact" class="control-label">Contact #</label>
+                        <input type="text" name="contact" id="contact" class="form-control form-control-sm rounded-0" value="${item.contact || ''}" required/>
+                      </div>
+                    </div>
+                    <div class="row mb-3">
+                      <div class="form-group col-12">
+                        <label for="description" class="control-label">Description</label>
+                        <textarea rows="5" name="description" id="description" class="form-control form-control-sm rounded-0" required>${item.description || ''}</textarea>
+                      </div>
+                    </div>
+                    <div class="row mb-3">
+                      <div class="form-group col-12">
+                        <label for="customFile" class="control-label">Item Image</label>
+                        <input type="file" class="form-control" id="customFile" accept="image/png, image/jpeg">
+                      </div>
+                    </div>
+                    <div class="row mb-3">
+                      <div class="form-group d-flex justify-content-center">
+                        <img src="${initialImgUrl}" alt="" id="cimg" class="img-fluid img-thumbnail" style="max-height: 200px; max-width: 200px; object-fit: cover;">
+                      </div>
+                    </div>
+                    <div class="row mb-3">
+                      <div class="form-group col-12">
+                        <label for="status" class="control-label">Status</label>
+                        <select name="status" id="status" class="form-select form-select-sm rounded-0" required>
+                          <option value="0" ${Number(item.status) === 0 ? 'selected' : ''}>Pending</option>
+                          <option value="1" ${Number(item.status) === 1 ? 'selected' : ''}>Publish</option>
+                          <option value="2" ${Number(item.status) === 2 ? 'selected' : ''}>Claimed</option>
+                        </select>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+              <div class="card-footer py-2 text-center">
+                <button class="btn btn-primary btn-sm bg-gradient-teal btn-flat border-0" form="items-form"><i class="bi bi-save"></i> Save</button>
+                <a class="btn btn-light btn-sm bg-gradient-light border btn-flat" href="./?page=items"><i class="bi bi-x-lg"></i> Cancel</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      `);
+
+      $('#category_id').select2({ placeholder: 'Please Select Here', width: '100%' });
+
+      $('#customFile').on('change', async function() {
+        if (this.files && this.files[0]) {
+          const file = this.files[0];
+          const val = window.StorageManager.validateImage(file);
+          if (!val.valid) {
+            alert(val.error);
+            $(this).val('');
+            return;
+          }
+          uploadedItemImage = await window.StorageManager.fileToDataURL(file);
+          $('#cimg').attr('src', uploadedItemImage);
+        }
+      });
+
+      $('#items-form').on('submit', async function(e) {
+        e.preventDefault();
+        $('#item-err-msg').empty();
+        start_loader();
+        const data = {
+          id: id,
+          category_id: $('#category_id').val(),
+          fullname: $('#fullname').val(),
+          title: $('#title').val(),
+          contact: $('#contact').val(),
+          description: $('#description').val(),
+          status: $('#status').val(),
+          image_path: uploadedItemImage
+        };
+        const resp = await window.ItemManager.save(data);
+        await updateSidebarBadges();
+        end_loader();
+        if (resp.status === 'success') {
+          alert_toast(resp.msg, 'success');
+          setTimeout(() => {
+            window.location.href = './?page=items/view_item&id=' + resp.iid;
+          }, 1000);
+        } else {
+          $('#item-err-msg').html(`<div class="alert alert-danger">${resp.msg}</div>`);
+        }
+      });
+    }
+
+    // 7. View Item
+    async function renderViewItem(id) {
+      if (!id) {
+        window.location.href = './?page=items';
+        return;
+      }
+      const item = await window.ItemManager.getById(id);
+      if (!item) {
+        alert('Item not found.');
+        window.location.href = './?page=items';
+        return;
+      }
+
+      const imgUrl = window.StorageManager.getImageUrl(item.image_path, '../uploads/logo.png', '../');
+      let statusBadge = '<span class="badge bg-secondary px-3 rounded-pill">Pending</span>';
+      if (Number(item.status) === 1) statusBadge = '<span class="badge bg-primary px-3 rounded-pill">Published</span>';
+      else if (Number(item.status) === 2) statusBadge = '<span class="badge bg-success px-3 rounded-pill">Claimed</span>';
+
+      $('#admin-content-area').html(`
+        <div class="row mt-lg-n4 mt-md-n4 justify-content-center">
+          <div class="col-lg-10 col-md-12 col-sm-12 col-xs-12">
+            <div class="card rounded-0">
+              <div class="card-body">
+                <div class="container-fluid mt-4">
+                  <div class="lf-image">
+                    <img src="${imgUrl}" alt="${item.title}">
+                  </div>
+                  <h2 class="titleTxt">${item.title} <span>| ${item.category}</span></h2>
+                  <dl>
+                    <dt class="text-muted">Founder Name</dt>
+                    <dd class="ps-4">${item.fullname}</dd>
+                    <dt class="text-muted">Contact No.</dt>
+                    <dd class="ps-4">${item.contact}</dd>
+                    <dt class="text-muted">Description</dt>
+                    <dd class="ps-4">${(item.description || '').replace(/\n/g, '<br>')}</dd>
+                    <dt class="text-muted">Status</dt>
+                    <dd class="ps-4" id="view-item-status-badge">${statusBadge}</dd>
+                  </dl>
+                </div>
+              </div>
+              <div class="card-footer py-2 text-center d-flex justify-content-center gap-2 flex-wrap">
+                ${Number(item.status) !== 1 ? `<button class="btn btn-success btn-sm rounded-0" id="btn-approve-item"><i class="bi bi-check-circle"></i> Approve & Publish</button>` : ''}
+                ${Number(item.status) !== 2 ? `<button class="btn btn-info btn-sm text-white rounded-0" id="btn-claim-item"><i class="bi bi-award"></i> Mark as Claimed</button>` : ''}
+                <button class="btn btn-danger btn-sm bg-gradient-danger rounded-0" type="button" id="delete_item_view_btn"><i class="bi bi-trash"></i> Delete</button>
+                <a class="btn btn-primary btn-sm bg-gradient-teal rounded-0" href="./?page=items/manage_item&id=${item.id}"><i class="bi bi-pencil-square"></i> Edit</a>
+                <a class="btn btn-light btn-sm bg-gradient-light border rounded-0" href="./?page=items"><i class="bi bi-chevron-left"></i> Back to List</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      `);
+
+      $('#btn-approve-item').on('click', async function() {
+        start_loader();
+        await window.ItemManager.updateStatus(id, 1);
+        await updateSidebarBadges();
+        end_loader();
+        alert_toast('Item has been approved and published.', 'success');
+        renderViewItem(id);
+      });
+
+      $('#btn-claim-item').on('click', async function() {
+        start_loader();
+        await window.ItemManager.updateStatus(id, 2);
+        await updateSidebarBadges();
+        end_loader();
+        alert_toast('Item has been marked as claimed.', 'success');
+        renderViewItem(id);
+      });
+
+      $('#delete_item_view_btn').on('click', function() {
+        window._conf('Are you sure to delete this item permanently?', async function() {
+          start_loader();
+          await window.ItemManager.delete(id);
+          await updateSidebarBadges();
+          end_loader();
+          alert_toast('Item Data successfully deleted.', 'success');
+          window.location.href = './?page=items';
+        });
+      });
+    }
+
+    // 8. Inquiries List
+    async function renderAdminInquiries() {
+      const inquiries = await window.InquiryManager.getAll();
+      let rowsHtml = '';
+      inquiries.forEach((inq, idx) => {
+        const statusBadge = inq.status == 1 ? '<span class="badge bg-success px-3 rounded-pill">Read</span>' : '<span class="badge bg-secondary px-3 rounded-pill">Unread</span>';
+        rowsHtml += `
+          <tr>
+            <td class="text-center align-middle">${idx + 1}</td>
+            <td class="align-middle">${formatDate(inq.created_at)}</td>
+            <td class="align-middle">${inq.fullname}</td>
+            <td class="text-center align-middle">${statusBadge}</td>
+            <td class="text-center align-middle">
+              <div class="dropdown">
+                <button type="button" class="btn btn-flat p-1 btn-default btn-sm border dropdown-toggle dropdown-icon" data-bs-toggle="dropdown">Action</button>
+                <div class="dropdown-menu">
+                  <a class="dropdown-item" href="./?page=inquiries/view_inquiry&id=${inq.id}"><span class="bi bi-card-text text-dark"></span> View</a>
+                  <div class="dropdown-divider"></div>
+                  <a class="dropdown-item delete_inq_btn" href="javascript:void(0)" data-id="${inq.id}"><span class="bi bi-trash text-danger"></span> Delete</a>
+                </div>
+              </div>
+            </td>
+          </tr>
+        `;
+      });
+
+      $('#admin-content-area').html(`
+        <div class="card card-outline rounded-0 card-navy">
+          <div class="card-body pt-4">
+            <div class="table-responsive">
+              <table class="table table-sm table-hover table-striped table-bordered" id="inq-list-tbl">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Date Created</th>
+                    <th>Name</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${rowsHtml}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      `);
+
+      new simpleDatatables.DataTable('#inq-list-tbl');
+
+      $('.delete_inq_btn').on('click', function() {
+        const inqId = $(this).attr('data-id');
+        window._conf('Are you sure to delete this inquiry permanently?', async function() {
+          start_loader();
+          await window.InquiryManager.delete(inqId);
+          await updateSidebarBadges();
+          end_loader();
+          alert_toast('Inquiry successfully deleted.', 'success');
+          renderAdminInquiries();
+        });
+      });
+    }
+
+    // 9. View Inquiry
+    async function renderViewInquiry(id) {
+      if (!id) {
+        window.location.href = './?page=inquiries';
+        return;
+      }
+      const inq = await window.InquiryManager.getById(id, true);
+      await updateSidebarBadges();
+      if (!inq) {
+        alert('Inquiry not found.');
+        window.location.href = './?page=inquiries';
+        return;
+      }
+
+      $('#admin-content-area').html(`
+        <div class="row mt-lg-n4 mt-md-n4 justify-content-center">
+          <div class="col-lg-10 col-md-12 col-sm-12 col-xs-12">
+            <div class="card rounded-0">
+              <div class="card-body">
+                <div class="container-fluid mt-4">
+                  <h2>From: <b>${inq.fullname}</b></h2>
+                  <dl class="row mb-0">
+                    <dt class="col-auto pe-3"><b>Email:</b></dt>
+                    <dd><a href="mailto:${inq.email}">${inq.email || 'N/A'}</a></dd>
+                  </dl>
+                  <dl class="row">
+                    <dt class="col-auto pe-3"><b>Contact No.:</b></dt>
+                    <dd>${inq.contact || 'N/A'}</dd>
+                  </dl>
+                  <div class="p-3 bg-light border">${(inq.message || '').replace(/\n/g, '<br>')}</div>
+                </div>
+              </div>
+              <div class="card-footer py-2 text-center">
+                <button class="btn btn-danger btn-sm bg-gradient-danger rounded-0" type="button" id="delete_inq_view_btn"><i class="bi bi-trash"></i> Delete</button>
+                <a class="btn btn-light btn-sm bg-gradient-light border rounded-0" href="./?page=inquiries"><i class="bi bi-chevron-left"></i> Back to List</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      `);
+
+      $('#delete_inq_view_btn').on('click', function() {
+        window._conf('Are you sure to delete this inquiry permanently?', async function() {
+          start_loader();
+          await window.InquiryManager.delete(id);
+          await updateSidebarBadges();
+          end_loader();
+          alert_toast('Inquiry successfully deleted.', 'success');
+          window.location.href = './?page=inquiries';
+        });
+      });
+    }
+
+    // 10. User List
+    async function renderUserList() {
+      if (Number(currentUser.type) !== 1) {
+        alert('Access denied. Administrator privileges required.');
+        window.location.href = './';
+        return;
+      }
+
+      const users = await window.AdminManager.getAllUsers(currentUser.id);
+      let rowsHtml = '';
+      users.forEach((u, idx) => {
+        const avatarUrl = window.StorageManager.getImageUrl(u.avatar, '../uploads/user_avatar.jpg', '../');
+        rowsHtml += `
+          <tr>
+            <td class="text-center align-middle">${idx + 1}</td>
+            <td class="align-middle">${formatDate(u.date_updated)}</td>
+            <td class="text-center align-middle">
+              <img src="${avatarUrl}" alt="" class="img-thumbnail rounded-circle user-avatar">
+            </td>
+            <td class="align-middle">${u.firstname} ${u.middlename ? u.middlename + ' ' : ''}${u.lastname}</td>
+            <td class="align-middle">${u.username}</td>
+            <td class="text-center align-middle">${Number(u.type) === 1 ? 'Administrator' : 'Staff'}</td>
+            <td class="text-center align-middle">
+              <div class="dropdown">
+                <button type="button" class="btn btn-flat p-1 btn-light btn-sm dropdown-toggle dropdown-icon border" data-bs-toggle="dropdown">Action</button>
+                <div class="dropdown-menu">
+                  <a class="dropdown-item" href="./?page=user/manage_user&id=${u.id}"><span class="bi bi-pencil-square text-dark"></span> Edit</a>
+                  <div class="dropdown-divider"></div>
+                  <a class="dropdown-item delete_user_btn" href="javascript:void(0)" data-id="${u.id}"><span class="bi bi-trash text-danger"></span> Delete</a>
+                </div>
+              </div>
+            </td>
+          </tr>
+        `;
+      });
+
+      $('#admin-content-area').html(`
+        <div class="card card-outline rounded-0 card-navy">
+          <div class="card-header">
+            <div class="card-tools d-flex justify-content-end">
+              <a href="./?page=user/manage_user" class="btn btn-flat btn-primary bg-gradient-teal border-0 rounded-0"><i class="bi bi-plus-lg"></i> Create New</a>
+            </div>
+          </div>
+          <div class="card-body pt-4">
+            <div class="table-responsive">
+              <table class="table table-hover table-striped table-bordered" id="user-list-tbl">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Date Updated</th>
+                    <th>Avatar</th>
+                    <th>Name</th>
+                    <th>Username</th>
+                    <th>Type</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${rowsHtml}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      `);
+
+      new simpleDatatables.DataTable('#user-list-tbl');
+
+      $('.delete_user_btn').on('click', function() {
+        const userId = $(this).attr('data-id');
+        window._conf('Are you sure to delete this User permanently?', async function() {
+          start_loader();
+          await window.AdminManager.deleteUser(userId);
+          end_loader();
+          alert_toast('User successfully deleted.', 'success');
+          renderUserList();
+        });
+      });
+    }
+
+    // 11. Manage User
+    async function renderManageUser(id) {
+      if (Number(currentUser.type) !== 1) {
+        alert('Access denied. Administrator privileges required.');
+        window.location.href = './';
+        return;
+      }
+
+      let user = { firstname: '', middlename: '', lastname: '', username: '', type: 2, avatar: '' };
+      if (id) {
+        user = await window.AdminManager.getUserById(id);
+        if (!user) {
+          alert('User not found.');
+          window.location.href = './?page=user/list';
+          return;
+        }
+      }
+
+      let uploadedAvatar = user.avatar || '';
+      const initialAvatarUrl = window.StorageManager.getImageUrl(user.avatar, '../uploads/user_avatar.jpg', '../');
+
+      $('#admin-content-area').html(`
+        <div class="card card-outline rounded-0 card-navy">
+          <div class="card-body">
+            <div class="container-fluid pt-4">
+              <div id="user-err-msg"></div>
+              <form action="" id="manage-user">
+                <input type="hidden" name="id" value="${id || ''}">
+                <div class="form-group mb-3">
+                  <label for="firstname">First Name</label>
+                  <input type="text" name="firstname" id="firstname" class="form-control" value="${user.firstname || ''}" required>
+                </div>
+                <div class="form-group mb-3">
+                  <label for="middlename">Middle Name</label>
+                  <input type="text" name="middlename" id="middlename" class="form-control" value="${user.middlename || ''}">
+                </div>
+                <div class="form-group mb-3">
+                  <label for="lastname">Last Name</label>
+                  <input type="text" name="lastname" id="lastname" class="form-control" value="${user.lastname || ''}" required>
+                </div>
+                <div class="form-group mb-3">
+                  <label for="username">Username</label>
+                  <input type="text" name="username" id="username" class="form-control" value="${user.username || ''}" required autocomplete="off">
+                </div>
+                <div class="form-group mb-3">
+                  <label for="password">${id ? 'New ' : ''}Password</label>
+                  <input type="password" name="password" id="password" class="form-control" autocomplete="off" ${!id ? 'required' : ''}>
+                  ${id ? '<small class="text-muted"><i>Leave this blank if you don\'t want to change the password.</i></small>' : ''}
+                </div>
+                <div class="form-group mb-3">
+                  <label for="type" class="control-label">Type</label>
+                  <select name="type" id="type" class="form-control form-control-sm rounded-0" required>
+                    <option value="1" ${Number(user.type) === 1 ? 'selected' : ''}>Administrator</option>
+                    <option value="2" ${Number(user.type) === 2 ? 'selected' : ''}>Staff</option>
+                  </select>
+                </div>
+                <div class="form-group mb-3">
+                  <label for="customFile" class="control-label">Avatar</label>
+                  <input type="file" class="form-control" id="customFile" accept="image/png, image/jpeg">
+                </div>
+                <div class="form-group d-flex justify-content-center mb-3">
+                  <img src="${initialAvatarUrl}" alt="" id="cimg" class="img-fluid img-thumbnail">
+                </div>
+              </form>
+            </div>
+          </div>
+          <div class="card-footer py-2">
+            <div class="col-12">
+              <button class="btn btn-sm btn-primary bg-gradient-teal border-0 rounded-0 me-2" form="manage-user">Save User Details</button>
+              <a href="./?page=user/list" class="btn btn-sm btn-default border rounded-0"><i class="bi bi-chevron-left"></i> Cancel</a>
+            </div>
+          </div>
+        </div>
+      `);
+
+      $('#customFile').on('change', async function() {
+        if (this.files && this.files[0]) {
+          const file = this.files[0];
+          const val = window.StorageManager.validateImage(file);
+          if (!val.valid) {
+            alert(val.error);
+            $(this).val('');
+            return;
+          }
+          uploadedAvatar = await window.StorageManager.fileToDataURL(file);
+          $('#cimg').attr('src', uploadedAvatar);
+        }
+      });
+
+      $('#manage-user').on('submit', async function(e) {
+        e.preventDefault();
+        $('#user-err-msg').empty();
+        start_loader();
+        const data = {
+          id: id,
+          firstname: $('#firstname').val(),
+          middlename: $('#middlename').val(),
+          lastname: $('#lastname').val(),
+          username: $('#username').val(),
+          password: $('#password').val(),
+          type: $('#type').val(),
+          avatar: uploadedAvatar
+        };
+        const resp = await window.AdminManager.saveUser(data);
+        end_loader();
+        if (resp.status === 'success') {
+          alert_toast(resp.msg, 'success');
+          setTimeout(() => {
+            window.location.href = './?page=user/list';
+          }, 1000);
+        } else {
+          $('#user-err-msg').html(`<div class="alert alert-danger">${resp.msg}</div>`);
+        }
+      });
+    }
+
+    // 12. User Profile Settings (My Account)
+    async function renderUserProfile() {
+      const user = await window.AdminManager.getUserById(currentUser.id);
+      let uploadedAvatar = user.avatar || '';
+      const initialAvatarUrl = window.StorageManager.getImageUrl(user.avatar, '../uploads/user_avatar.jpg', '../');
+
+      $('#admin-content-area').html(`
+        <section class="section">
+          <div class="card card-outline rounded-0 card-navy">
+            <div class="card-body">
+              <div class="container-fluid pt-4">
+                <div id="profile-err-msg"></div>
+                <form action="" id="profile-form">
+                  <input type="hidden" name="id" value="${user.id}">
+                  <div class="form-group mb-3">
+                    <label for="firstname">First Name</label>
+                    <input type="text" name="firstname" id="firstname" class="form-control" value="${user.firstname || ''}" required>
+                  </div>
+                  <div class="form-group mb-3">
+                    <label for="middlename">Middle Name</label>
+                    <input type="text" name="middlename" id="middlename" class="form-control" value="${user.middlename || ''}">
+                  </div>
+                  <div class="form-group mb-3">
+                    <label for="lastname">Last Name</label>
+                    <input type="text" name="lastname" id="lastname" class="form-control" value="${user.lastname || ''}" required>
+                  </div>
+                  <div class="form-group mb-3">
+                    <label for="username">Username</label>
+                    <input type="text" name="username" id="username" class="form-control" value="${user.username || ''}" required autocomplete="off">
+                  </div>
+                  <div class="form-group mb-3">
+                    <label for="password">Password</label>
+                    <input type="password" name="password" id="password" class="form-control" autocomplete="off">
+                    <small class="text-muted"><i>Leave this blank if you don't want to change the password.</i></small>
+                  </div>
+                  <div class="form-group mb-3">
+                    <label for="customFile" class="control-label">Avatar</label>
+                    <input type="file" class="form-control" id="customFile" accept="image/png, image/jpeg">
+                  </div>
+                  <div class="form-group d-flex justify-content-center mb-3">
+                    <img src="${initialAvatarUrl}" alt="" id="cimg" class="img-fluid img-thumbnail">
+                  </div>
+                </form>
+              </div>
+            </div>
+            <div class="card-footer py-2">
+              <div class="col-12">
+                <button class="btn btn-sm btn-primary bg-gradient-teal border-0" form="profile-form">Update</button>
+              </div>
+            </div>
+          </div>
+        </section>
+      `);
+
+      $('#customFile').on('change', async function() {
+        if (this.files && this.files[0]) {
+          const file = this.files[0];
+          const val = window.StorageManager.validateImage(file);
+          if (!val.valid) {
+            alert(val.error);
+            $(this).val('');
+            return;
+          }
+          uploadedAvatar = await window.StorageManager.fileToDataURL(file);
+          $('#cimg').attr('src', uploadedAvatar);
+        }
+      });
+
+      $('#profile-form').on('submit', async function(e) {
+        e.preventDefault();
+        $('#profile-err-msg').empty();
+        start_loader();
+        const data = {
+          id: user.id,
+          firstname: $('#firstname').val(),
+          middlename: $('#middlename').val(),
+          lastname: $('#lastname').val(),
+          username: $('#username').val(),
+          password: $('#password').val(),
+          avatar: uploadedAvatar
+        };
+        const resp = await window.AdminManager.saveUser(data);
+        end_loader();
+        if (resp.status === 'success') {
+          alert_toast('User Details successfully updated.', 'success');
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000);
+        } else {
+          $('#profile-err-msg').html(`<div class="alert alert-danger">${resp.msg}</div>`);
+        }
+      });
+    }
+
+    // 12b. Homepage Builder (CMS Suite)
+    async function renderCMSBuilderPage() {
+      start_loader();
+      const sections = await window.CMSManager.getSections(true);
+      const partners = await window.CMSManager.getPartners(true);
+      const testimonials = await window.CMSManager.getTestimonials(true);
+      const faqs = await window.CMSManager.getFaqs(true);
+
+      const hero = sections['hero'] || {};
+      const heroExtra = hero.extra_data_parsed || {};
+
+      const partnersSec = sections['partners'] || {};
+      const howSec = sections['how_it_works'] || {};
+      const howSteps = (howSec.extra_data_parsed && howSec.extra_data_parsed.steps) ? howSec.extra_data_parsed.steps : [];
+
+      const statsSec = sections['stats'] || {};
+      const statsCounters = (statsSec.extra_data_parsed && statsSec.extra_data_parsed.counters) ? statsSec.extra_data_parsed.counters : [];
+
+      const trustSec = sections['trust'] || {};
+      const trustBadges = (trustSec.extra_data_parsed && trustSec.extra_data_parsed.badges) ? trustSec.extra_data_parsed.badges : [];
+
+      const footerSec = sections['footer'] || {};
+      const footerExtra = footerSec.extra_data_parsed || {};
+
+      const heroImg = hero.image_path ? (hero.image_path.startsWith('data:') ? hero.image_path : '../' + hero.image_path) : '../uploads/cms/hero_bg.jpg';
+
+      $('#admin-content-area').html(`
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+          <div>
+            <h4 class="fw-bold mb-1 text-dark"><i class="bi bi-layout-text-window-reverse text-primary me-2"></i>Homepage Builder (CMS)</h4>
+            <p class="text-muted small mb-0">Visually customize all 9 homepage sections, upload hero banners, manage reviews, and preview live devices.</p>
+          </div>
+          <div class="d-flex gap-2 flex-wrap">
+            <button type="button" class="btn btn-outline-secondary rounded-pill px-3 shadow-sm btn-sm" id="btn-revisions">
+              <i class="bi bi-clock-history me-1"></i> Revisions & Rollback
+            </button>
+            <button type="button" class="btn btn-outline-primary rounded-pill px-3 shadow-sm btn-sm" id="btn-toggle-preview">
+              <i class="bi bi-display me-1"></i> Live Device Preview
+            </button>
+            <button type="button" class="btn btn-success rounded-pill px-4 shadow-sm btn-sm" id="btn-publish-live">
+              <i class="bi bi-cloud-arrow-up-fill me-1"></i> Publish Live
+            </button>
+          </div>
+        </div>
+
+        <div class="row g-4 cms-builder-wrap">
+          <!-- Left Navigation: Vertical Section Tabs (3 cols on XL, 4 on LG, 12 on mobile) -->
+          <div class="col-xl-3 col-lg-4 col-12">
+            <div class="card shadow-sm border-0 cms-nav-card sticky-top" style="top: 80px;">
+              <div class="card-header bg-white py-3 border-bottom d-flex align-items-center justify-content-between">
+                <div>
+                  <h6 class="fw-bold mb-0 text-dark"><i class="bi bi-layers-fill text-primary me-2"></i>Sections</h6>
+                  <small class="text-muted">9 Homepage Blocks</small>
+                </div>
+                <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-2 py-1">Active</span>
+              </div>
+              <div class="list-group list-group-flush cms-nav-group" id="cmsVerticalTabs" role="tablist">
+                <a class="list-group-item list-group-item-action active d-flex align-items-center justify-content-between" data-bs-toggle="list" href="#content-hero" role="tab">
+                  <div class="d-flex align-items-center gap-2">
+                    <span class="cms-nav-icon bg-primary bg-opacity-10 text-primary"><i class="bi bi-image"></i></span>
+                    <div>
+                      <span class="fw-bold d-block text-dark small">Hero & Search</span>
+                      <small class="text-muted" style="font-size: 0.72rem;">Banner, title, search</small>
+                    </div>
+                  </div>
+                  <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill">Active</span>
+                </a>
+                <a class="list-group-item list-group-item-action d-flex align-items-center justify-content-between" data-bs-toggle="list" href="#content-partners" role="tab">
+                  <div class="d-flex align-items-center gap-2">
+                    <span class="cms-nav-icon bg-info bg-opacity-10 text-info"><i class="bi bi-buildings"></i></span>
+                    <div>
+                      <span class="fw-bold d-block text-dark small">Trusted Partners</span>
+                      <small class="text-muted" style="font-size: 0.72rem;">Logo ticker</small>
+                    </div>
+                  </div>
+                  <span class="badge bg-secondary bg-opacity-10 text-secondary border rounded-pill">${partners.length}</span>
+                </a>
+                <a class="list-group-item list-group-item-action d-flex align-items-center justify-content-between" data-bs-toggle="list" href="#content-how" role="tab">
+                  <div class="d-flex align-items-center gap-2">
+                    <span class="cms-nav-icon bg-warning bg-opacity-10 text-warning"><i class="bi bi-diagram-3"></i></span>
+                    <div>
+                      <span class="fw-bold d-block text-dark small">How It Works</span>
+                      <small class="text-muted" style="font-size: 0.72rem;">3-step process cards</small>
+                    </div>
+                  </div>
+                  <span class="badge bg-secondary bg-opacity-10 text-secondary border rounded-pill">3</span>
+                </a>
+                <a class="list-group-item list-group-item-action d-flex align-items-center justify-content-between" data-bs-toggle="list" href="#content-testimonials" role="tab">
+                  <div class="d-flex align-items-center gap-2">
+                    <span class="cms-nav-icon bg-danger bg-opacity-10 text-danger"><i class="bi bi-chat-heart"></i></span>
+                    <div>
+                      <span class="fw-bold d-block text-dark small">Testimonials</span>
+                      <small class="text-muted" style="font-size: 0.72rem;">Client feedback cards</small>
+                    </div>
+                  </div>
+                  <span class="badge bg-secondary bg-opacity-10 text-secondary border rounded-pill">${testimonials.length}</span>
+                </a>
+                <a class="list-group-item list-group-item-action d-flex align-items-center justify-content-between" data-bs-toggle="list" href="#content-stats" role="tab">
+                  <div class="d-flex align-items-center gap-2">
+                    <span class="cms-nav-icon bg-success bg-opacity-10 text-success"><i class="bi bi-graph-up"></i></span>
+                    <div>
+                      <span class="fw-bold d-block text-dark small">Stats & Impact</span>
+                      <small class="text-muted" style="font-size: 0.72rem;">4 live counters</small>
+                    </div>
+                  </div>
+                  <span class="badge bg-secondary bg-opacity-10 text-secondary border rounded-pill">4</span>
+                </a>
+                <a class="list-group-item list-group-item-action d-flex align-items-center justify-content-between" data-bs-toggle="list" href="#content-trust" role="tab">
+                  <div class="d-flex align-items-center gap-2">
+                    <span class="cms-nav-icon bg-primary bg-opacity-10 text-primary"><i class="bi bi-shield-check"></i></span>
+                    <div>
+                      <span class="fw-bold d-block text-dark small">Security & Trust</span>
+                      <small class="text-muted" style="font-size: 0.72rem;">Security badges</small>
+                    </div>
+                  </div>
+                  <span class="badge bg-secondary bg-opacity-10 text-secondary border rounded-pill">3</span>
+                </a>
+                <a class="list-group-item list-group-item-action d-flex align-items-center justify-content-between" data-bs-toggle="list" href="#content-footer" role="tab">
+                  <div class="d-flex align-items-center gap-2">
+                    <span class="cms-nav-icon bg-dark bg-opacity-10 text-dark"><i class="bi bi-layout-sidebar-inset-reverse"></i></span>
+                    <div>
+                      <span class="fw-bold d-block text-dark small">Footer & Info</span>
+                      <small class="text-muted" style="font-size: 0.72rem;">Brand & office info</small>
+                    </div>
+                  </div>
+                  <span class="badge bg-secondary bg-opacity-10 text-secondary border rounded-pill">Config</span>
+                </a>
+                <a class="list-group-item list-group-item-action d-flex align-items-center justify-content-between" data-bs-toggle="list" href="#content-faqs" role="tab">
+                  <div class="d-flex align-items-center gap-2">
+                    <span class="cms-nav-icon bg-info bg-opacity-10 text-info"><i class="bi bi-question-circle"></i></span>
+                    <div>
+                      <span class="fw-bold d-block text-dark small">FAQs Drawer</span>
+                      <small class="text-muted" style="font-size: 0.72rem;">Help drawer items</small>
+                    </div>
+                  </div>
+                  <span class="badge bg-secondary bg-opacity-10 text-secondary border rounded-pill">${faqs.length}</span>
+                </a>
+                <a class="list-group-item list-group-item-action d-flex align-items-center justify-content-between" data-bs-toggle="list" href="#content-ordering" role="tab">
+                  <div class="d-flex align-items-center gap-2">
+                    <span class="cms-nav-icon bg-secondary bg-opacity-10 text-secondary"><i class="bi bi-arrows-vertical"></i></span>
+                    <div>
+                      <span class="fw-bold d-block text-dark small">Layout & Order</span>
+                      <small class="text-muted" style="font-size: 0.72rem;">Rearrange sections</small>
+                    </div>
+                  </div>
+                  <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 rounded-pill"><i class="bi bi-arrow-down-up"></i></span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column: Active Section Editor Card (9 cols on XL, 8 on LG, 12 on mobile) -->
+          <div class="col-xl-9 col-lg-8 col-12" id="editor-column">
+            <div class="tab-content" id="cmsTabsContent">
+              
+              <!-- TAB 1: HERO & SEARCH -->
+              <div class="tab-pane fade show active" id="content-hero" role="tabpanel">
+                <div class="card shadow-sm border-0 cms-editor-card">
+                  <div class="cms-editor-header d-flex justify-content-between align-items-center">
+                    <div>
+                      <h5 class="fw-bold text-dark mb-1"><i class="bi bi-image text-primary me-2"></i>Hero & Search Banner</h5>
+                      <p class="text-muted small mb-0">Customize the headline, subtitle, buttons, background image and search bar.</p>
+                    </div>
+                    <div class="form-check form-switch m-0">
+                      <input class="form-check-input" type="checkbox" id="hero-is-active" ${Number(hero.is_active) !== 0 ? 'checked' : ''}>
+                      <label class="form-check-label fw-semibold small" for="hero-is-active">Section Visible</label>
+                    </div>
+                  </div>
+                  <div class="cms-editor-body">
+                    <form id="form-hero">
+                      <div class="row g-4">
+                        <div class="col-lg-7 col-12">
+                          <div class="mb-3">
+                            <label class="form-label fw-bold">Hero Headline Title *</label>
+                            <input type="text" class="form-control" id="hero-title" value="${hero.title || 'Lost something? Get it back fast!'}" required>
+                            <small class="text-muted">Phrasing like "Lost something? Get it back fast!" automatically highlights coral accents.</small>
+                          </div>
+                          <div class="mb-3">
+                            <label class="form-label fw-bold">Subtitle & Mission Statement *</label>
+                            <textarea class="form-control" id="hero-subtitle" rows="3" required>${hero.subtitle || 'We help you reconnect with your lost items easily through smart matching and verified recovery.'}</textarea>
+                          </div>
+                          <div class="row g-2 mb-3">
+                            <div class="col-sm-6 col-12">
+                              <label class="form-label fw-semibold small">Primary Button Text (Reclaim)</label>
+                              <input type="text" class="form-control" id="hero-reclaim-text" value="${heroExtra.reclaim_btn_text || 'Reclaim Your Item'}">
+                            </div>
+                            <div class="col-sm-6 col-12">
+                              <label class="form-label fw-semibold small">Primary Button Link</label>
+                              <input type="text" class="form-control" id="hero-reclaim-link" value="${heroExtra.reclaim_btn_link || './?page=items'}">
+                            </div>
+                          </div>
+                          <div class="row g-2 mb-3">
+                            <div class="col-sm-6 col-12">
+                              <label class="form-label fw-semibold small">Secondary Button (How It Works)</label>
+                              <input type="text" class="form-control" id="hero-how-text" value="${heroExtra.how_btn_text || 'How It Works'}">
+                            </div>
+                            <div class="col-sm-6 col-12">
+                              <label class="form-label fw-semibold small">Found Item Button Text</label>
+                              <input type="text" class="form-control" id="hero-found-text" value="${heroExtra.found_btn_text || 'I Found Something'}">
+                            </div>
+                          </div>
+                          <div class="card bg-light border-0 p-3 mb-3">
+                            <div class="form-check form-switch mb-2">
+                              <input class="form-check-input" type="checkbox" id="hero-has-embedded-text" ${heroExtra.has_embedded_text !== false ? 'checked' : ''}>
+                              <label class="form-check-label fw-bold" for="hero-has-embedded-text">Image Contains Embedded Graphic Headline Text</label>
+                              <small class="text-muted d-block mt-1">When enabled, the full uncropped image displays naturally without duplicating HTML text over the photo. Clickable action buttons overlay the graphic buttons directly.</small>
+                            </div>
+                            <div class="row g-2 mt-1">
+                              <div class="col-sm-7 col-12">
+                                <label class="form-label small fw-semibold">Dark Overlay Tint</label>
+                                <select class="form-select form-select-sm" id="hero-overlay-opacity">
+                                  <option value="0" ${Number(heroExtra.overlay_opacity || 0) === 0 ? 'selected' : ''}>0% (None - Original Photo Colors)</option>
+                                  <option value="0.15" ${Number(heroExtra.overlay_opacity) === 0.15 ? 'selected' : ''}>15% (Subtle Tint)</option>
+                                  <option value="0.4" ${Number(heroExtra.overlay_opacity) === 0.4 ? 'selected' : ''}>40% (Medium Tint)</option>
+                                  <option value="0.7" ${Number(heroExtra.overlay_opacity) === 0.7 ? 'selected' : ''}>70% (Dark Tint)</option>
+                                </select>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="card bg-light border-0 p-3 mb-2">
+                            <div class="form-check form-switch mb-0">
+                              <input class="form-check-input" type="checkbox" id="hero-show-search" ${heroExtra.show_search !== false ? 'checked' : ''}>
+                              <label class="form-check-label fw-bold" for="hero-show-search">Display Working Multi-Field Search Bar in Hero</label>
+                              <small class="text-muted d-block mt-1">Allows visitors to search by keyword, item category and location directly from the hero section.</small>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-lg-5 col-12">
+                          <label class="form-label fw-bold">Hero Background Image</label>
+                          <div class="cms-image-preview-box mb-3">
+                            <img src="${heroImg}" id="hero-preview" class="img-fluid rounded shadow-sm mb-2" alt="Hero Background">
+                            <div id="hero-detected-dimensions" class="badge bg-dark bg-opacity-75 text-white mb-2 py-1 px-2 d-inline-block small">
+                              Original Dimensions: ${heroExtra.image_width || 1024} × ${heroExtra.image_height || 697}px (Aspect: ${heroExtra.aspect_ratio || '1.47:1'})
+                            </div>
+                            <div class="d-flex flex-column gap-2">
+                              <input type="file" class="form-control form-control-sm" id="hero-file-input" accept="image/*">
+                              <button type="button" class="btn btn-sm btn-outline-secondary" id="btn-reset-hero-img">
+                                <i class="bi bi-arrow-counterclockwise me-1"></i> Reset to Default Image
+                              </button>
+                            </div>
+                            <small class="text-muted d-block mt-2" style="font-size: 0.78rem;">✓ 100% Uncropped View: Automatically adapts height without zooming or cropping.</small>
+                          </div>
+                        </div>
+                        <div class="col-12 text-end border-top pt-3">
+                          <button type="submit" class="btn btn-primary rounded-pill px-4 shadow-sm" id="btn-save-hero">
+                            <i class="bi bi-check2-circle me-1"></i> Save Hero Settings
+                          </button>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+
+              <!-- TAB 2: PARTNERS -->
+              <div class="tab-pane fade" id="content-partners" role="tabpanel">
+                <div class="card shadow-sm border-0 cms-editor-card">
+                  <div class="cms-editor-header d-flex justify-content-between align-items-center">
+                    <div>
+                      <h5 class="fw-bold text-dark mb-1"><i class="bi bi-buildings text-info me-2"></i>Trusted Partner Organizations</h5>
+                      <p class="text-muted small mb-0">Logos shown in the smooth horizontal ticker (Arc, Descript, Mercury, Ramp, Retool, Brex, OpenAI, etc.).</p>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-primary rounded-pill px-3" id="btn-add-partner-modal">
+                      <i class="bi bi-plus-lg me-1"></i> Add Partner Logo
+                    </button>
+                  </div>
+                  <div class="cms-editor-body p-0">
+                    <div class="table-responsive">
+                      <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                          <tr>
+                            <th style="width: 90px;" class="ps-3">Logo</th>
+                            <th>Organization Name</th>
+                            <th>Website URL</th>
+                            <th style="width: 100px;">Status</th>
+                            <th style="width: 100px;" class="text-end pe-3">Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody id="partners-table-body">
+                          ${partners.map(p => {
+                            const logoSrc = p.logo_path.startsWith('data:') ? p.logo_path : '../' + p.logo_path;
+                            return `
+                              <tr>
+                                <td class="ps-3">
+                                  <div class="bg-light p-1 rounded border text-center" style="width: 70px; height: 35px; display: flex; align-items: center; justify-content: center;">
+                                    <img src="${logoSrc}" alt="${p.name}" style="max-height: 25px; max-width: 60px;">
+                                  </div>
+                                </td>
+                                <td class="fw-bold">${p.name}</td>
+                                <td><a href="${p.website_url}" target="_blank" class="text-decoration-none small text-muted">${p.website_url}</a></td>
+                                <td><span class="badge ${p.is_active ? 'bg-success' : 'bg-secondary'}">${p.is_active ? 'Active' : 'Hidden'}</span></td>
+                                <td class="text-end pe-3">
+                                  <button type="button" class="btn btn-sm btn-outline-danger rounded-circle btn-del-partner" data-id="${p.id}" title="Delete"><i class="bi bi-trash"></i></button>
+                                </td>
+                              </tr>
+                            `;
+                          }).join('')}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- TAB 3: HOW IT WORKS -->
+              <div class="tab-pane fade" id="content-how" role="tabpanel">
+                <div class="card shadow-sm border-0 cms-editor-card">
+                  <div class="cms-editor-header">
+                    <h5 class="fw-bold text-dark mb-1"><i class="bi bi-diagram-3 text-warning me-2"></i>How It Works (3-Step Process)</h5>
+                    <p class="text-muted small mb-0">Configure the headline and 3 structured step cards displayed to guide visitors.</p>
+                  </div>
+                  <div class="cms-editor-body">
+                    <form id="form-how">
+                      <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                          <label class="form-label fw-bold">Section Title</label>
+                          <input type="text" class="form-control" id="how-title" value="${howSec.title || 'How It Works'}" required>
+                        </div>
+                        <div class="col-md-6">
+                          <label class="form-label fw-bold">Section Subtitle</label>
+                          <input type="text" class="form-control" id="how-subtitle" value="${howSec.subtitle || 'Reuniting belongings safely in three easy steps'}" required>
+                        </div>
+                      </div>
+                      <h6 class="fw-bold border-bottom pb-2 mb-3">Three Process Cards</h6>
+                      <div class="row g-3">
+                        ${[0, 1, 2].map(i => {
+                          const s = howSteps[i] || { step: i + 1, title: '', desc: '', icon: 'bi-search' };
+                          return `
+                            <div class="col-md-4">
+                              <div class="card border bg-light h-100 p-3">
+                                <div class="d-flex align-items-center mb-2">
+                                  <span class="badge bg-primary rounded-circle p-2 me-2" style="width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;">${i+1}</span>
+                                  <span class="fw-bold">Step ${i+1}</span>
+                                </div>
+                                <div class="mb-2">
+                                  <label class="form-label small fw-semibold">Step Title</label>
+                                  <input type="text" class="form-control form-control-sm step-title" data-idx="${i}" value="${s.title}" required>
+                                </div>
+                                <div class="mb-2">
+                                  <label class="form-label small fw-semibold">Icon Class</label>
+                                  <input type="text" class="form-control form-control-sm step-icon" data-idx="${i}" value="${s.icon}" required>
+                                </div>
+                                <div class="mb-2">
+                                  <label class="form-label small fw-semibold">Description</label>
+                                  <textarea class="form-control form-control-sm step-desc" data-idx="${i}" rows="3" required>${s.desc}</textarea>
+                                </div>
+                              </div>
+                            </div>
+                          `;
+                        }).join('')}
+                      </div>
+                      <div class="text-end border-top pt-3 mt-4">
+                        <button type="submit" class="btn btn-primary rounded-pill px-4 shadow-sm"><i class="bi bi-check2-circle me-1"></i> Save Process Steps</button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+
+              <!-- TAB 4: TESTIMONIALS -->
+              <div class="tab-pane fade" id="content-testimonials" role="tabpanel">
+                <div class="card shadow-sm border-0 cms-editor-card">
+                  <div class="cms-editor-header d-flex justify-content-between align-items-center">
+                    <div>
+                      <h5 class="fw-bold text-dark mb-1"><i class="bi bi-chat-heart text-danger me-2"></i>Client Feedback & Testimonials</h5>
+                      <p class="text-muted small mb-0">Card carousel matching the reference design (Harsh P., Jane D., 5-star ratings, avatars).</p>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-primary rounded-pill px-3" id="btn-add-testimonial-modal">
+                      <i class="bi bi-plus-lg me-1"></i> Add Review Card
+                    </button>
+                  </div>
+                  <div class="cms-editor-body">
+                    <div class="row g-3" id="testimonials-cards-container">
+                      ${testimonials.map(t => {
+                        const avatarSrc = t.avatar_path.startsWith('data:') ? t.avatar_path : '../' + t.avatar_path;
+                        return `
+                          <div class="col-md-6">
+                            <div class="card border shadow-none p-3 h-100 position-relative">
+                              <div class="d-flex gap-3">
+                                <img src="${avatarSrc}" alt="${t.author_name}" class="rounded-3 shadow-sm" style="width: 80px; height: 80px; object-fit: cover;">
+                                <div class="flex-grow-1">
+                                  <div class="text-warning mb-1">
+                                    ${'<i class="bi bi-star-fill"></i>'.repeat(t.rating || 5)}
+                                  </div>
+                                  <h6 class="fw-bold mb-1">${t.headline}</h6>
+                                  <p class="text-muted small mb-2 truncate-2">${t.review_text}</p>
+                                  <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                      <span class="fw-bold d-block small">${t.author_name}</span>
+                                      <span class="text-muted" style="font-size: 0.75rem;">${t.author_role}</span>
+                                    </div>
+                                    <button type="button" class="btn btn-sm btn-outline-danger rounded-circle btn-del-testimonial" data-id="${t.id}" title="Delete"><i class="bi bi-trash"></i></button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        `;
+                      }).join('')}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- TAB 5: STATS -->
+              <div class="tab-pane fade" id="content-stats" role="tabpanel">
+                <div class="card shadow-sm border-0 cms-editor-card">
+                  <div class="cms-editor-header">
+                    <h5 class="fw-bold text-dark mb-1"><i class="bi bi-graph-up text-success me-2"></i>Live Recovery Impact & Statistics</h5>
+                    <p class="text-muted small mb-0">Display real-time numbers demonstrating community trust and success rates.</p>
+                  </div>
+                  <div class="cms-editor-body">
+                    <form id="form-stats">
+                      <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                          <label class="form-label fw-bold">Section Title</label>
+                          <input type="text" class="form-control" id="stats-title" value="${statsSec.title || 'Live Recovery Impact'}" required>
+                        </div>
+                        <div class="col-md-6">
+                          <label class="form-label fw-bold">Section Subtitle</label>
+                          <input type="text" class="form-control" id="stats-subtitle" value="${statsSec.subtitle || 'Real-time metrics demonstrating community trust'}" required>
+                        </div>
+                      </div>
+                      <h6 class="fw-bold border-bottom pb-2 mb-3">Live Impact Metrics</h6>
+                      <div class="row g-3">
+                        ${[0, 1, 2, 3].map(i => {
+                          const stat = statsCounters[i] || { label: '', value: '', icon: 'bi-award' };
+                          return `
+                            <div class="col-md-3 col-sm-6 col-12">
+                              <div class="card border bg-light p-3 h-100">
+                                <div class="mb-2">
+                                  <label class="form-label small fw-semibold">Value (e.g. 15,000+)</label>
+                                  <input type="text" class="form-control stat-val" data-idx="${i}" value="${stat.value}" required>
+                                </div>
+                                <div class="mb-2">
+                                  <label class="form-label small fw-semibold">Label (e.g. Items Reunited)</label>
+                                  <input type="text" class="form-control stat-label" data-idx="${i}" value="${stat.label}" required>
+                                </div>
+                                <div class="mb-2">
+                                  <label class="form-label small fw-semibold">Icon Class</label>
+                                  <input type="text" class="form-control form-control-sm stat-icon" data-idx="${i}" value="${stat.icon}" required>
+                                </div>
+                              </div>
+                            </div>
+                          `;
+                        }).join('')}
+                      </div>
+                      <div class="text-end border-top pt-3 mt-4">
+                        <button type="submit" class="btn btn-primary rounded-pill px-4 shadow-sm"><i class="bi bi-check2-circle me-1"></i> Save Stats</button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+
+              <!-- TAB 6: SECURITY & TRUST -->
+              <div class="tab-pane fade" id="content-trust" role="tabpanel">
+                <div class="card shadow-sm border-0 cms-editor-card">
+                  <div class="cms-editor-header">
+                    <h5 class="fw-bold text-dark mb-1"><i class="bi bi-shield-check text-primary me-2"></i>Security, Trust & Privacy Guarantees</h5>
+                    <p class="text-muted small mb-0">Highlight verified identity checks, anti-fraud guarantees and data security.</p>
+                  </div>
+                  <div class="cms-editor-body">
+                    <form id="form-trust">
+                      <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                          <label class="form-label fw-bold">Section Title</label>
+                          <input type="text" class="form-control" id="trust-title" value="${trustSec.title || 'Enterprise Security & Community Trust'}" required>
+                        </div>
+                        <div class="col-md-6">
+                          <label class="form-label fw-bold">Section Subtitle</label>
+                          <input type="text" class="form-control" id="trust-subtitle" value="${trustSec.subtitle || 'Built with confidentiality and anti-fraud safeguards'}" required>
+                        </div>
+                      </div>
+                      <h6 class="fw-bold border-bottom pb-2 mb-3">Security Badges</h6>
+                      <div class="row g-3">
+                        ${[0, 1, 2].map(i => {
+                          const badge = trustBadges[i] || { title: '', desc: '', icon: 'bi-shield-check' };
+                          return `
+                            <div class="col-md-4">
+                              <div class="card border bg-light p-3 h-100">
+                                <div class="mb-2">
+                                  <label class="form-label small fw-semibold">Badge Title</label>
+                                  <input type="text" class="form-control badge-title" data-idx="${i}" value="${badge.title}" required>
+                                </div>
+                                <div class="mb-2">
+                                  <label class="form-label small fw-semibold">Icon Class</label>
+                                  <input type="text" class="form-control form-control-sm badge-icon" data-idx="${i}" value="${badge.icon}" required>
+                                </div>
+                                <div class="mb-2">
+                                  <label class="form-label small fw-semibold">Description</label>
+                                  <textarea class="form-control form-control-sm badge-desc" data-idx="${i}" rows="3" required>${badge.desc}</textarea>
+                                </div>
+                              </div>
+                            </div>
+                          `;
+                        }).join('')}
+                      </div>
+                      <div class="text-end border-top pt-3 mt-4">
+                        <button type="submit" class="btn btn-primary rounded-pill px-4 shadow-sm"><i class="bi bi-check2-circle me-1"></i> Save Security Badges</button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+
+              <!-- TAB 7: FOOTER -->
+              <div class="tab-pane fade" id="content-footer" role="tabpanel">
+                <div class="card shadow-sm border-0 cms-editor-card">
+                  <div class="cms-editor-header">
+                    <h5 class="fw-bold text-dark mb-1"><i class="bi bi-layout-sidebar-inset-reverse text-dark me-2"></i>Footer Brand & Contact Info</h5>
+                    <p class="text-muted small mb-0">Platform brand statements, office address, contact phone and email.</p>
+                  </div>
+                  <div class="cms-editor-body">
+                    <form id="form-footer">
+                      <div class="row g-3">
+                        <div class="col-md-6">
+                          <div class="mb-3">
+                            <label class="form-label fw-bold">Platform Brand Name</label>
+                            <input type="text" class="form-control" id="footer-title" value="${footerSec.title || 'Lost and Found Information System'}" required>
+                          </div>
+                          <div class="mb-3">
+                            <label class="form-label fw-bold">Mission Description</label>
+                            <textarea class="form-control" id="footer-subtitle" rows="3" required>${footerSec.subtitle || 'Connecting people, places, and lost belongings with integrity.'}</textarea>
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="mb-3">
+                            <label class="form-label fw-bold">Office Address</label>
+                            <input type="text" class="form-control" id="footer-address" value="${footerExtra.address || '4226 Florence Street, Arlington, Texas, 76011'}">
+                          </div>
+                          <div class="row g-2 mb-3">
+                            <div class="col-md-6">
+                              <label class="form-label fw-semibold">Contact Phone</label>
+                              <input type="text" class="form-control" id="footer-phone" value="${footerExtra.phone || '903-436-9356'}">
+                            </div>
+                            <div class="col-md-6">
+                              <label class="form-label fw-semibold">Support Email</label>
+                              <input type="email" class="form-control" id="footer-email" value="${footerExtra.email || 'support@lfis.local'}">
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-12 text-end border-top pt-3">
+                          <button type="submit" class="btn btn-primary rounded-pill px-4 shadow-sm"><i class="bi bi-check2-circle me-1"></i> Save Footer Settings</button>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+
+              <!-- TAB 8: FAQS -->
+              <div class="tab-pane fade" id="content-faqs" role="tabpanel">
+                <div class="card shadow-sm border-0 cms-editor-card">
+                  <div class="cms-editor-header d-flex justify-content-between align-items-center">
+                    <div>
+                      <h5 class="fw-bold text-dark mb-1"><i class="bi bi-question-circle text-info me-2"></i>Frequently Asked Questions (Drawer)</h5>
+                      <p class="text-muted small mb-0">Answers shown in the floating interactive help drawer.</p>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-primary rounded-pill px-3" id="btn-add-faq-modal">
+                      <i class="bi bi-plus-lg me-1"></i> Add FAQ Question
+                    </button>
+                  </div>
+                  <div class="cms-editor-body">
+                    <div class="accordion" id="accordionFaqsAdmin">
+                      ${faqs.map((f, idx) => `
+                        <div class="accordion-item mb-2 border rounded">
+                          <h2 class="accordion-header" id="heading${f.id}">
+                            <button class="accordion-button ${idx === 0 ? '' : 'collapsed'} py-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${f.id}">
+                              <span class="badge bg-light text-primary border me-2">${f.category || 'General'}</span>
+                              <span class="fw-semibold">${f.question}</span>
+                            </button>
+                          </h2>
+                          <div id="collapse${f.id}" class="accordion-collapse collapse ${idx === 0 ? 'show' : ''}" data-bs-parent="#accordionFaqsAdmin">
+                            <div class="accordion-body d-flex justify-content-between align-items-center">
+                              <p class="mb-0 text-muted">${(f.answer || '').replace(/\\n/g, '<br>')}</p>
+                              <button type="button" class="btn btn-sm btn-outline-danger ms-3 rounded-circle btn-del-faq" data-id="${f.id}"><i class="bi bi-trash"></i></button>
+                            </div>
+                          </div>
+                        </div>
+                      `).join('')}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- TAB 9: ORDERING & VISIBILITY -->
+              <div class="tab-pane fade" id="content-ordering" role="tabpanel">
+                <div class="card shadow-sm border-0 cms-editor-card">
+                  <div class="cms-editor-header d-flex justify-content-between align-items-center">
+                    <div>
+                      <h5 class="fw-bold text-dark mb-1"><i class="bi bi-arrows-vertical text-secondary me-2"></i>Section Layout & Display Order</h5>
+                      <p class="text-muted small mb-0">Move sections up/down or toggle visibility on the public homepage.</p>
+                    </div>
+                    <button type="button" class="btn btn-primary rounded-pill btn-sm px-3 shadow-sm" id="btn-save-order">
+                      <i class="bi bi-save me-1"></i> Save Layout Ordering
+                    </button>
+                  </div>
+                  <div class="cms-editor-body">
+                    <ul class="list-group" id="sections-sortable-list">
+                      ${Object.values(sections).map(s => `
+                        <li class="list-group-item d-flex justify-content-between align-items-center py-3" data-key="${s.section_key}">
+                          <div class="d-flex align-items-center gap-3">
+                            <span class="badge bg-secondary p-2"><i class="bi bi-grip-vertical fs-6"></i></span>
+                            <div>
+                              <h6 class="mb-0 fw-bold">${s.section_key.toUpperCase()} SECTION</h6>
+                              <small class="text-muted">${s.title || 'Section Details'}</small>
+                            </div>
+                          </div>
+                          <div class="d-flex align-items-center gap-3">
+                            <div class="btn-group btn-group-sm">
+                              <button type="button" class="btn btn-outline-secondary btn-move-up" title="Move Up"><i class="bi bi-arrow-up"></i></button>
+                              <button type="button" class="btn btn-outline-secondary btn-move-down" title="Move Down"><i class="bi bi-arrow-down"></i></button>
+                            </div>
+                            <div class="form-check form-switch mb-0">
+                              <input class="form-check-input switch-section-toggle" type="checkbox" data-key="${s.section_key}" ${Number(s.is_active) !== 0 ? 'checked' : ''}>
+                              <label class="form-check-label small fw-semibold">Visible</label>
+                            </div>
+                          </div>
+                        </li>
+                      `).join('')}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- Bootstrap Offcanvas Live Device Preview Drawer -->
+        <div class="offcanvas offcanvas-end cms-preview-offcanvas" tabindex="-1" id="previewOffcanvas" aria-labelledby="previewOffcanvasLabel">
+          <div class="offcanvas-header cms-preview-header d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center gap-2">
+              <span class="badge bg-primary px-2 py-1"><i class="bi bi-broadcast me-1"></i> Live</span>
+              <h6 class="offcanvas-title fw-bold text-white mb-0" id="previewOffcanvasLabel">Interactive Device Preview</h6>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+              <div class="btn-group btn-group-sm">
+                <button type="button" class="btn btn-light active btn-preview-size" data-width="100%"><i class="bi bi-laptop me-1"></i> Desktop</button>
+                <button type="button" class="btn btn-outline-light btn-preview-size" data-width="768px"><i class="bi bi-tablet me-1"></i> Tablet</button>
+                <button type="button" class="btn btn-outline-light btn-preview-size" data-width="375px"><i class="bi bi-phone me-1"></i> Mobile</button>
+              </div>
+              <button type="button" class="btn btn-sm btn-outline-light" id="btn-refresh-preview" title="Reload Preview"><i class="bi bi-arrow-clockwise"></i></button>
+              <a href="../" target="_blank" class="btn btn-sm btn-outline-light" title="Open in new window"><i class="bi bi-box-arrow-up-right"></i></a>
+              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+          </div>
+          <div class="offcanvas-body cms-preview-body p-0">
+            <iframe id="preview-iframe" class="cms-preview-frame" src="../" style="width: 100%;"></iframe>
+          </div>
+        </div>
+
+        <!-- Modals Container -->
+        <div id="cms-modals-holder"></div>
+      `);
+
+      end_loader();
+
+      // Handlers
+      let heroUploadedImg = null;
+      let detectedImgW = heroExtra.image_width || 1024;
+      let detectedImgH = heroExtra.image_height || 697;
+
+      $('#hero-file-input').on('change', async function() {
+        if (this.files && this.files[0]) {
+          const val = window.StorageManager.validateImage(this.files[0]);
+          if (!val.valid) { alert(val.error); return; }
+          heroUploadedImg = await window.StorageManager.fileToDataURL(this.files[0]);
+          $('#hero-preview').attr('src', heroUploadedImg);
+
+          const testImg = new Image();
+          testImg.onload = function() {
+            detectedImgW = testImg.naturalWidth;
+            detectedImgH = testImg.naturalHeight;
+            const aspect = (detectedImgW / detectedImgH).toFixed(2);
+            $('#hero-detected-dimensions').text(`Original Dimensions: ${detectedImgW} × ${detectedImgH}px (Aspect: ${aspect}:1)`);
+          };
+          testImg.src = heroUploadedImg;
+        }
+      });
+
+      $('#btn-reset-hero-img').on('click', function() {
+        heroUploadedImg = 'uploads/cms/hero_bg.jpg';
+        detectedImgW = 1024;
+        detectedImgH = 697;
+        $('#hero-preview').attr('src', '../uploads/cms/hero_bg.jpg');
+        $('#hero-file-input').val('');
+        $('#hero-detected-dimensions').text('Original Dimensions: 1024 × 697px (Aspect: 1.47:1)');
+        alert_toast('Reset to default boy with water bottle hero image. Click "Save Hero Settings" to apply.', 'info');
+      });
+
+      // Save Hero
+      $('#form-hero').on('submit', async function(e) {
+        e.preventDefault();
+        start_loader();
+        const data = {
+          section_key: 'hero',
+          title: $('#hero-title').val().trim(),
+          subtitle: $('#hero-subtitle').val().trim(),
+          extra_data: {
+            reclaim_btn_text: $('#hero-reclaim-text').val().trim(),
+            reclaim_btn_link: $('#hero-reclaim-link').val().trim(),
+            how_btn_text: $('#hero-how-text').val().trim(),
+            found_btn_text: $('#hero-found-text').val().trim(),
+            found_btn_link: (heroExtra.found_btn_link || './?page=found'),
+            show_search: $('#hero-show-search').is(':checked'),
+            has_embedded_text: $('#hero-has-embedded-text').is(':checked'),
+            overlay_opacity: parseFloat($('#hero-overlay-opacity').val() || 0),
+            image_width: detectedImgW,
+            image_height: detectedImgH,
+            aspect_ratio: (detectedImgW / detectedImgH).toFixed(2),
+            search_placeholder: 'Search by keyword, item title or brand...',
+            location_placeholder: 'City, airport, station or campus...'
+          },
+          is_active: $('#hero-is-active').is(':checked') ? 1 : 0
+        };
+        if (heroUploadedImg) data.image_path = heroUploadedImg;
+        const resp = await window.CMSManager.saveSection(data);
+        end_loader();
+        alert_toast(resp.msg, 'success');
+        reloadPreview();
+      });
+
+      // Save How It Works
+      $('#form-how').on('submit', async function(e) {
+        e.preventDefault();
+        start_loader();
+        const steps = [];
+        for (let i = 0; i < 3; i++) {
+          steps.push({
+            step: i + 1,
+            title: $(`.step-title[data-idx="${i}"]`).val(),
+            icon: $(`.step-icon[data-idx="${i}"]`).val(),
+            desc: $(`.step-desc[data-idx="${i}"]`).val()
+          });
+        }
+        const data = {
+          section_key: 'how_it_works',
+          title: $('#how-title').val(),
+          subtitle: $('#how-subtitle').val(),
+          extra_data: { steps },
+          is_active: 1
+        };
+        const resp = await window.CMSManager.saveSection(data);
+        end_loader();
+        alert_toast(resp.msg, 'success');
+        reloadPreview();
+      });
+
+      // Save Stats
+      $('#form-stats').on('submit', async function(e) {
+        e.preventDefault();
+        start_loader();
+        const counters = [];
+        for (let i = 0; i < 4; i++) {
+          counters.push({
+            value: $(`.stat-val[data-idx="${i}"]`).val(),
+            label: $(`.stat-label[data-idx="${i}"]`).val(),
+            icon: $(`.stat-icon[data-idx="${i}"]`).val()
+          });
+        }
+        const data = {
+          section_key: 'stats',
+          title: $('#stats-title').val(),
+          subtitle: $('#stats-subtitle').val(),
+          extra_data: { counters },
+          is_active: 1
+        };
+        const resp = await window.CMSManager.saveSection(data);
+        end_loader();
+        alert_toast(resp.msg, 'success');
+        reloadPreview();
+      });
+
+      // Save Trust Badges
+      $('#form-trust').on('submit', async function(e) {
+        e.preventDefault();
+        start_loader();
+        const badges = [];
+        for (let i = 0; i < 3; i++) {
+          badges.push({
+            title: $(`.badge-title[data-idx="${i}"]`).val(),
+            icon: $(`.badge-icon[data-idx="${i}"]`).val(),
+            desc: $(`.badge-desc[data-idx="${i}"]`).val()
+          });
+        }
+        const data = {
+          section_key: 'trust',
+          title: $('#trust-title').val(),
+          subtitle: $('#trust-subtitle').val(),
+          extra_data: { badges },
+          is_active: 1
+        };
+        const resp = await window.CMSManager.saveSection(data);
+        end_loader();
+        alert_toast(resp.msg, 'success');
+        reloadPreview();
+      });
+
+      // Save Footer
+      $('#form-footer').on('submit', async function(e) {
+        e.preventDefault();
+        start_loader();
+        const data = {
+          section_key: 'footer',
+          title: $('#footer-title').val(),
+          subtitle: $('#footer-subtitle').val(),
+          extra_data: {
+            address: $('#footer-address').val(),
+            phone: $('#footer-phone').val(),
+            email: $('#footer-email').val(),
+            quick_links: footerExtra.quick_links || [],
+            legal_links: footerExtra.legal_links || []
+          },
+          is_active: 1
+        };
+        const resp = await window.CMSManager.saveSection(data);
+        end_loader();
+        alert_toast(resp.msg, 'success');
+        reloadPreview();
+      });
+
+      // Delete Partner
+      $('.btn-del-partner').on('click', async function() {
+        const id = $(this).data('id');
+        if (confirm('Delete this partner logo?')) {
+          start_loader();
+          await window.CMSManager.deletePartner(id);
+          end_loader();
+          renderCMSBuilderPage();
+        }
+      });
+
+      // Add Partner Modal
+      $('#btn-add-partner-modal').on('click', function() {
+        $('#cms-modals-holder').html(`
+          <div class="modal fade" id="partnerModalJS" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <form id="form-add-partner-js">
+                  <div class="modal-header">
+                    <h5 class="modal-title fw-bold">Add Partner Organization</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                  </div>
+                  <div class="modal-body">
+                    <div class="mb-3">
+                      <label class="form-label fw-semibold">Organization Name *</label>
+                      <input type="text" class="form-control" id="partner-name-js" placeholder="e.g. Arc, Retool" required>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label fw-semibold">Website URL</label>
+                      <input type="url" class="form-control" id="partner-url-js" placeholder="https://example.com">
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label fw-semibold">Logo (SVG, PNG or JPG)</label>
+                      <input type="file" class="form-control" id="partner-logo-file-js" accept="image/*">
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary rounded-pill px-4">Save Partner</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        `);
+        const modal = new bootstrap.Modal(document.getElementById('partnerModalJS'));
+        modal.show();
+
+        let partnerLogoData = 'uploads/cms/partners/arc.svg';
+        $('#partner-logo-file-js').on('change', async function() {
+          if (this.files && this.files[0]) {
+            partnerLogoData = await window.StorageManager.fileToDataURL(this.files[0]);
+          }
+        });
+
+        $('#form-add-partner-js').on('submit', async function(e) {
+          e.preventDefault();
+          start_loader();
+          await window.CMSManager.savePartner({
+            name: $('#partner-name-js').val(),
+            website_url: $('#partner-url-js').val(),
+            logo_path: partnerLogoData,
+            is_active: 1
+          });
+          end_loader();
+          modal.hide();
+          renderCMSBuilderPage();
+        });
+      });
+
+      // Delete Testimonial
+      $('.btn-del-testimonial').on('click', async function() {
+        const id = $(this).data('id');
+        if (confirm('Delete this testimonial review?')) {
+          start_loader();
+          await window.CMSManager.deleteTestimonial(id);
+          end_loader();
+          renderCMSBuilderPage();
+        }
+      });
+
+      // Add Testimonial Modal
+      $('#btn-add-testimonial-modal').on('click', function() {
+        $('#cms-modals-holder').html(`
+          <div class="modal fade" id="testModalJS" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <form id="form-add-test-js">
+                  <div class="modal-header">
+                    <h5 class="modal-title fw-bold">Add Client Review</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                  </div>
+                  <div class="modal-body">
+                    <div class="row g-2 mb-3">
+                      <div class="col-md-6">
+                        <label class="form-label fw-semibold">Author Name *</label>
+                        <input type="text" class="form-control" id="test-author-js" placeholder="e.g. Harsh P." required>
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-label fw-semibold">Role / Title</label>
+                        <input type="text" class="form-control" id="test-role-js" placeholder="e.g. Product Designer">
+                      </div>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label fw-semibold">Headline Quote *</label>
+                      <input type="text" class="form-control" id="test-headline-js" placeholder="e.g. You have right place" required>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label fw-semibold">Review Text *</label>
+                      <textarea class="form-control" id="test-text-js" rows="3" required></textarea>
+                    </div>
+                    <div class="row g-2 mb-3">
+                      <div class="col-md-6">
+                        <label class="form-label fw-semibold">Star Rating</label>
+                        <select class="form-select" id="test-rating-js">
+                          <option value="5" selected>5 Stars</option>
+                          <option value="4">4 Stars</option>
+                          <option value="3">3 Stars</option>
+                        </select>
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-label fw-semibold">Avatar Photo</label>
+                        <input type="file" class="form-control" id="test-avatar-file-js" accept="image/*">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary rounded-pill px-4">Save Review</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        `);
+        const modal = new bootstrap.Modal(document.getElementById('testModalJS'));
+        modal.show();
+
+        let avatarData = 'uploads/cms/testimonials/harsh.jpg';
+        $('#test-avatar-file-js').on('change', async function() {
+          if (this.files && this.files[0]) {
+            avatarData = await window.StorageManager.fileToDataURL(this.files[0]);
+          }
+        });
+
+        $('#form-add-test-js').on('submit', async function(e) {
+          e.preventDefault();
+          start_loader();
+          await window.CMSManager.saveTestimonial({
+            author_name: $('#test-author-js').val(),
+            author_role: $('#test-role-js').val(),
+            headline: $('#test-headline-js').val(),
+            review_text: $('#test-text-js').val(),
+            rating: Number($('#test-rating-js').val()),
+            avatar_path: avatarData,
+            is_active: 1
+          });
+          end_loader();
+          modal.hide();
+          renderCMSBuilderPage();
+        });
+      });
+
+      // Delete FAQ
+      $('.btn-del-faq').on('click', async function() {
+        const id = $(this).data('id');
+        if (confirm('Delete this FAQ item?')) {
+          start_loader();
+          await window.CMSManager.deleteFaq(id);
+          end_loader();
+          renderCMSBuilderPage();
+        }
+      });
+
+      // Add FAQ Modal
+      $('#btn-add-faq-modal').on('click', function() {
+        $('#cms-modals-holder').html(`
+          <div class="modal fade" id="faqModalJS" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <form id="form-add-faq-js">
+                  <div class="modal-header">
+                    <h5 class="modal-title fw-bold">Add FAQ Question</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                  </div>
+                  <div class="modal-body">
+                    <div class="mb-3">
+                      <label class="form-label fw-semibold">Category</label>
+                      <input type="text" class="form-control" id="faq-cat-js" value="General">
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label fw-semibold">Question *</label>
+                      <input type="text" class="form-control" id="faq-q-js" required>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label fw-semibold">Answer *</label>
+                      <textarea class="form-control" id="faq-a-js" rows="4" required></textarea>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary rounded-pill px-4">Save FAQ</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        `);
+        const modal = new bootstrap.Modal(document.getElementById('faqModalJS'));
+        modal.show();
+
+        $('#form-add-faq-js').on('submit', async function(e) {
+          e.preventDefault();
+          start_loader();
+          await window.CMSManager.saveFaq({
+            category: $('#faq-cat-js').val(),
+            question: $('#faq-q-js').val(),
+            answer: $('#faq-a-js').val(),
+            is_active: 1
+          });
+          end_loader();
+          modal.hide();
+          renderCMSBuilderPage();
+        });
+      });
+
+      // Section Visibility Toggle
+      $('.switch-section-toggle').on('change', async function() {
+        const key = $(this).data('key');
+        const isActive = $(this).is(':checked');
+        await window.CMSManager.toggleSection(key, isActive);
+        alert_toast(`Section ${isActive ? 'enabled' : 'hidden'}.`, 'success');
+        reloadPreview();
+      });
+
+      // Reordering buttons
+      $('.btn-move-up').on('click', function() {
+        const li = $(this).closest('li');
+        const prev = li.prev();
+        if (prev.length) li.insertBefore(prev);
+      });
+      $('.btn-move-down').on('click', function() {
+        const li = $(this).closest('li');
+        const next = li.next();
+        if (next.length) li.insertAfter(next);
+      });
+
+      $('#btn-save-order').on('click', async function() {
+        start_loader();
+        const orders = {};
+        $('#sections-sortable-list li').each(function(index) {
+          orders[$(this).data('key')] = index + 1;
+        });
+        await window.CMSManager.reorderSections(orders);
+        end_loader();
+        alert_toast('Sections reordered successfully!', 'success');
+        reloadPreview();
+      });
+
+      // Publish Live
+      $('#btn-publish-live').on('click', async function() {
+        start_loader();
+        const res = await window.CMSManager.publishHomepage();
+        end_loader();
+        alert_toast(res.msg, 'success');
+        reloadPreview();
+      });
+
+      // Revisions Modal
+      $('#btn-revisions').on('click', async function() {
+        const revs = await window.CMSManager.getRevisions();
+        let html = '';
+        if (revs.length === 0) {
+          html = '<tr><td colspan="3" class="text-center text-muted py-3">No archived revisions yet.</td></tr>';
+        } else {
+          revs.forEach(r => {
+            html += `
+              <tr>
+                <td class="fw-bold">${r.revision_name}</td>
+                <td class="small text-muted">${new Date(r.created_at).toLocaleString()}</td>
+                <td class="text-end">
+                  <button class="btn btn-sm btn-outline-warning rounded-pill btn-rollback-js" data-id="${r.id}">
+                    <i class="bi bi-arrow-counterclockwise me-1"></i> Rollback
+                  </button>
+                </td>
+              </tr>
+            `;
+          });
+        }
+
+        $('#cms-modals-holder').html(`
+          <div class="modal fade" id="revisionsModalJS" tabindex="-1">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title fw-bold"><i class="bi bi-clock-history me-2 text-primary"></i>Homepage Revisions & 1-Click Rollback</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                  <p class="text-muted small">Every time you click "Publish Live", an immutable backup snapshot is saved. You can restore any version below instantly.</p>
+                  <table class="table table-hover align-middle">
+                    <thead class="table-light"><tr><th>Revision</th><th>Saved On</th><th class="text-end">Action</th></tr></thead>
+                    <tbody>${html}</tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        `);
+        const modal = new bootstrap.Modal(document.getElementById('revisionsModalJS'));
+        modal.show();
+
+        $('.btn-rollback-js').on('click', async function() {
+          const id = $(this).data('id');
+          if (confirm('Revert entire homepage to this revision snapshot?')) {
+            start_loader();
+            const res = await window.CMSManager.rollbackRevision(id);
+            end_loader();
+            alert(res.msg);
+            modal.hide();
+            renderCMSBuilderPage();
+          }
+        });
+      });
+
+      // Toggle Live Device Preview (Bootstrap Offcanvas)
+      $('#btn-toggle-preview').on('click', function() {
+        const offcanvasEl = document.getElementById('previewOffcanvas');
+        if (offcanvasEl) {
+          const bsOffcanvas = bootstrap.Offcanvas.getOrCreateInstance(offcanvasEl);
+          bsOffcanvas.toggle();
+          reloadPreview();
+        }
+      });
+
+      // Preview Responsive Sizing
+      $('.btn-preview-size').on('click', function() {
+        $('.btn-preview-size').removeClass('active btn-light').addClass('btn-outline-light');
+        $(this).addClass('active btn-light').removeClass('btn-outline-light');
+        const width = $(this).data('width');
+        $('#preview-iframe').css('width', width);
+      });
+
+      $('#btn-refresh-preview').on('click', function() {
+        reloadPreview();
+      });
+
+      function reloadPreview() {
+        const iframe = document.getElementById('preview-iframe');
+        if (iframe) {
+          iframe.src = '../?preview_t=' + Date.now();
+        }
+      }
+    }
+
+    // 13. Page Editor (Welcome or About)
+    async function renderPageEditor(pageKey) {
+      const sysInfo = await window.db.getSystemInfo();
+      const content = sysInfo[pageKey] || '';
+
+      $('#admin-content-area').html(`
+        <div class="card rounded-0">
+          <div class="card-body rounded-0 pt-4">
+            <div class="container-fluid">
+              <form action="" id="page-form">
+                <div class="mb-3">
+                  <label class="form-label fw-bold">Page HTML Content:</label>
+                  <textarea name="content" id="page_content" rows="14" class="form-control" required>${content}</textarea>
+                </div>
+              </form>
+            </div>
+          </div>
+          <div class="card-footer">
+            <div class="col-lg-4 col-md-5 col-sm-10 col-12 mx-auto">
+              <button class="btn btn-block w-100 btn-primary" form="page-form">Update</button>
+            </div>
+          </div>
+        </div>
+      `);
+
+      $('#page-form').on('submit', async function(e) {
+        e.preventDefault();
+        start_loader();
+        const updated = $('#page_content').val();
+        await window.AdminManager.updatePageContent(pageKey, updated);
+        end_loader();
+        alert_toast('Page Content has been updated successfully', 'success');
+      });
+    }
+
+    // 14. System Information
+    async function renderSystemInfo() {
+      if (Number(currentUser.type) !== 1) {
+        alert('Access denied.');
+        window.location.href = './';
+        return;
+      }
+
+      const sysInfo = await window.db.getSystemInfo();
+      let uploadedLogo = sysInfo.logo || '';
+      let uploadedCover = sysInfo.cover || '';
+
+      const logoUrl = window.StorageManager.getImageUrl(sysInfo.logo, '../uploads/logo.png', '../');
+      const coverUrl = window.StorageManager.getImageUrl(sysInfo.cover, '../uploads/cover.png', '../');
+
+      let banners = [];
+      try {
+        banners = sysInfo.banner_images ? JSON.parse(sysInfo.banner_images) : [];
+      } catch {
+        banners = [];
+      }
+
+      let bannerListHtml = banners.map(bPath => {
+        const bUrl = window.StorageManager.getImageUrl(bPath, '../uploads/cover.png', '../');
+        return `
+          <div class="d-flex w-100 align-items-center img-item mb-2 p-2 border rounded">
+            <span><img src="${bUrl}" width="150px" height="100px" style="object-fit:cover;" class="img-thumbnail" alt=""></span>
+            <span class="ms-3"><button class="btn btn-sm btn-outline-danger rem_banner_btn" type="button" data-path="${bPath}"><i class="bi bi-trash"></i> Delete</button></span>
+          </div>
+        `;
+      }).join('');
+
+      $('#admin-content-area').html(`
+        <div class="col-lg-12">
+          <div class="card card-outline rounded-0 card-navy">
+            <div class="card-body pt-4">
+              <form action="" id="system-frm">
+                <div class="form-group mb-3">
+                  <label for="name" class="control-label">System Name</label>
+                  <input type="text" class="form-control form-control-sm" name="name" id="name" value="${sysInfo.name || ''}" required>
+                </div>
+                <div class="form-group mb-3">
+                  <label for="short_name" class="control-label">System Short Name</label>
+                  <input type="text" class="form-control form-control-sm" name="short_name" id="short_name" value="${sysInfo.short_name || ''}" required>
+                </div>
+                <div class="form-group mb-3">
+                  <label class="control-label">System Logo</label>
+                  <input type="file" class="form-control" id="customFile1" accept="image/png, image/jpeg">
+                </div>
+                <div class="form-group d-flex justify-content-center mb-3">
+                  <img src="${logoUrl}" alt="" id="cimg" class="img-fluid img-thumbnail">
+                </div>
+                <div class="form-group mb-3">
+                  <label class="control-label">Website Cover</label>
+                  <input type="file" class="form-control" id="customFile2" accept="image/png, image/jpeg">
+                </div>
+                <div class="form-group d-flex justify-content-center mb-3">
+                  <img src="${coverUrl}" alt="" id="cimg2" class="img-fluid img-thumbnail">
+                </div>
+                <div class="form-group mb-3">
+                  <label class="control-label">Add New Banner Image</label>
+                  <input type="file" class="form-control" id="customFile3" accept="image/png, image/jpeg">
+                </div>
+                <div class="mb-3">
+                  <label class="control-label fw-bold">Active Banner Images</label>
+                  <div id="banner-items-container">
+                    ${bannerListHtml || '<div class="text-muted">No banners added yet.</div>'}
+                  </div>
+                </div>
+              </form>
+            </div>
+            <div class="card-footer py-2">
+              <button class="btn btn-sm btn-primary bg-gradient-teal border-0" form="system-frm">Update System Info</button>
+            </div>
+          </div>
+        </div>
+      `);
+
+      $('#customFile1').on('change', async function() {
+        if (this.files && this.files[0]) {
+          uploadedLogo = await window.StorageManager.fileToDataURL(this.files[0]);
+          $('#cimg').attr('src', uploadedLogo);
+        }
+      });
+
+      $('#customFile2').on('change', async function() {
+        if (this.files && this.files[0]) {
+          uploadedCover = await window.StorageManager.fileToDataURL(this.files[0]);
+          $('#cimg2').attr('src', uploadedCover);
+        }
+      });
+
+      $('#customFile3').on('change', async function() {
+        if (this.files && this.files[0]) {
+          start_loader();
+          const newBannerData = await window.StorageManager.fileToDataURL(this.files[0]);
+          await window.AdminManager.addBannerImage(newBannerData);
+          end_loader();
+          alert_toast('New banner image added.', 'success');
+          renderSystemInfo();
+        }
+      });
+
+      $('.rem_banner_btn').on('click', function() {
+        const path = $(this).attr('data-path');
+        window._conf('Are you sure to delete this banner permanently?', async function() {
+          start_loader();
+          await window.AdminManager.deleteBannerImage(path);
+          end_loader();
+          alert_toast('Banner image deleted.', 'success');
+          renderSystemInfo();
+        });
+      });
+
+      $('#system-frm').on('submit', async function(e) {
+        e.preventDefault();
+        start_loader();
+        const infoObj = {
+          name: $('#name').val(),
+          short_name: $('#short_name').val(),
+          logo: uploadedLogo,
+          cover: uploadedCover
+        };
+        await window.AdminManager.updateSystemInfo(infoObj);
+        await window.syncSystemBranding('../');
+        end_loader();
+        alert_toast('System Information successfully updated.', 'success');
+      });
+    }
+
+    // 15. Contact Information
+    async function renderContactInfo() {
+      if (Number(currentUser.type) !== 1) {
+        alert('Access denied.');
+        window.location.href = './';
+        return;
+      }
+
+      const sysInfo = await window.db.getSystemInfo();
+
+      $('#admin-content-area').html(`
+        <div class="row mt-lg-n4 mt-md-n4 justify-content-center">
+          <div class="col-lg-8 col-md-10 col-sm-12 col-xs-12">
+            <div class="card rounded-0 shadow">
+              <div class="card-body pt-4">
+                <form action="" id="contact-frm">
+                  <div class="form-group mb-3">
+                    <label for="phone" class="control-label">Telephone #</label>
+                    <input type="text" class="form-control form-control-sm rounded-0" name="phone" id="phone" value="${sysInfo.phone || ''}">
+                  </div>
+                  <div class="form-group mb-3">
+                    <label for="mobile" class="control-label">Mobile #</label>
+                    <input type="text" class="form-control form-control-sm rounded-0" name="mobile" id="mobile" value="${sysInfo.mobile || ''}">
+                  </div>
+                  <div class="form-group mb-3">
+                    <label for="email" class="control-label">Email</label>
+                    <input type="email" class="form-control form-control-sm rounded-0" name="email" id="email" value="${sysInfo.email || ''}">
+                  </div>
+                  <div class="form-group mb-3">
+                    <label for="address" class="control-label">Address</label>
+                    <textarea rows="3" class="form-control form-control-sm rounded-0" name="address" id="address">${sysInfo.address || ''}</textarea>
+                  </div>
+                </form>
+              </div>
+              <div class="card-footer py-2">
+                <button class="btn btn-sm btn-primary btn-flat bg-gradient-teal border-0" form="contact-frm">Update</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `);
+
+      $('#contact-frm').on('submit', async function(e) {
+        e.preventDefault();
+        start_loader();
+        const contactData = {
+          phone: $('#phone').val(),
+          mobile: $('#mobile').val(),
+          email: $('#email').val(),
+          address: $('#address').val()
+        };
+        await window.AdminManager.updateSystemInfo(contactData);
+        end_loader();
+        alert_toast('Contact Information updated successfully.', 'success');
+      });
+    }
+
+    // 16. Admin 404
+    function renderAdmin404() {
+      $('#admin-content-area').html(`
+        <div class="text-center py-5">
+          <h1 class="display-1 fw-bold text-primary">404</h1>
+          <p class="fs-3"><span class="text-danger">Oops!</span> Page not found.</p>
+          <p class="lead">The administration page you requested does not exist.</p>
+          <a href="./" class="btn btn-primary">Return to Dashboard</a>
+        </div>
+      `);
+    }
+  </script>
+</body>
+</html>

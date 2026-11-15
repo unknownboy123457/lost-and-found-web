@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 40" width="160" height="40" fill="none">
+  <g transform="translate(0, 4)">
+    <svg width="32" height="32" viewBox="0 0 32 32" color="#475569"><rect x="6" y="8" width="20" height="4" rx="2" fill="currentColor"/><rect x="6" y="14" width="14" height="4" rx="2" fill="currentColor"/><rect x="6" y="20" width="8" height="4" rx="2" fill="currentColor"/></svg>
+  </g>
+  <text x="40" y="26" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="18" font-weight="700" letter-spacing="-0.3px" fill="#1e293b">descript</text>
+</svg>
