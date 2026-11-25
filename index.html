@@ -120,10 +120,14 @@
         </ul>
       </nav><!-- End Icons Navigation -->
       <div class="d-flex align-items-center justify-content-between gap-2" id="nav-auth-container">
-        <button type="button" class="btn btn-primary btn-sm rounded-pill px-3 shadow-sm d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#otpLoginModal">
-          <i class="bi bi-phone me-1"></i>
-          <span>Login / Register</span>
-        </button>
+        <a href="login.html" class="btn btn-primary btn-sm rounded-pill px-3 shadow-sm d-flex align-items-center">
+          <i class="bi bi-box-arrow-in-right me-1"></i>
+          <span>Sign In</span>
+        </a>
+        <a href="register.html" class="btn btn-outline-primary btn-sm rounded-pill px-3 shadow-sm d-flex align-items-center ms-1">
+          <i class="bi bi-person-plus me-1"></i>
+          <span>Register</span>
+        </a>
         <a href="admin/login.html" class="btn btn-outline-secondary btn-sm rounded-circle ms-1" title="Admin Portal" style="width: 32px; height: 32px; padding: 0; display: inline-flex; align-items: center; justify-content: center;">
           <i class="bi bi-shield-lock" style="font-size: 0.85rem;"></i>
         </a>
@@ -370,8 +374,8 @@
               <ul class="dropdown-menu dropdown-menu-end shadow border-0" aria-labelledby="userMenuDropdown">
                 <li class="dropdown-header text-start">
                   <h6 class="mb-0 text-dark">${userName}</h6>
-                  <span class="small text-muted">+91 ${currentUser.mobile || ''}</span>
-                  <span class="badge ${isAdmin ? 'bg-danger' : 'bg-success'} ms-1">${isAdmin ? 'Admin' : 'Verified User'}</span>
+                  <span class="small text-muted d-block">${currentUser.email || currentUser.username}</span>
+                  <span class="badge ${isAdmin ? 'bg-danger' : 'bg-success'} mt-1">${isAdmin ? 'Administrator' : 'Verified Member'}</span>
                 </li>
                 <li><hr class="dropdown-divider"></li>
                 ${isAdmin ? `
@@ -389,7 +393,7 @@
                 </li>
                 <li>
                   <a class="dropdown-item py-2" href="./?page=found">
-                    <i class="bi bi-plus-circle text-success me-2"></i>Post Found Item
+                    <i class="bi bi-plus-circle text-success me-2"></i>Report Found Item
                   </a>
                 </li>
                 <li>
@@ -400,7 +404,7 @@
                 <li><hr class="dropdown-divider"></li>
                 <li>
                   <a class="dropdown-item py-2 text-danger" href="javascript:void(0)" onclick="window.AuthManager.logout('./')">
-                    <i class="bi bi-box-arrow-right me-2"></i>Logout
+                    <i class="bi bi-box-arrow-right me-2"></i>Sign Out
                   </a>
                 </li>
               </ul>
@@ -409,9 +413,16 @@
         } else {
           $('#nav-item-my-reports').hide();
           $('#nav-auth-container').html(`
-            <button type="button" class="btn btn-primary btn-sm rounded-pill px-3 shadow-sm d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#otpLoginModal">
-              <i class="bi bi-phone me-1"></i>
-              <span>Login / Register</span>
+            <a href="login.html" class="btn btn-primary btn-sm rounded-pill px-3 shadow-sm d-flex align-items-center">
+              <i class="bi bi-box-arrow-in-right me-1"></i>
+              <span>Sign In</span>
+            </a>
+            <a href="register.html" class="btn btn-outline-primary btn-sm rounded-pill px-3 shadow-sm d-flex align-items-center ms-1">
+              <i class="bi bi-person-plus me-1"></i>
+              <span>Register</span>
+            </a>
+            <button type="button" class="btn btn-light btn-sm rounded-circle ms-1 border" data-bs-toggle="modal" data-bs-target="#otpLoginModal" title="Quick OTP Sign-In" style="width: 32px; height: 32px; padding: 0; display: inline-flex; align-items: center; justify-content: center;">
+              <i class="bi bi-phone" style="font-size: 0.85rem;"></i>
             </button>
             <a href="admin/login.html" class="btn btn-outline-secondary btn-sm rounded-circle ms-1" title="Admin Portal" style="width: 32px; height: 32px; padding: 0; display: inline-flex; align-items: center; justify-content: center;">
               <i class="bi bi-shield-lock" style="font-size: 0.85rem;"></i>
@@ -1397,8 +1408,7 @@
       $('#btn-start-claim').on('click', function() {
         const user = window.AuthManager.getCurrentUser();
         if (!user) {
-          const otpModal = new bootstrap.Modal(document.getElementById('otpLoginModal'));
-          otpModal.show();
+          window.location.href = 'login.html?redirect=' + encodeURIComponent(window.location.search ? window.location.search : './');
           return;
         }
         const claimModal = new bootstrap.Modal(document.getElementById('claimItemModal'));
@@ -1476,12 +1486,18 @@
               <div class="card shadow border-0 p-5 rounded-4">
                 <div class="display-3 text-primary mb-3"><i class="bi bi-shield-lock"></i></div>
                 <h3 class="fw-bold mb-2">Sign In Required to Report</h3>
-                <p class="text-muted mb-4">To safeguard community integrity and prevent spam submissions, reporting found belongings requires verified mobile authentication.</p>
+                <p class="text-muted mb-4">To safeguard community integrity and prevent spam submissions, reporting found belongings requires an authenticated user account.</p>
                 <div class="d-grid gap-2 col-md-8 col-12 mx-auto">
-                  <button type="button" class="btn btn-primary btn-lg rounded-pill shadow-sm" data-bs-toggle="modal" data-bs-target="#otpLoginModal">
-                    <i class="bi bi-phone me-1"></i> Sign In with Mobile Number
+                  <a href="login.html?redirect=index.html%3Fpage%3Dfound" class="btn btn-primary btn-lg rounded-pill shadow-sm">
+                    <i class="bi bi-box-arrow-in-right me-1"></i> Sign In to Report
+                  </a>
+                  <a href="register.html" class="btn btn-outline-primary btn-lg rounded-pill shadow-sm">
+                    <i class="bi bi-person-plus me-1"></i> Create a Free Account
+                  </a>
+                  <button type="button" class="btn btn-light btn-sm rounded-pill border text-muted mt-2" data-bs-toggle="modal" data-bs-target="#otpLoginModal">
+                    <i class="bi bi-phone me-1"></i> Or Sign In with Mobile OTP
                   </button>
-                  <a href="./?page=items" class="btn btn-light rounded-pill border">
+                  <a href="./?page=items" class="btn btn-link btn-sm text-secondary mt-1">
                     <i class="bi bi-arrow-left me-1"></i> Return to Catalog
                   </a>
                 </div>

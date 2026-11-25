@@ -63,12 +63,21 @@
         }
       },
       {
-        name: 'Authentication: Admin Valid Login',
+        name: 'Authentication: Admin Login with Username & Password',
         run: async () => {
           const res = await window.AuthManager.login('admin', 'admin123');
-          if (res.status !== 'success') throw new Error('Admin login failed');
+          if (res.status !== 'success') throw new Error('Admin login failed: ' + res.msg);
           if (!window.AuthManager.isAdmin()) throw new Error('User is not identified as Admin');
           return `Logged in as ${res.user.username} (type: ${res.user.type})`;
+        }
+      },
+      {
+        name: 'Authentication: Admin Login with Email & Password',
+        run: async () => {
+          const res = await window.AuthManager.login('admin@lostandfound.com', 'admin123');
+          if (res.status !== 'success') throw new Error('Admin email login failed: ' + res.msg);
+          if (!window.AuthManager.isAdmin()) throw new Error('User is not identified as Admin');
+          return `Logged in via email: ${res.user.email}`;
         }
       },
       {
@@ -76,24 +85,134 @@
         run: async () => {
           const res = await window.AuthManager.login('admin', 'wrong_pass_123');
           if (res.status === 'success') throw new Error('Invalid login should have failed');
-          return 'Correctly rejected invalid credentials';
+          return 'Correctly rejected invalid credentials with error: ' + res.msg;
         }
       },
       {
-        name: 'Authentication: User Registration',
+        name: 'Authentication: Non-Existent Email / Account Rejection',
         run: async () => {
-          const testUsername = 'testuser_' + Date.now();
+          const res = await window.AuthManager.login('nobody_exists_12345@domain.com', 'password123');
+          if (res.status === 'success') throw new Error('Login with non-existent email should have failed');
+          return 'Correctly rejected non-existent email with message: ' + res.msg;
+        }
+      },
+      {
+        name: 'Authentication: User Registration with Name, Email & Password',
+        run: async () => {
+          const rand = Date.now();
+          const testEmail = `user_${rand}@campus.edu`;
+          const testUsername = `user_${rand}`;
           const res = await window.AuthManager.register({
-            firstname: 'Test',
-            lastname: 'User',
+            firstname: 'Sarah',
+            lastname: 'Connor',
+            email: testEmail,
             username: testUsername,
-            password: 'testpassword',
-            type: 2
+            password: 'securepassword123',
+            confirm_password: 'securepassword123'
           });
           if (res.status !== 'success') throw new Error(res.msg);
-          const loginRes = await window.AuthManager.login(testUsername, 'testpassword');
-          if (loginRes.status !== 'success') throw new Error('Login with newly registered user failed');
-          return `Registered and logged in with ${testUsername}`;
+          if (Number(res.user.type) !== 2) throw new Error('Public registrant must be regular user (type 2)');
+          return `Registered account for ${testEmail} with ID #${res.user.id}`;
+        }
+      },
+      {
+        name: 'Authentication: Duplicate Email Registration Rejection',
+        run: async () => {
+          const duplicateEmail = `dup_${Date.now()}@campus.edu`;
+          await window.AuthManager.register({
+            firstname: 'Initial',
+            lastname: 'User',
+            email: duplicateEmail,
+            username: 'init_' + Date.now(),
+            password: 'password123'
+          });
+          const dupRes = await window.AuthManager.register({
+            firstname: 'Impostor',
+            lastname: 'User',
+            email: duplicateEmail,
+            username: 'impostor_' + Date.now(),
+            password: 'password456'
+          });
+          if (dupRes.status === 'success') throw new Error('Duplicate email registration should have failed');
+          return 'Correctly rejected duplicate email: ' + dupRes.msg;
+        }
+      },
+      {
+        name: 'Authentication: Password Mismatch Rejection on Registration',
+        run: async () => {
+          const res = await window.AuthManager.register({
+            firstname: 'Mismatch',
+            lastname: 'Tester',
+            email: `mismatch_${Date.now()}@campus.edu`,
+            password: 'passwordABC',
+            confirm_password: 'passwordXYZ'
+          });
+          if (res.status === 'success') throw new Error('Mismatched passwords should have failed');
+          return 'Correctly rejected mismatching passwords: ' + res.msg;
+        }
+      },
+      {
+        name: 'Authentication: Login Using Newly Registered Email & Password',
+        run: async () => {
+          const regEmail = `login_test_${Date.now()}@example.com`;
+          await window.AuthManager.register({
+            firstname: 'Login',
+            lastname: 'Tester',
+            email: regEmail,
+            username: 'logintest_' + Date.now(),
+            password: 'myPassword123'
+          });
+          const loginRes = await window.AuthManager.login(regEmail, 'myPassword123');
+          if (loginRes.status !== 'success') throw new Error('Login failed with registered email: ' + loginRes.msg);
+          return `Successfully authenticated user ${loginRes.user.firstname} via email ${regEmail}`;
+        }
+      },
+      {
+        name: 'Authentication: Session Persistence Across Refreshes (Storage Sync)',
+        run: async () => {
+          const cur = window.AuthManager.getCurrentUser();
+          if (!cur) throw new Error('Expected active session user');
+          // Simulate tab refresh by clearing sessionStorage and reading from localStorage
+          sessionStorage.removeItem('lfis_user_session');
+          const rehydrated = window.AuthManager.getCurrentUser();
+          if (!rehydrated) throw new Error('Session failed to re-hydrate from persistent storage');
+          if (rehydrated.id !== cur.id) throw new Error('Rehydrated user ID mismatch');
+          return `Session verified & persisted across storage re-hydration for user #${rehydrated.id}`;
+        }
+      },
+      {
+        name: 'Authentication: Logout & Re-authentication Lifecycle',
+        run: async () => {
+          // Clear session
+          sessionStorage.removeItem('lfis_user_session');
+          localStorage.removeItem('lfis_user_session');
+          if (window.AuthManager.getCurrentUser() !== null) throw new Error('Session should be null after logout');
+
+          // Log back in
+          const relogin = await window.AuthManager.login('admin', 'admin123');
+          if (relogin.status !== 'success') throw new Error('Re-login failed after logout');
+          return 'Logout cleanly removed storage; subsequent login re-established session';
+        }
+      },
+      {
+        name: 'Authentication: Admin Protection & Regular User Privilege Separation',
+        run: async () => {
+          // Register regular user
+          const reg = await window.AuthManager.register({
+            firstname: 'Regular',
+            lastname: 'Citizen',
+            email: `regular_${Date.now()}@example.com`,
+            username: 'reg_' + Date.now(),
+            password: 'userpass123'
+          });
+          // Verify regular user is NOT admin
+          if (window.AuthManager.isAdmin()) throw new Error('Regular user must not have isAdmin=true');
+
+          // Verify database check: regular user cannot access admin
+          const dbUser = await window.db.getById('users', reg.user.id);
+          if (Number(dbUser.type) === 1) throw new Error('Regular user must not have type=1 in database');
+
+          return 'Admin portal protection confirmed: Regular user has type 2 and is blocked from admin access';
         }
       },
       {

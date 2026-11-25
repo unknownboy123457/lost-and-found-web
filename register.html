@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" style="height: auto;">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -26,23 +26,34 @@
     body {
       background-image: url("uploads/cover.png");
       background-size: cover;
+      background-position: center center;
       background-repeat: no-repeat;
-      backdrop-filter: brightness(.7);
-      overflow-x: hidden;
+      backdrop-filter: brightness(0.65);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
-    .logo img {
-      max-height: 55px;
-      margin-right: 25px;
+    .auth-card {
+      border: none;
+      border-radius: 12px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+      background: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(10px);
     }
-    .logo span {
-      color: #fff;
-      text-shadow: 0px 0px 10px #000;
+    .logo-container img {
+      max-height: 52px;
+    }
+    .logo-container span {
+      font-weight: 700;
+      color: #012970;
+      font-size: 1.25rem;
     }
     img#cimg {
-      height: 12vh;
-      width: 12vh;
+      height: 90px;
+      width: 90px;
       object-fit: cover;
-      border-radius: 100% 100%;
+      border-radius: 50%;
     }
   </style>
 
@@ -60,101 +71,147 @@
   <script src="scripts/app.js"></script>
 </head>
 <body>
-  <main>
-    <div class="container py-4">
-      <section class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center">
-        <div class="container">
-          <div class="row justify-content-center">
-            <div class="col-lg-5 col-md-8 d-flex flex-column align-items-center justify-content-center">
 
-              <div class="d-flex justify-content-center py-3">
-                <a href="./" class="logo d-flex align-items-center w-auto">
-                  <img src="uploads/logo.png" alt="Logo">
-                  <span class="d-none d-lg-block text-center" data-sys-name>Lost and Found Information System</span>
-                </a>
-              </div><!-- End Logo -->
+  <div class="container py-4">
+    <div class="row justify-content-center">
+      <div class="col-12 col-sm-11 col-md-9 col-lg-7 col-xl-6">
+        
+        <!-- Header Branding -->
+        <div class="text-center mb-3">
+          <a href="./" class="logo-container d-inline-flex align-items-center text-decoration-none bg-white py-2 px-3 rounded-pill shadow-sm">
+            <img src="uploads/logo.png" alt="LFIS Logo" class="me-2">
+            <span data-sys-short-name>LFIS</span>
+          </a>
+        </div>
 
-              <div class="card mb-3 w-100 shadow">
-                <div class="card-body">
-                  <div class="pt-4 pb-2">
-                    <h5 class="card-title text-center pb-0 fs-4">Create an Account</h5>
-                    <p class="text-center small">Enter your personal details to register</p>
+        <div class="card auth-card">
+          <div class="card-body p-4 p-md-5">
+            
+            <div class="text-center mb-4">
+              <h4 class="fw-bold text-dark mb-1">Create an Account</h4>
+              <p class="text-muted small mb-0">Join the community to report found items, track claims, and recover lost belongings</p>
+            </div>
+
+            <!-- Error/Success Alert Container -->
+            <div id="register-err-container"></div>
+
+            <form class="row g-3 needs-validation" novalidate id="register-frm">
+              
+              <!-- First Name -->
+              <div class="col-12 col-md-6">
+                <label for="firstname" class="form-label fw-semibold small">First Name <span class="text-danger">*</span></label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="bi bi-person text-muted"></i></span>
+                  <input type="text" name="firstname" class="form-control" id="firstname" placeholder="First Name" required autofocus>
+                </div>
+                <div class="invalid-feedback">Please enter your first name.</div>
+              </div>
+
+              <!-- Last Name -->
+              <div class="col-12 col-md-6">
+                <label for="lastname" class="form-label fw-semibold small">Last Name <span class="text-danger">*</span></label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="bi bi-person text-muted"></i></span>
+                  <input type="text" name="lastname" class="form-control" id="lastname" placeholder="Last Name" required>
+                </div>
+                <div class="invalid-feedback">Please enter your last name.</div>
+              </div>
+
+              <!-- Email Address -->
+              <div class="col-12 col-md-6">
+                <label for="email" class="form-label fw-semibold small">Email Address <span class="text-danger">*</span></label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="bi bi-envelope text-muted"></i></span>
+                  <input type="email" name="email" class="form-control" id="email" placeholder="name@example.com" required>
+                </div>
+                <div class="invalid-feedback">Please enter a valid email address.</div>
+              </div>
+
+              <!-- Username -->
+              <div class="col-12 col-md-6">
+                <label for="username" class="form-label fw-semibold small">Username <span class="text-danger">*</span></label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="bi bi-at text-muted"></i></span>
+                  <input type="text" name="username" class="form-control" id="username" placeholder="Choose a username" required>
+                </div>
+                <div class="invalid-feedback">Please choose a username.</div>
+              </div>
+
+              <!-- Password -->
+              <div class="col-12 col-md-6">
+                <label for="password" class="form-label fw-semibold small">Password <span class="text-danger">*</span></label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="bi bi-lock text-muted"></i></span>
+                  <input type="password" name="password" class="form-control" id="password" placeholder="Min. 6 characters" minlength="6" required>
+                </div>
+                <div class="invalid-feedback">Password must be at least 6 characters.</div>
+              </div>
+
+              <!-- Confirm Password -->
+              <div class="col-12 col-md-6">
+                <label for="confirm_password" class="form-label fw-semibold small">Confirm Password <span class="text-danger">*</span></label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="bi bi-shield-check text-muted"></i></span>
+                  <input type="password" name="confirm_password" class="form-control" id="confirm_password" placeholder="Re-enter password" minlength="6" required>
+                </div>
+                <div class="invalid-feedback">Please confirm your password.</div>
+              </div>
+
+              <!-- Optional Avatar Upload -->
+              <div class="col-12">
+                <div class="d-flex align-items-center gap-3 p-2 border rounded bg-light">
+                  <img src="uploads/user_avatar.jpg" alt="Avatar Preview" id="cimg" class="img-thumbnail">
+                  <div class="flex-grow-1">
+                    <label for="avatarFile" class="form-label fw-semibold small mb-1">Profile Photo (Optional)</label>
+                    <input type="file" class="form-control form-control-sm" id="avatarFile" accept="image/png, image/jpeg">
+                    <div class="form-text small">JPEG or PNG, maximum 2MB.</div>
                   </div>
-
-                  <div id="register-err-container"></div>
-
-                  <form class="row g-3 needs-validation" novalidate id="register-frm">
-                    <div class="col-12 col-md-6">
-                      <label for="firstname" class="form-label">First Name</label>
-                      <input type="text" name="firstname" class="form-control" id="firstname" required>
-                    </div>
-
-                    <div class="col-12 col-md-6">
-                      <label for="lastname" class="form-label">Last Name</label>
-                      <input type="text" name="lastname" class="form-control" id="lastname" required>
-                    </div>
-
-                    <div class="col-12">
-                      <label for="username" class="form-label">Username</label>
-                      <div class="input-group has-validation">
-                        <span class="input-group-text">@</span>
-                        <input type="text" name="username" class="form-control" id="username" required>
-                      </div>
-                    </div>
-
-                    <div class="col-12">
-                      <label for="password" class="form-label">Password</label>
-                      <input type="password" name="password" class="form-control" id="password" required>
-                    </div>
-
-                    <div class="col-12">
-                      <label for="type" class="form-label">Account Role</label>
-                      <select name="type" id="type" class="form-select" required>
-                        <option value="2" selected>Staff</option>
-                        <option value="1">Administrator</option>
-                      </select>
-                    </div>
-
-                    <div class="col-12">
-                      <label for="avatarFile" class="form-label">Avatar (Optional)</label>
-                      <input type="file" class="form-control" id="avatarFile" accept="image/png, image/jpeg">
-                    </div>
-
-                    <div class="col-12 d-flex justify-content-center">
-                      <img src="uploads/user_avatar.jpg" alt="Avatar Preview" id="cimg" class="img-fluid img-thumbnail">
-                    </div>
-
-                    <div class="col-12">
-                      <button class="btn btn-primary w-100" type="submit">Create Account</button>
-                    </div>
-
-                    <div class="col-12 text-center">
-                      <p class="small mb-0">Already have an account? <a href="admin/login.html">Log in</a></p>
-                    </div>
-                  </form>
-
                 </div>
               </div>
 
-            </div>
+              <!-- Submit Button -->
+              <div class="col-12 pt-2">
+                <button class="btn btn-primary btn-lg w-100 shadow-sm" type="submit" id="btnSubmitRegister">
+                  <span class="spinner-border spinner-border-sm d-none me-2" id="regSpinner" role="status"></span>
+                  <i class="bi bi-person-check me-1" id="regIcon"></i> Register Account
+                </button>
+              </div>
+
+              <!-- Links -->
+              <div class="col-12 text-center pt-2 border-top">
+                <p class="small text-muted mb-0">
+                  Already have an account? <a href="login.html" class="fw-semibold text-primary">Sign In here</a>
+                </p>
+                <div class="mt-2 small">
+                  <a href="./" class="text-secondary text-decoration-none"><i class="bi bi-arrow-left me-1"></i> Return to Homepage</a>
+                </div>
+              </div>
+
+            </form>
+
           </div>
         </div>
-      </section>
+
+      </div>
     </div>
-  </main>
+  </div>
 
   <script>
     $(document).ready(async function() {
       await window.db.init();
+
+      // Branding sync
       const sysInfo = await window.db.getSystemInfo();
       if (sysInfo) {
         if (sysInfo.name) {
-          $('[data-sys-name]').text(sysInfo.name);
-          document.title = 'Register | ' + sysInfo.name;
+          document.title = 'Create an Account | ' + sysInfo.name;
+        }
+        if (sysInfo.short_name) {
+          $('[data-sys-short-name]').text(sysInfo.short_name);
         }
         if (sysInfo.logo) {
           const logoUrl = window.StorageManager.getImageUrl(sysInfo.logo, 'uploads/logo.png');
-          $('.logo img').attr('src', logoUrl);
+          $('.logo-container img').attr('src', logoUrl);
           $('link[rel="icon"]').attr('href', logoUrl);
         }
         if (sysInfo.cover) {
@@ -185,42 +242,98 @@
       $('#register-frm').on('submit', async function(e) {
         e.preventDefault();
         $('#register-err-container').empty();
-        start_loader();
+        $('.form-control').removeClass('is-invalid');
 
         const firstname = $('#firstname').val().trim();
         const lastname = $('#lastname').val().trim();
+        const email = $('#email').val().trim();
         const username = $('#username').val().trim();
         const password = $('#password').val();
-        const type = $('#type').val();
+        const confirm_password = $('#confirm_password').val();
 
-        if (!firstname || !lastname || !username || !password) {
-          $('#register-err-container').html("<div class='alert alert-danger'>All fields are required.</div>");
-          end_loader();
+        // Client-side validations
+        if (!firstname) {
+          $('#firstname').addClass('is-invalid').focus();
+          return;
+        }
+        if (!lastname) {
+          $('#lastname').addClass('is-invalid').focus();
+          return;
+        }
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!email || !emailRegex.test(email)) {
+          $('#email').addClass('is-invalid').focus();
+          $('#register-err-container').html('<div class="alert alert-danger py-2">Please enter a valid email address.</div>');
+          return;
+        }
+        if (!username) {
+          $('#username').addClass('is-invalid').focus();
+          return;
+        }
+        if (!password || password.length < 6) {
+          $('#password').addClass('is-invalid').focus();
+          $('#register-err-container').html('<div class="alert alert-danger py-2">Password must be at least 6 characters long.</div>');
+          return;
+        }
+        if (password !== confirm_password) {
+          $('#confirm_password').addClass('is-invalid').focus();
+          $('#register-err-container').html('<div class="alert alert-danger py-2">Passwords do not match. Please re-enter.</div>');
           return;
         }
 
-        const resp = await window.AuthManager.register({
-          firstname,
-          lastname,
-          username,
-          password,
-          type,
-          avatar: avatarData
-        });
+        // Show spinner
+        $('#regSpinner').removeClass('d-none');
+        $('#regIcon').addClass('d-none');
+        $('#btnSubmitRegister').prop('disabled', true);
 
-        end_loader();
+        try {
+          const resp = await window.AuthManager.register({
+            firstname,
+            lastname,
+            email,
+            username,
+            password,
+            confirm_password,
+            avatar: avatarData
+          });
 
-        if (resp.status === 'success') {
-          $('#register-err-container').html("<div class='alert alert-success'>Account successfully created! Redirecting to dashboard...</div>");
-          setTimeout(() => {
-            window.location.replace('admin/');
-          }, 1200);
-        } else {
-          $('#register-err-container').html(`<div class='alert alert-danger'>${resp.msg}</div>`);
+          if (resp.status === 'success') {
+            $('#register-err-container').html(`
+              <div class="alert alert-success d-flex align-items-center py-2">
+                <i class="bi bi-check-circle-fill me-2 fs-5"></i>
+                <div><strong>Account created successfully!</strong> Redirecting to your dashboard...</div>
+              </div>
+            `);
+            setTimeout(() => {
+              window.location.replace('index.html?page=my-reports');
+            }, 800);
+          } else {
+            $('#register-err-container').html(`
+              <div class="alert alert-danger d-flex align-items-center py-2">
+                <i class="bi bi-exclamation-triangle-fill me-2 fs-5"></i>
+                <div>${resp.msg}</div>
+              </div>
+            `);
+            if (resp.msg.toLowerCase().includes('email')) {
+              $('#email').addClass('is-invalid').focus();
+            } else if (resp.msg.toLowerCase().includes('username')) {
+              $('#username').addClass('is-invalid').focus();
+            }
+          }
+        } catch (err) {
+          console.error('Registration error:', err);
+          $('#register-err-container').html(`
+            <div class="alert alert-danger py-2">
+              <i class="bi bi-exclamation-octagon me-1"></i> An unexpected system error occurred. Please try again.
+            </div>
+          `);
+        } finally {
+          $('#regSpinner').addClass('d-none');
+          $('#regIcon').removeClass('d-none');
+          $('#btnSubmitRegister').prop('disabled', false);
         }
       });
     });
   </script>
 </body>
 </html>
-

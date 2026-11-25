@@ -130,6 +130,7 @@ const SEED_DATA = {
       middlename: '',
       lastname: 'Admin',
       username: 'admin',
+      email: 'admin@lostandfound.com',
       // SHA-256 for 'admin123'
       password_hash: '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9',
       avatar: 'uploads/avatars/1.png',
@@ -143,6 +144,7 @@ const SEED_DATA = {
       middlename: '',
       lastname: 'Blake',
       username: 'cblake',
+      email: 'claire.blake@lostandfound.com',
       // SHA-256 for 'password123'
       password_hash: 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f',
       avatar: 'uploads/avatars/2.png',

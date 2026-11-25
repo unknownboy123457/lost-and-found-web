@@ -62,9 +62,20 @@ const reportServer = http.createServer((req, res) => {
 });
 
 async function main() {
-  server.listen(PORT);
+  server.on('error', (err) => {
+    if (err.code === 'EADDRINUSE') {
+      console.log(`Port ${PORT} is already running (external server active). Continuing...`);
+    } else {
+      console.error('Server error:', err);
+    }
+  });
+
+  try {
+    server.listen(PORT);
+  } catch (e) {}
+
   reportServer.listen(REPORT_PORT);
-  console.log(`Server listening on ${PORT}, report on ${REPORT_PORT}`);
+  console.log(`Report listener on ${REPORT_PORT}`);
 
   const chromePath = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
   const chromeArgs = [
@@ -87,7 +98,7 @@ async function main() {
   clearTimeout(timeout);
 
   try { chrome.kill(); } catch (e) {}
-  server.close();
+  if (server.listening) server.close();
   reportServer.close();
 
   if (result.startsWith('SUCCESS')) {

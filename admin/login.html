@@ -79,32 +79,36 @@
                   <form class="row g-3 needs-validation" novalidate id="login-frm">
                     <div id="login-err-container"></div>
                     <div class="col-12">
-                      <label for="yourUsername" class="form-label">Username</label>
+                      <label for="yourUsername" class="form-label">Username or Email</label>
                       <div class="input-group has-validation">
                         <span class="input-group-text" id="inputGroupPrepend">@</span>
-                        <input type="text" name="username" class="form-control" id="yourUsername" required>
-                        <div class="invalid-feedback">Please enter your username.</div>
+                        <input type="text" name="username" class="form-control" id="yourUsername" placeholder="Username or email address" required autofocus>
+                        <div class="invalid-feedback">Please enter your username or email.</div>
                       </div>
                     </div>
 
                     <div class="col-12">
                       <label for="yourPassword" class="form-label">Password</label>
-                      <input type="password" name="password" class="form-control" id="yourPassword" required>
+                      <input type="password" name="password" class="form-control" id="yourPassword" placeholder="Enter password" required>
                       <div class="invalid-feedback">Please enter your password!</div>
                     </div>
 
                     <div class="col-12">
-                      <button class="btn btn-primary w-100" type="submit">Login</button>
+                      <button class="btn btn-primary w-100" type="submit">Admin Sign In</button>
                     </div>
 
                     <div class="col-12 text-center">
-                      <p class="small mb-0">Don't have an account? <a href="../register.html">Create an account</a></p>
+                      <p class="small mb-0">Looking for user access? <a href="../login.html">User Sign In</a> | <a href="../register.html">Create an Account</a></p>
+                    </div>
+
+                    <div class="col-12 text-center pt-2">
+                      <a href="../" class="small text-decoration-none text-secondary"><i class="bi bi-arrow-left"></i> Back to Public Website</a>
                     </div>
 
                     <div class="col-12 mt-3">
                       <div class="alert alert-light border small mb-0 py-2">
                         <strong>Default Admin Credentials:</strong><br>
-                        Username: <code>admin</code><br>
+                        Username: <code>admin</code> (or <code>admin@lostandfound.com</code>)<br>
                         Password: <code>admin123</code>
                       </div>
                     </div>
@@ -127,7 +131,7 @@
       if (sysInfo) {
         if (sysInfo.name) {
           $('[data-sys-name]').text(sysInfo.name);
-          document.title = 'Login | ' + sysInfo.name;
+          document.title = 'Admin Login | ' + sysInfo.name;
         }
         if (sysInfo.logo) {
           const logoUrl = window.StorageManager.getImageUrl(sysInfo.logo, '../uploads/logo.png', '../');
@@ -141,7 +145,7 @@
       }
 
       // Pre-fill username if remembered
-      const lastUser = localStorage.getItem('lfis_last_username');
+      const lastUser = localStorage.getItem('lfis_last_identifier') || localStorage.getItem('lfis_last_username');
       if (lastUser) {
         $('#yourUsername').val(lastUser);
       }
@@ -151,11 +155,11 @@
         $('#login-err-container').empty();
         start_loader();
 
-        const username = $('#yourUsername').val();
+        const username = $('#yourUsername').val().trim();
         const password = $('#yourPassword').val();
 
         if (!username || !password) {
-          $('#login-err-container').html("<div class='alert alert-danger'><i class='bi bi-exclamation-triangle'></i> Please enter both username and password.</div>");
+          $('#login-err-container').html("<div class='alert alert-danger'><i class='bi bi-exclamation-triangle'></i> Please enter both username/email and password.</div>");
           end_loader();
           return;
         }
@@ -164,9 +168,19 @@
         end_loader();
 
         if (resp.status === 'success') {
-          window.location.replace('./');
+          if (Number(resp.user.type) === 1) {
+            window.location.replace('./');
+          } else {
+            $('#login-err-container').html(`
+              <div class='alert alert-danger'>
+                <i class='bi bi-shield-x me-1'></i> <strong>Access Denied:</strong> This portal requires Administrator privileges. 
+                <a href='../index.html?page=my-reports' class='alert-link d-block mt-1'>Click here to open the User Portal</a>
+              </div>
+            `);
+            window.AuthManager.logout('login.html');
+          }
         } else {
-          $('#login-err-container').html("<div class='alert alert-danger'><i class='bi bi-exclamation-triangle'></i> Incorrect username or password.</div>");
+          $('#login-err-container').html(`<div class='alert alert-danger'><i class='bi bi-exclamation-triangle'></i> ${resp.msg || 'Incorrect username or password.'}</div>`);
           $('#yourUsername').addClass('is-invalid');
           $('#yourPassword').addClass('is-invalid');
           $('#yourUsername').focus();

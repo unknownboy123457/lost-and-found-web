@@ -333,10 +333,18 @@
         start_loader();
         await window.db.init();
 
-        // Enforce auth
+        // Enforce auth & strict database-verified administrator privileges
         currentUser = window.AuthManager.getCurrentUser();
         if (!currentUser) {
           window.location.replace('login.html');
+          return;
+        }
+
+        // Strict Authorization: Query database record directly to prevent client-side session tampering
+        const dbUser = await window.db.getById('users', currentUser.id);
+        if (!dbUser || Number(dbUser.type) !== 1) {
+          alert('Access denied: Administrator privileges required to access the Admin Portal.');
+          window.location.replace('../login.html');
           return;
         }
 

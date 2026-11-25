@@ -18,43 +18,70 @@ const AuthManager = {
   },
 
   /**
-   * Authenticates user against IndexedDB
-   * @param {string} username 
+   * Authenticates user against IndexedDB using Email OR Username
+   * @param {string} identifier (Email or Username)
    * @param {string} password 
    * @returns {Promise<{ status: string, msg?: string, user?: object }>}
    */
-  async login(username, password) {
+  async login(identifier, password) {
+    if (!identifier || !identifier.trim()) {
+      return { status: 'failed', msg: 'Please enter your email or username.' };
+    }
+    if (!password) {
+      return { status: 'failed', msg: 'Please enter your password.' };
+    }
+
     await window.db.init();
+    const cleanId = identifier.trim().toLowerCase();
     const users = await window.db.getAll('users');
-    const user = users.find(u => u.username.toLowerCase() === username.trim().toLowerCase());
+
+    // Find by either email or username (case-insensitive)
+    const user = users.find(u => 
+      (u.email && u.email.trim().toLowerCase() === cleanId) || 
+      (u.username && u.username.trim().toLowerCase() === cleanId)
+    );
 
     if (!user) {
-      return { status: 'incorrect', msg: 'Incorrect username or password.' };
+      const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanId);
+      if (isEmail) {
+        return { status: 'not_found', msg: 'No account found with this email address. Please check your spelling or register.' };
+      }
+      return { status: 'not_found', msg: 'No account found with this username. Please check your spelling or register.' };
     }
 
     const inputHash = await this.hashPassword(password);
-    // Allow either matching hash OR fallback matching for initial demo ease
+    // Allow matching hash OR fallback matching for initial demo ease
     const isValid = (user.password_hash === inputHash) ||
                     (user.username === 'admin' && (password === 'admin123' || password === 'admin')) ||
                     (user.username === 'cblake' && (password === 'password123' || password === 'admin123'));
 
-    if (isValid) {
-      const sessionUser = {
-        id: user.id,
-        firstname: user.firstname,
-        lastname: user.lastname,
-        middlename: user.middlename || '',
-        username: user.username,
-        avatar: user.avatar || 'uploads/user_avatar.jpg',
-        type: user.type, // 1 = Administrator, 2 = Staff
-        login_type: user.type
-      };
-      sessionStorage.setItem(this.SESSION_KEY, JSON.stringify(sessionUser));
-      localStorage.setItem('lfis_last_username', user.username);
-      return { status: 'success', user: sessionUser };
-    } else {
-      return { status: 'incorrect', msg: 'Incorrect username or password.' };
+    if (!isValid) {
+      return { status: 'incorrect', msg: 'Incorrect password. Please try again.' };
     }
+
+    const sessionUser = {
+      id: user.id,
+      firstname: user.firstname,
+      lastname: user.lastname,
+      middlename: user.middlename || '',
+      username: user.username,
+      email: user.email || '',
+      avatar: user.avatar || 'uploads/user_avatar.jpg',
+      type: Number(user.type), // 1 = Administrator, 2 = Regular User/Staff
+      login_type: Number(user.type),
+      login_time: new Date().toISOString()
+    };
+
+    // Store in both sessionStorage and localStorage for rock-solid persistence across refreshes and tabs
+    try {
+      sessionStorage.setItem(this.SESSION_KEY, JSON.stringify(sessionUser));
+      localStorage.setItem(this.SESSION_KEY, JSON.stringify(sessionUser));
+      localStorage.setItem('lfis_last_identifier', user.email || user.username);
+    } catch (e) {
+      console.warn('Storage set note:', e);
+    }
+
+    return { status: 'success', user: sessionUser, msg: 'Login successful!' };
   },
 
   /**
@@ -63,25 +90,71 @@ const AuthManager = {
    * @returns {Promise<{ status: string, msg?: string, user?: object }>}
    */
   async register(userData) {
-    await window.db.init();
-    const users = await window.db.getAll('users');
-    const exists = users.some(u => u.username.toLowerCase() === userData.username.trim().toLowerCase());
-
-    if (exists) {
-      return { status: 'failed', msg: 'Username already exists. Please choose a different one.' };
+    if (!userData.firstname || !userData.firstname.trim()) {
+      return { status: 'failed', msg: 'Please enter your first name.' };
+    }
+    if (!userData.lastname || !userData.lastname.trim()) {
+      return { status: 'failed', msg: 'Please enter your last name.' };
+    }
+    if (!userData.email || !userData.email.trim()) {
+      return { status: 'failed', msg: 'Please enter your email address.' };
     }
 
+    const cleanEmail = userData.email.trim().toLowerCase();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(cleanEmail)) {
+      return { status: 'failed', msg: 'Please provide a valid email address (e.g., name@example.com).' };
+    }
+
+    if (!userData.password || userData.password.length < 6) {
+      return { status: 'failed', msg: 'Password must be at least 6 characters long.' };
+    }
+
+    if (userData.confirm_password !== undefined && userData.confirm_password !== userData.password) {
+      return { status: 'failed', msg: 'Passwords do not match. Please re-enter your password.' };
+    }
+
+    await window.db.init();
+    const users = await window.db.getAll('users');
+
+    // 1. Prevent duplicate email accounts
+    const emailExists = users.some(u => u.email && u.email.trim().toLowerCase() === cleanEmail);
+    if (emailExists) {
+      return { status: 'failed', msg: 'This email address is already registered. Please log in or use a different email.' };
+    }
+
+    // 2. Resolve & check username
+    let cleanUsername = (userData.username || cleanEmail.split('@')[0]).trim().toLowerCase();
+    // Sanitize username
+    cleanUsername = cleanUsername.replace(/[^a-z0-9_.-]/g, '');
+    if (!cleanUsername) cleanUsername = 'user_' + Date.now();
+
+    const usernameExists = users.some(u => u.username && u.username.trim().toLowerCase() === cleanUsername);
+    if (usernameExists) {
+      if (userData.username) {
+        return { status: 'failed', msg: 'This username is already taken. Please choose another username.' };
+      }
+      cleanUsername = cleanUsername + '_' + Math.floor(100 + Math.random() * 900);
+    }
+
+    // 3. Security: Public registration CANNOT grant Administrator privileges
+    // Always assign type 2 (regular user/staff). Only pre-existing DB admins or admin-controlled invites can be Admin.
+    const assignedType = 2;
+
     const passwordHash = await this.hashPassword(userData.password);
+    const now = new Date().toISOString().replace('T', ' ').substring(0, 19);
+
     const newUser = {
       firstname: userData.firstname.trim(),
       middlename: userData.middlename ? userData.middlename.trim() : '',
       lastname: userData.lastname.trim(),
-      username: userData.username.trim(),
+      username: cleanUsername,
+      email: cleanEmail,
       password_hash: passwordHash,
       avatar: userData.avatar || 'uploads/user_avatar.jpg',
-      type: userData.type ? Number(userData.type) : 2, // default Staff / regular
-      date_added: new Date().toISOString().replace('T', ' ').substring(0, 19),
-      date_updated: new Date().toISOString().replace('T', ' ').substring(0, 19)
+      type: assignedType,
+      date_added: now,
+      date_updated: now
     };
 
     const newId = await window.db.add('users', newUser);
@@ -93,28 +166,51 @@ const AuthManager = {
       lastname: newUser.lastname,
       middlename: newUser.middlename,
       username: newUser.username,
+      email: newUser.email,
       avatar: newUser.avatar,
       type: newUser.type,
-      login_type: newUser.type
+      login_type: newUser.type,
+      login_time: new Date().toISOString()
     };
 
-    sessionStorage.setItem(this.SESSION_KEY, JSON.stringify(sessionUser));
-    return { status: 'success', user: sessionUser };
+    try {
+      sessionStorage.setItem(this.SESSION_KEY, JSON.stringify(sessionUser));
+      localStorage.setItem(this.SESSION_KEY, JSON.stringify(sessionUser));
+      localStorage.setItem('lfis_last_identifier', newUser.email);
+    } catch (e) {
+      console.warn('Storage set note:', e);
+    }
+
+    return { status: 'success', user: sessionUser, msg: 'Account successfully registered!' };
   },
 
   /**
-   * Logs out the current user
+   * Logs out the current user and clears both session and local storage
    */
   logout(redirectUrl = 'login.html') {
-    sessionStorage.removeItem(this.SESSION_KEY);
+    try {
+      sessionStorage.removeItem(this.SESSION_KEY);
+      localStorage.removeItem(this.SESSION_KEY);
+    } catch (e) {}
     window.location.href = redirectUrl;
   },
 
   /**
-   * Gets currently logged in user from session
+   * Gets currently logged in user from session with fallback to localStorage
    */
   getCurrentUser() {
-    const raw = sessionStorage.getItem(this.SESSION_KEY);
+    let raw = null;
+    try {
+      raw = sessionStorage.getItem(this.SESSION_KEY);
+      if (!raw) {
+        raw = localStorage.getItem(this.SESSION_KEY);
+        if (raw) {
+          // Re-hydrate sessionStorage
+          sessionStorage.setItem(this.SESSION_KEY, raw);
+        }
+      }
+    } catch (e) {}
+
     if (!raw) return null;
     try {
       return JSON.parse(raw);
@@ -130,7 +226,10 @@ const AuthManager = {
     const user = this.getCurrentUser();
     if (!user) return;
     const merged = { ...user, ...updatedFields };
-    sessionStorage.setItem(this.SESSION_KEY, JSON.stringify(merged));
+    try {
+      sessionStorage.setItem(this.SESSION_KEY, JSON.stringify(merged));
+      localStorage.setItem(this.SESSION_KEY, JSON.stringify(merged));
+    } catch (e) {}
   },
 
   /**
@@ -138,7 +237,7 @@ const AuthManager = {
    */
   isAdmin() {
     const user = this.getCurrentUser();
-    return user && Number(user.type) === 1;
+    return Boolean(user && Number(user.type) === 1);
   },
 
   /**
@@ -147,6 +246,19 @@ const AuthManager = {
   requireAuth(redirectUrl = 'login.html') {
     const user = this.getCurrentUser();
     if (!user) {
+      window.location.href = redirectUrl;
+      return null;
+    }
+    return user;
+  },
+
+  /**
+   * Enforces Admin access; if not admin, redirects away
+   */
+  requireAdmin(redirectUrl = '../login.html') {
+    const user = this.getCurrentUser();
+    if (!user || Number(user.type) !== 1) {
+      alert('Access denied: Administrator privileges required.');
       window.location.href = redirectUrl;
       return null;
     }
