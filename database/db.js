@@ -329,9 +329,13 @@ class LfisDB {
       const store = tx.objectStore(storeName);
       const copy = { ...item };
       if (!copy.id) delete copy.id;
+      let result = null;
       const request = store.add(copy);
-      request.onsuccess = () => resolve(request.result);
+      request.onsuccess = () => { result = request.result; };
       request.onerror = () => reject(request.error);
+      tx.oncomplete = () => setTimeout(() => resolve(result), 0);
+      tx.onerror = () => reject(tx.error);
+      tx.onabort = () => reject(new Error('Transaction aborted'));
     });
   }
 
@@ -340,9 +344,13 @@ class LfisDB {
     return new Promise((resolve, reject) => {
       const tx = this.getTransaction(storeName, 'readwrite');
       const store = tx.objectStore(storeName);
+      let result = null;
       const request = store.put(item);
-      request.onsuccess = () => resolve(request.result);
+      request.onsuccess = () => { result = request.result; };
       request.onerror = () => reject(request.error);
+      tx.oncomplete = () => setTimeout(() => resolve(result), 0);
+      tx.onerror = () => reject(tx.error);
+      tx.onabort = () => reject(new Error('Transaction aborted'));
     });
   }
 
@@ -354,9 +362,13 @@ class LfisDB {
       if (item.id && !isNaN(Number(item.id))) {
         item.id = Number(item.id);
       }
+      let result = null;
       const request = store.put(item);
-      request.onsuccess = () => resolve(request.result);
+      request.onsuccess = () => { result = request.result; };
       request.onerror = () => reject(request.error);
+      tx.oncomplete = () => setTimeout(() => resolve(result), 0);
+      tx.onerror = () => reject(tx.error);
+      tx.onabort = () => reject(new Error('Transaction aborted'));
     });
   }
 
@@ -393,8 +405,10 @@ class LfisDB {
       const store = tx.objectStore(storeName);
       const numericId = !isNaN(Number(id)) ? Number(id) : id;
       const request = store.delete(numericId);
-      request.onsuccess = () => resolve(true);
       request.onerror = () => reject(request.error);
+      tx.oncomplete = () => setTimeout(() => resolve(true), 0);
+      tx.onerror = () => reject(tx.error);
+      tx.onabort = () => reject(new Error('Transaction aborted'));
     });
   }
 

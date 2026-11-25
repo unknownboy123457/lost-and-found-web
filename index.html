@@ -1309,22 +1309,23 @@
           </div>
         </div>
 
-        <!-- Ownership Claim Modal -->
+        <!-- AI-Powered Ownership Claim Modal -->
         <div class="modal fade" id="claimItemModal" tabindex="-1" aria-labelledby="claimItemModalLabel" aria-hidden="true" data-bs-backdrop="static">
           <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content border-0 shadow-lg">
-              <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title fw-bold" id="claimItemModalLabel">
-                  <i class="bi bi-shield-lock-fill me-2"></i> Submit Ownership Claim
+            <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+              <div class="modal-header bg-primary text-white py-3">
+                <h5 class="modal-title fw-bold d-flex align-items-center" id="claimItemModalLabel">
+                  <i class="bi bi-robot fs-4 text-warning me-2"></i>
+                  <span>AI Ownership Verification — ${item.category}</span>
                 </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body p-4">
-                <div class="alert alert-primary bg-opacity-10 border-primary d-flex align-items-center mb-3 p-3">
-                  <i class="bi bi-info-circle-fill fs-4 text-primary me-3"></i>
+                <div class="alert alert-primary bg-primary bg-opacity-10 border-primary d-flex align-items-center mb-3 p-3 rounded-3">
+                  <i class="bi bi-cpu-fill fs-3 text-primary me-3"></i>
                   <div class="small">
-                    <strong>Claiming:</strong> ${item.title} (${item.category})<br>
-                    <span class="text-muted">Found at: ${locStr} on ${dateStr}</span>
+                    <strong class="d-block text-dark">Claiming: ${item.title}</strong>
+                    <span class="text-muted">Our AI system generated questions specifically for <strong>${item.category}</strong>. Please answer clearly. Our administrator will verify your answers before releasing collection details.</span>
                   </div>
                 </div>
 
@@ -1337,44 +1338,37 @@
                       <input type="text" class="form-control" id="claimantName" required value="${currentUser ? window.AuthManager.getUserDisplayName() : ''}">
                     </div>
                     <div class="col-md-6">
-                      <label class="form-label fw-semibold">Your Contact Number *</label>
+                      <label class="form-label fw-semibold">Your Contact Phone *</label>
                       <input type="tel" class="form-control" id="claimantContact" required value="${currentUser ? (currentUser.mobile || '') : ''}">
                     </div>
                   </div>
 
                   <div class="mb-3">
                     <label class="form-label fw-semibold">Email Address (Optional)</label>
-                    <input type="email" class="form-control" id="claimantEmail" placeholder="name@example.com" value="${currentUser ? (currentUser.email || '') : ''}">
+                    <input type="email" class="form-control" id="claimantEmail" placeholder="student@college.edu" value="${currentUser ? (currentUser.email || '') : ''}">
+                  </div>
+
+                  <!-- AI-Generated Category Questions -->
+                  <div class="mb-3">
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                      <span class="fw-bold text-dark"><i class="bi bi-patch-question-fill text-primary me-1"></i> AI Verification Questions (Required)</span>
+                      <span class="badge bg-primary text-light font-monospace small"><i class="bi bi-shield-check me-1"></i> ${item.category}</span>
+                    </div>
+                    <div id="ai-questions-list">
+                      <!-- Dynamically rendered when modal opens -->
+                    </div>
                   </div>
 
                   <div class="mb-3">
-                    <label class="form-label fw-semibold">How and where did you lose this item? *</label>
-                    <textarea class="form-control" id="claimDescription" rows="3" placeholder="Describe the circumstance of when and where you lost it..." required></textarea>
-                  </div>
-
-                  <!-- Compulsory Unique Identifying Detail -->
-                  <div class="card border-warning bg-warning bg-opacity-10 p-3 mb-3">
-                    <label class="form-label fw-bold text-dark d-flex align-items-center mb-1">
-                      <i class="bi bi-key-fill text-danger me-2 fs-5"></i>
-                      Unique Identifying Detail (COMPULSORY) *
-                    </label>
-                    <p class="small text-muted mb-2">
-                      To prevent false claims and prove you are the genuine owner, describe something specific not visible in the public photos — such as a secret scratch, engraved initials, serial number, keychain charm, or exact items kept inside. 
-                      <span class="fw-bold text-dark d-block mt-1">This answer is kept strictly private and will only be inspected by administrators during verification.</span>
-                    </p>
-                    <textarea class="form-control border-warning" id="claimUniqueDetails" rows="3" placeholder="Enter specific secret characteristics (e.g. 'Inside the front zipper there is a student ID #4492 and a brass latchkey')..." required></textarea>
-                  </div>
-
-                  <div class="mb-3">
-                    <label class="form-label fw-semibold">Proof Photograph / Receipt (Optional)</label>
+                    <label class="form-label fw-semibold">Additional Details / Proof Receipt (Optional)</label>
                     <input type="file" class="form-control" id="claimProofFile" accept="image/png, image/jpeg, image/webp">
-                    <div class="form-text">Attach a previous photo showing you with the item, original purchase bill, or warranty card if available.</div>
+                    <div class="form-text">Attach a previous photo with this item or purchase bill if available.</div>
                   </div>
 
                   <div class="d-grid mt-4">
-                    <button type="submit" class="btn btn-primary btn-lg rounded-pill shadow" id="btnSubmitClaim">
+                    <button type="submit" class="btn btn-primary btn-lg rounded-pill shadow-sm btn-3d" id="btnSubmitClaim">
                       <span class="spinner-border spinner-border-sm d-none me-2" role="status"></span>
-                      <i class="bi bi-check2-circle me-1"></i> Submit Ownership Claim for Verification
+                      <i class="bi bi-send-check me-1"></i> Submit Claim for Administrative Approval
                     </button>
                   </div>
                 </form>
@@ -1400,6 +1394,8 @@
         }
       });
 
+      let currentAIQuestions = [];
+
       // Start claim button handler
       $('#btn-start-claim').on('click', function() {
         const user = window.AuthManager.getCurrentUser();
@@ -1407,6 +1403,27 @@
           window.location.href = 'login.html?redirect=' + encodeURIComponent(window.location.search ? window.location.search : './');
           return;
         }
+
+        // Generate AI questions tailored to category
+        currentAIQuestions = window.AIClaimEngine ? window.AIClaimEngine.generateQuestions(item.category, item) : [
+          "What is the colour, material, and distinctive feature of your item?",
+          "Are there any scratches, dents, stickers, or serial numbers on it?",
+          "Describe any unique contents, accessories, or markings.",
+          "Around what campus location or building did you lose this item?"
+        ];
+
+        const qHtml = currentAIQuestions.map((q, idx) => `
+          <div class="mb-3 p-3 bg-light rounded-3 border">
+            <label class="form-label fw-bold text-dark d-flex align-items-center mb-1">
+              <span class="badge bg-primary text-light me-2 font-monospace">Q${idx + 1}</span>
+              <span>${q}</span>
+            </label>
+            <textarea class="form-control bg-white border-primary border-opacity-25 ai-claim-answer" data-idx="${idx}" rows="2" placeholder="Your specific answer..." required></textarea>
+          </div>
+        `).join('');
+
+        $('#ai-questions-list').html(qHtml);
+
         const claimModal = new bootstrap.Modal(document.getElementById('claimItemModal'));
         claimModal.show();
       });
@@ -1434,14 +1451,20 @@
           return;
         }
 
+        const answers = [];
+        $('.ai-claim-answer').each(function() {
+          answers.push($(this).val().trim());
+        });
+
         const payload = {
           itemId: item.id,
           claimantId: user.id,
           claimantName: $('#claimantName').val(),
           claimantContact: $('#claimantContact').val(),
           claimantEmail: $('#claimantEmail').val(),
-          description: $('#claimDescription').val(),
-          uniqueDetails: $('#claimUniqueDetails').val(),
+          description: `AI ownership claim for ${item.title} (${item.category})`,
+          questions: currentAIQuestions,
+          answers: answers,
           proofImage: claimProofBase64
         };
 
@@ -1575,6 +1598,32 @@
                     <div class="form-text text-muted">Note: Keep unique identifying secrets (like serial numbers or bag contents) out of this description so administrators can use them to test claimants.</div>
                   </div>
 
+                  <!-- College Handover & Private Room Information -->
+                  <div class="card border-primary border-opacity-25 bg-primary bg-opacity-10 p-3 mb-4 rounded-3">
+                    <div class="d-flex align-items-center mb-2">
+                      <i class="bi bi-shield-lock-fill text-primary me-2 fs-5"></i>
+                      <span class="fw-bold text-dark">Private College Handover & Room Details</span>
+                      <span class="badge bg-secondary ms-auto small">Never Shown Publicly</span>
+                    </div>
+                    <p class="text-muted small mb-3">
+                      These details are kept strictly private and will <strong>only</strong> be unlocked for the true owner once their AI claim answers are approved by the college administrator.
+                    </p>
+                    <div class="row g-3">
+                      <div class="col-md-6">
+                        <label for="founder_hostel" class="form-label fw-semibold">Hostel / Campus Building Name *</label>
+                        <input type="text" name="founder_hostel" id="founder_hostel" class="form-control bg-white" placeholder="e.g. Tagore Hostel - Block B, or Library Admin" required/>
+                      </div>
+                      <div class="col-md-6">
+                        <label for="founder_room" class="form-label fw-semibold">Room Number / Office Desk *</label>
+                        <input type="text" name="founder_room" id="founder_room" class="form-control bg-white" placeholder="e.g. Room 204, or Desk 3" required/>
+                      </div>
+                      <div class="col-12">
+                        <label for="collection_instructions" class="form-label fw-semibold">Handover Availability / Special Instructions</label>
+                        <input type="text" name="collection_instructions" id="collection_instructions" class="form-control bg-white" placeholder="e.g. Available weekdays after 5:00 PM, or WhatsApp me before visiting"/>
+                      </div>
+                    </div>
+                  </div>
+
                   <!-- Multiple Photographs Upload -->
                   <div class="mb-4">
                     <label class="form-label fw-semibold d-flex justify-content-between">
@@ -1650,9 +1699,12 @@
         const descVal = $('#description').val().trim();
         const contactVal = $('#contact').val().trim();
         const fullnameVal = $('#fullname').val().trim();
+        const hostelVal = $('#founder_hostel').val().trim();
+        const roomVal = $('#founder_room').val().trim();
+        const instructionsVal = $('#collection_instructions').val().trim();
 
-        if (!title || !catId || !dateVal || !locVal || !descVal || !contactVal || !fullnameVal) {
-          $('#found-form-alert').html('<div class="alert alert-danger">Please fill in all compulsory fields marked with *.</div>');
+        if (!title || !catId || !dateVal || !locVal || !descVal || !contactVal || !fullnameVal || !hostelVal || !roomVal) {
+          $('#found-form-alert').html('<div class="alert alert-danger">Please fill in all compulsory fields marked with *, including your hostel and room number.</div>');
           return;
         }
 
@@ -1672,6 +1724,9 @@
           item_date: dateVal,
           contact: contactVal,
           description: descVal,
+          founder_hostel: hostelVal,
+          founder_room: roomVal,
+          collection_instructions: instructionsVal,
           images: selectedImagesBase64,
           image_path: selectedImagesBase64.length > 0 ? selectedImagesBase64[0] : ''
         };
@@ -1795,11 +1850,14 @@
               let badge = '<span class="badge bg-warning text-dark">Under Review</span>';
               let actionHtml = '';
 
-              if (st === 'approved') {
-                badge = '<span class="badge bg-success">Claim Approved — Action Required</span>';
+              if (st === 'approved' || st === 'approved_for_collection') {
+                badge = '<span class="badge bg-success"><i class="bi bi-unlock-fill me-1"></i> Claim Approved — Recovery Unlocked</span>';
                 actionHtml = `
-                  <button type="button" class="btn btn-success btn-sm rounded-pill px-3 btn-open-address-modal" data-claim-id="${c.id}">
-                    <i class="bi bi-pencil-square me-1"></i> Submit Handover Address
+                  <button type="button" class="btn btn-success btn-sm rounded-pill px-3 btn-3d btn-view-college-recovery" data-item-id="${c.item_id}" data-claim-id="${c.id}">
+                    <i class="bi bi-geo-alt-fill me-1"></i> View Hostel & Collection Details
+                  </button>
+                  <button type="button" class="btn btn-outline-success btn-sm rounded-pill px-3 ms-1 btn-open-address-modal" data-claim-id="${c.id}">
+                    <i class="bi bi-pencil-square me-1"></i> Alternate Address
                   </button>
                 `;
               } else if (st === 'ready_for_scheduling') {
@@ -2003,6 +2061,63 @@
           </div>
         </div>
 
+        <!-- Modal: College Handover & Room Details -->
+        <div class="modal fade" id="collegeRecoveryModal" tabindex="-1" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+              <div class="modal-header bg-success text-white py-3">
+                <h5 class="modal-title fw-bold d-flex align-items-center">
+                  <i class="bi bi-unlock-fill me-2 fs-5"></i>
+                  <span>Verified College Handover & Room Details</span>
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+              </div>
+              <div class="modal-body p-4">
+                <div class="alert alert-success bg-success bg-opacity-10 border-success d-flex align-items-center mb-3 p-3 rounded-3">
+                  <i class="bi bi-patch-check-fill fs-3 text-success me-3"></i>
+                  <div class="small">
+                    <strong class="d-block text-success">Ownership Claim Verified!</strong>
+                    <span class="text-muted">The administrator has approved your claim. You may now contact the student finder directly and collect your item.</span>
+                  </div>
+                </div>
+
+                <div class="card bg-light border p-3 mb-3 rounded-3">
+                  <div class="row g-3">
+                    <div class="col-6">
+                      <small class="text-muted d-block"><i class="bi bi-person text-primary me-1"></i> Student Finder</small>
+                      <span class="fw-bold text-dark fs-6" id="recoveryFounderName">—</span>
+                    </div>
+                    <div class="col-6">
+                      <small class="text-muted d-block"><i class="bi bi-telephone text-success me-1"></i> Contact Phone</small>
+                      <span class="fw-bold text-dark fs-6" id="recoveryFounderPhone">—</span>
+                      <a href="#" id="recoveryCallBtn" class="btn btn-xs btn-outline-success btn-sm py-0 ms-1" style="font-size:0.75rem;"><i class="bi bi-telephone-outbound me-1"></i> Call</a>
+                    </div>
+                    <div class="col-12 border-top pt-2">
+                      <small class="text-muted d-block"><i class="bi bi-building text-primary me-1"></i> Campus Hostel / Building</small>
+                      <span class="badge bg-primary px-3 py-2 fs-6 mt-1" id="recoveryHostel">—</span>
+                    </div>
+                    <div class="col-12 border-top pt-2">
+                      <small class="text-muted d-block"><i class="bi bi-door-open text-warning me-1"></i> Exact Room Number / Office</small>
+                      <span class="badge bg-dark px-3 py-2 fs-6 mt-1" id="recoveryRoom">—</span>
+                    </div>
+                    <div class="col-12 border-top pt-2">
+                      <small class="text-muted d-block"><i class="bi bi-info-circle text-secondary me-1"></i> Collection Instructions</small>
+                      <div class="small text-dark fst-italic p-2 bg-white rounded border mt-1" id="recoveryInstructions">—</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="small text-muted text-center">
+                  <i class="bi bi-shield-check text-success me-1"></i> Please present your college student ID card when meeting for the collection.
+                </div>
+              </div>
+              <div class="modal-footer bg-light py-2">
+                <button type="button" class="btn btn-secondary btn-sm rounded-pill px-4" data-bs-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- Modal: View Official Pickup Location -->
         <div class="modal fade" id="viewPickupModal" tabindex="-1" aria-hidden="true">
           <div class="modal-dialog modal-dialog-centered">
@@ -2020,6 +2135,29 @@
           </div>
         </div>
       `);
+
+      // View College Recovery Details modal trigger
+      $('.btn-view-college-recovery').on('click', async function() {
+        const itemId = $(this).data('item-id');
+        start_loader();
+        const res = await window.ItemManager.getCollectionDetails(itemId, currentUser.id);
+        end_loader();
+
+        if (res.status === 'success') {
+          const d = res.collection_details;
+          $('#recoveryFounderName').text(d.founder_name);
+          $('#recoveryFounderPhone').text(d.founder_contact);
+          $('#recoveryCallBtn').attr('href', 'tel:' + d.founder_contact);
+          $('#recoveryHostel').text(d.founder_hostel || 'Campus Residential Block');
+          $('#recoveryRoom').text(d.founder_room || 'Room / Reception Desk');
+          $('#recoveryInstructions').text(d.collection_instructions || 'Please coordinate with the finder during daytime campus hours.');
+
+          const recModal = new bootstrap.Modal(document.getElementById('collegeRecoveryModal'));
+          recModal.show();
+        } else {
+          alert_toast(res.msg || 'Collection details locked.', 'danger');
+        }
+      });
 
       // Address modal trigger
       $('.btn-open-address-modal').on('click', function() {

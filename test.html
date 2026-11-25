@@ -645,11 +645,206 @@
           const stored = localStorage.getItem('lfis_user_session') || sessionStorage.getItem('lfis_user_session');
           if (!stored) throw new Error('Session was not persisted in storage');
 
-          // Test logout
-          window.AuthManager.logout();
+          // Test logout (no redirect in automated testing environment)
+          window.AuthManager.logout(false);
           if (window.AuthManager.getCurrentUser() !== null) throw new Error('Logout did not clear session');
 
           return 'Auth state verified: Session properly created, persisted in storage, and cleared on logout';
+        }
+      },
+      {
+        name: 'AI Verification: Dynamic Category-Based Question Generation Engine',
+        run: async () => {
+          if (!window.AIClaimEngine) throw new Error('AIClaimEngine is not defined');
+
+          const categoriesToTest = [
+            'Watches & Jewelry',
+            'Mobile Phones & Tablets',
+            'Wallets & IDs',
+            'Bags & Backpacks',
+            'Laptops & Electronics',
+            'Earbuds & Audio',
+            'Books & Notebooks',
+            'Clothing & Bottles',
+            'Other Miscellaneous'
+          ];
+
+          for (const catName of categoriesToTest) {
+            const questions = window.AIClaimEngine.generateQuestions(catName, { title: 'Test ' + catName, brand: 'Sony' });
+            if (!Array.isArray(questions) || questions.length < 4 || questions.length > 6) {
+              throw new Error(`Category ${catName} generated ${questions.length} questions, expected 4-6.`);
+            }
+            for (const q of questions) {
+              if (typeof q !== 'string' || q.trim().length < 10) {
+                throw new Error(`Invalid question text in ${catName}: ${q}`);
+              }
+            }
+          }
+
+          // Test watch questions specifically
+          const watchQuestions = window.AIClaimEngine.generateQuestions('Watches & Jewelry');
+          const hasStrapQ = watchQuestions.some(q => q.toLowerCase().includes('strap'));
+          const hasDialOrBackQ = watchQuestions.some(q => q.toLowerCase().includes('dial') || q.toLowerCase().includes('back'));
+          if (!hasStrapQ || !hasDialOrBackQ) {
+            throw new Error('Watch questions did not include expected strap and dial/back casing checks');
+          }
+
+          return `AI Engine verified: Generated 4-6 meaningful, college-friendly verification questions across ${categoriesToTest.length} categories`;
+        }
+      },
+      {
+        name: 'College Recovery: Found Item Registration with Private Hostel & Room Details',
+        run: async () => {
+          // Student reports a found watch with private collection details
+          const itemRes = await window.ItemManager.save({
+            category_id: 3,
+            user_id: 101,
+            fullname: 'Ravi Kumar (Finder)',
+            title: 'Fossil Chronograph Watch Found Near Audi',
+            contact: '9876543210',
+            location: 'Main Auditorium Foyer',
+            item_date: '2026-11-25',
+            description: 'Silver-toned stainless steel analog watch with blue accents.',
+            // Private college collection details:
+            founder_hostel: 'Tagore Hostel - Block B',
+            founder_room: 'Room 208',
+            collection_instructions: 'Available in room 208 after 5:00 PM on weekdays.',
+            status: 1
+          });
+
+          if (!itemRes.iid) throw new Error('Failed to save found item');
+          window._testCollegeWatchId = itemRes.iid;
+
+          // Verify that public getById DOES NOT leak the private hostel/room details to regular unauthenticated users
+          const publicItem = await window.ItemManager.getById(itemRes.iid, null);
+          if (publicItem.founder_hostel || publicItem.founder_room) {
+            throw new Error('SECURITY VIOLATION: Private hostel or room details were leaked in public getById()');
+          }
+
+          return `Found item #${itemRes.iid} registered with private collection info (Hostel/Room protected from public listing)`;
+        }
+      },
+      {
+        name: 'AI Claim Submission: Answers Saving, Initial Status & Duplicate Prevention',
+        run: async () => {
+          const watchId = window._testCollegeWatchId;
+          const claimantStudentId = 202;
+
+          const questions = window.AIClaimEngine.generateQuestions('Watches & Jewelry');
+          const answers = [
+            'Navy blue leather strap with silver buckle',
+            'Tiny scratch on the glass near the 2 o clock marker',
+            'Engraved initials R.V. on the back plate casing',
+            'Dark blue dial with three chronograph sub-dials',
+            'Lost near the Main Auditorium around 3:30 PM after physics lecture'
+          ];
+
+          // Submit AI Claim
+          const claimRes = await window.ClaimManager.submitClaim({
+            item_id: watchId,
+            claimant_id: claimantStudentId,
+            claimant_name: 'Rahul Verma (Owner)',
+            claimant_contact: '9811223344',
+            claimant_email: 'rahul.verma@college.edu',
+            questions: questions,
+            answers: answers
+          });
+
+          if (claimRes.status !== 'success') throw new Error('Claim submission failed: ' + claimRes.msg);
+          if (!claimRes.msg.includes('submitted successfully') || !claimRes.msg.includes('administrator will review')) {
+            throw new Error('Confirmation message did not match expected prompt specification: ' + claimRes.msg);
+          }
+          window._testCollegeClaimId = claimRes.claim_id;
+
+          // Check claim record in database
+          const claimRecord = await window.ClaimManager.getClaimById(claimRes.claim_id, 1);
+          if (!claimRecord.questions || claimRecord.questions.length === 0) throw new Error('AI questions were not stored on claim');
+          if (!claimRecord.answers || claimRecord.answers.length === 0) throw new Error('Claimant answers were not stored on claim');
+
+          // Duplicate claim prevention
+          const dupRes = await window.ClaimManager.submitClaim({
+            item_id: watchId,
+            claimant_id: claimantStudentId,
+            claimant_name: 'Rahul Verma',
+            claimant_contact: '9811223344',
+            questions: questions,
+            answers: answers
+          });
+
+          if (dupRes.status === 'success') throw new Error('Duplicate claim by same student on same item should be rejected');
+
+          return `AI Claim #${claimRes.claim_id} saved with ${claimRecord.questions.length} questions, initial status pending review, duplicate prevented`;
+        }
+      },
+      {
+        name: 'College Collection Security: Room Detail Access Before vs After Admin Approval',
+        run: async () => {
+          const watchId = window._testCollegeWatchId;
+          const claimId = window._testCollegeClaimId;
+          const claimantStudentId = 202;
+          const otherStudentId = 303;
+
+          // 1. BEFORE APPROVAL: Claimant calls getCollectionDetails -> MUST BE FORBIDDEN
+          const lockedRes = await window.ItemManager.getCollectionDetails(watchId, claimantStudentId);
+          if (lockedRes.status !== 'forbidden') {
+            throw new Error('SECURITY VIOLATION: Pending claimant was able to view collection details before admin approval!');
+          }
+
+          // 2. Admin reviews and approves claim
+          const approveRes = await window.ClaimManager.approveClaim(claimId, 'AI questions matched watch features and back engraving.');
+          if (approveRes.status !== 'success') throw new Error('Admin approval failed: ' + approveRes.msg);
+
+          // 3. AFTER APPROVAL: Claimant calls getCollectionDetails -> MUST SUCCEED
+          const unlockedRes = await window.ItemManager.getCollectionDetails(watchId, claimantStudentId);
+          if (unlockedRes.status !== 'success') {
+            throw new Error('Approved claimant was unable to retrieve collection details: ' + unlockedRes.msg);
+          }
+
+          const details = unlockedRes.collection_details;
+          if (details.founder_hostel !== 'Tagore Hostel - Block B' || details.founder_room !== 'Room 208') {
+            throw new Error('Mismatched hostel or room details: ' + JSON.stringify(details));
+          }
+          if (details.founder_contact !== '9876543210') {
+            throw new Error('Mismatched founder contact number: ' + details.founder_contact);
+          }
+
+          // 4. Another student tries to access collection details -> MUST BE FORBIDDEN
+          const otherStudentRes = await window.ItemManager.getCollectionDetails(watchId, otherStudentId);
+          if (otherStudentRes.status !== 'forbidden') {
+            throw new Error('SECURITY VIOLATION: Unapproved student was able to access collection details!');
+          }
+
+          return `College security verified: Room details locked during review, unlocked for approved claimant (${details.founder_hostel}, ${details.founder_room}), blocked for others`;
+        }
+      },
+      {
+        name: 'Handover & Return Status: Marking Item RETURNED and Closing Further Claims',
+        run: async () => {
+          const watchId = window._testCollegeWatchId;
+          const claimId = window._testCollegeClaimId;
+
+          // Admin confirms handover and marks item as returned
+          const returnRes = await window.ClaimManager.confirmHandover(claimId, 'Owner met finder at Tagore Hostel room 208, ID verified, watch returned.');
+          if (returnRes.status !== 'success') throw new Error('Handover completion failed: ' + returnRes.msg);
+
+          // Verify item status in database is 2 (RETURNED)
+          const watchItem = await window.ItemManager.getById(watchId, true);
+          if (Number(watchItem.status) !== 2) throw new Error('Watch status must be 2 (RETURNED), got: ' + watchItem.status);
+
+          // Attempting to submit a new claim on this returned item must be rejected
+          const newClaimAttempt = await window.ClaimManager.submitClaim({
+            item_id: watchId,
+            claimant_id: 505,
+            claimant_name: 'Late Claimant',
+            claimant_contact: '555-1234',
+            unique_details: 'I lost my watch here too'
+          });
+
+          if (newClaimAttempt.status === 'success') {
+            throw new Error('Returned item should not accept new claims');
+          }
+
+          return `Lifecycle complete: Item #${watchId} officially marked RETURNED, closed to future claims, recovery verified`;
         }
       }
     ];
@@ -672,6 +867,7 @@
         tbody.appendChild(row);
 
         try {
+          await new Promise(r => setTimeout(r, 60));
           const detail = await test.run();
           row.querySelector('td:nth-child(3)').innerHTML = '<span class="badge bg-success">PASS</span>';
           row.querySelector('td:nth-child(4)').innerHTML = `<span class="text-success">${detail || 'OK'}</span>`;

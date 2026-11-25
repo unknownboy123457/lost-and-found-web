@@ -165,3 +165,177 @@ table.dataTable td {
 .table-responsive{
     overflow-x: auto;
 }
+
+/* =========================================================
+   COLLEGE PLATFORM THEME & PREMIUM 3D STYLING (PART 4)
+   ========================================================= */
+
+:root {
+  --primary-royal: #1e40af;
+  --primary-blue: #2563eb;
+  --secondary-sky: #0ea5e9;
+  --accent-teal: #0d9488;
+  --bg-soft: #f8fafc;
+  --text-dark: #0f172a;
+  --text-muted: #64748b;
+  --border-subtle: #e2e8f0;
+}
+
+body {
+  background-color: var(--bg-soft);
+  color: var(--text-dark);
+}
+
+/* 1. Premium 3D Buttons */
+.btn {
+  font-weight: 500;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.btn:active {
+  transform: translateY(2px) !important;
+}
+
+.btn-primary, 
+.btn-success, 
+.btn-danger, 
+.btn-warning, 
+.btn-info, 
+.btn-dark {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.12), 0 2px 4px -2px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  border-width: 0;
+}
+
+.btn-primary {
+  background: linear-gradient(180deg, #3b82f6 0%, #1d4ed8 100%) !important;
+  color: #fff !important;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(180deg, #2563eb 0%, #1e40af 100%) !important;
+  transform: translateY(-1.5px);
+  box-shadow: 0 6px 14px -2px rgba(37, 99, 235, 0.35), 0 3px 6px -3px rgba(0, 0, 0, 0.15);
+}
+
+.btn-success {
+  background: linear-gradient(180deg, #10b981 0%, #047857 100%) !important;
+  color: #fff !important;
+}
+
+.btn-success:hover {
+  background: linear-gradient(180deg, #059669 0%, #065f46 100%) !important;
+  transform: translateY(-1.5px);
+  box-shadow: 0 6px 14px -2px rgba(16, 185, 129, 0.35);
+}
+
+.btn-danger {
+  background: linear-gradient(180deg, #ef4444 0%, #b91c1c 100%) !important;
+  color: #fff !important;
+}
+
+.btn-danger:hover {
+  background: linear-gradient(180deg, #dc2626 0%, #991b1b 100%) !important;
+  transform: translateY(-1.5px);
+  box-shadow: 0 6px 14px -2px rgba(239, 68, 68, 0.35);
+}
+
+.btn-outline-primary {
+  border: 1.5px solid var(--primary-blue);
+  color: var(--primary-blue);
+  background: #ffffff;
+}
+
+.btn-outline-primary:hover {
+  background: var(--primary-blue);
+  color: #ffffff;
+  transform: translateY(-1.5px);
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);
+}
+
+/* 2. Responsive Image Sizes & Aspect Ratios */
+.item-card-img-wrap {
+  height: 190px !important;
+  overflow: hidden;
+  background: #f1f5f9;
+  position: relative;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+
+.item-card-img-wrap img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  transition: transform 0.35s ease;
+}
+
+.item-card-interactive:hover .item-card-img-wrap img {
+  transform: scale(1.04);
+}
+
+.item-card-interactive {
+  border-radius: 12px;
+  transition: all 0.25s ease;
+  border: 1px solid var(--border-subtle) !important;
+}
+
+.item-card-interactive:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04) !important;
+}
+
+/* Detail page main image containment */
+.main-photo-wrap {
+  height: 320px !important;
+  max-height: 320px !important;
+  background: #0f172a !important;
+  border-radius: 12px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  overflow: hidden !important;
+}
+
+.main-photo-wrap img {
+  max-height: 310px !important;
+  max-width: 100% !important;
+  object-fit: contain !important;
+}
+
+.item-thumb-btn {
+  width: 56px !important;
+  height: 56px !important;
+  object-fit: cover !important;
+  border-radius: 8px !important;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.item-thumb-btn:hover {
+  transform: scale(1.06);
+}
+
+/* 3. Form Inputs & Cards */
+.form-control, .form-select {
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 0.6rem 0.85rem;
+  font-size: 0.95rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: var(--primary-blue);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.card {
+  border-radius: 12px;
+  border-color: var(--border-subtle);
+}
+
+.badge {
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}

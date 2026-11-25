@@ -187,12 +187,14 @@ const AuthManager = {
   /**
    * Logs out the current user and clears both session and local storage
    */
-  logout(redirectUrl = 'login.html') {
+  logout(redirectUrl = null) {
     try {
       sessionStorage.removeItem(this.SESSION_KEY);
       localStorage.removeItem(this.SESSION_KEY);
     } catch (e) {}
-    window.location.href = redirectUrl;
+    if (redirectUrl) {
+      window.location.href = redirectUrl;
+    }
   },
 
   /**

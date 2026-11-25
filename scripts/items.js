@@ -49,14 +49,138 @@ const ItemManager = {
     return items;
   },
 
-  async getById(id) {
+  async getById(id, caller = null) {
     await window.db.init();
     const item = await window.db.getById('item_list', id);
     if (!item) return null;
     const cat = await window.db.getById('category_list', item.category_id);
-    return {
+    const enriched = {
       ...item,
       category: cat ? cat.name : 'N/A'
+    };
+
+    // Determine authorization to view private collection details
+    let isAdmin = false;
+    let userId = null;
+    if (caller === true) isAdmin = true;
+    else if (typeof caller === 'object' && caller !== null) {
+      isAdmin = Number(caller.type) === 1;
+      userId = caller.id;
+    } else if (typeof caller === 'number' || typeof caller === 'string') {
+      userId = Number(caller);
+      if (userId === 1) isAdmin = true;
+    }
+
+    if (!isAdmin && window.AuthManager) {
+      if (window.AuthManager.isAdmin && window.AuthManager.isAdmin()) isAdmin = true;
+      const logged = window.AuthManager.getCurrentUser ? window.AuthManager.getCurrentUser() : null;
+      if (logged) {
+        if (Number(logged.type) === 1) isAdmin = true;
+        if (!userId) userId = logged.id;
+      }
+    }
+
+    // Check if user is the founder
+    const isFounder = userId && enriched.user_id && Number(enriched.user_id) === Number(userId);
+
+    // Strict privacy: only admin or founder get raw private room details by default
+    if (!isAdmin && !isFounder) {
+      enriched.has_private_collection_info = Boolean(enriched.founder_hostel || enriched.founder_room);
+      delete enriched.founder_hostel;
+      delete enriched.founder_room;
+      delete enriched.collection_instructions;
+    }
+
+    return enriched;
+  },
+
+  /**
+   * Securely retrieve private college collection & room details.
+   * Access is strictly restricted to:
+   * 1. System Administrators
+   * 2. The original Finder
+   * 3. An approved claimant whose claim has been verified and approved by Admin.
+   */
+  async getCollectionDetails(itemId, caller = null) {
+    await window.db.init();
+    const rawItem = await window.db.getById('item_list', itemId);
+    if (!rawItem) {
+      return { status: 'failed', msg: 'Item not found in database.' };
+    }
+
+    let isAdmin = false;
+    let userId = null;
+    if (caller === true) isAdmin = true;
+    else if (typeof caller === 'object' && caller !== null) {
+      isAdmin = Number(caller.type) === 1;
+      userId = caller.id;
+    } else if (typeof caller === 'number' || typeof caller === 'string') {
+      userId = Number(caller);
+      if (userId === 1) isAdmin = true;
+    }
+
+    if (!isAdmin && window.AuthManager) {
+      if (window.AuthManager.isAdmin && window.AuthManager.isAdmin()) isAdmin = true;
+      const logged = window.AuthManager.getCurrentUser ? window.AuthManager.getCurrentUser() : null;
+      if (logged) {
+        if (Number(logged.type) === 1) isAdmin = true;
+        if (!userId) userId = logged.id;
+      }
+    }
+
+    // If Admin or the item's original finder, grant access
+    const isFounder = userId && rawItem.user_id && Number(rawItem.user_id) === Number(userId);
+    if (isAdmin || isFounder) {
+      return {
+        status: 'success',
+        is_admin: isAdmin,
+        is_founder: isFounder,
+        collection_details: {
+          founder_name: rawItem.fullname || 'Campus Member',
+          founder_contact: rawItem.contact || 'Available upon request',
+          founder_hostel: rawItem.founder_hostel || 'Campus Residential Block',
+          founder_room: rawItem.founder_room || 'Room / Reception Desk',
+          collection_instructions: rawItem.collection_instructions || 'Please coordinate with the founder during daytime campus hours.'
+        }
+      };
+    }
+
+    // If caller is an authenticated student, check if they have an APPROVED claim
+    if (!userId) {
+      return { status: 'forbidden', msg: 'Authentication required. Please log in to view collection details.' };
+    }
+
+    const allClaims = await window.db.getAll('claims');
+    const userClaim = allClaims.find(c => 
+      Number(c.item_id) === Number(itemId) && 
+      Number(c.claimant_id) === Number(userId)
+    );
+
+    if (!userClaim) {
+      return { status: 'forbidden', msg: 'No ownership claim on record for this item.' };
+    }
+
+    const approvedStatuses = ['approved', 'approved_for_collection', 'ready_for_scheduling', 'scheduled', 'completed', 'returned'];
+    if (!approvedStatuses.includes(userClaim.status)) {
+      return {
+        status: 'forbidden',
+        claim_status: userClaim.status,
+        msg: 'Collection details are locked. An administrator must verify and approve your ownership answers before collection details are unlocked.'
+      };
+    }
+
+    // Claimant is verified & approved! Return the private room & contact information
+    return {
+      status: 'success',
+      claim_id: userClaim.id,
+      claim_status: userClaim.status,
+      collection_details: {
+        founder_name: rawItem.fullname || 'Campus Member',
+        founder_contact: rawItem.contact || 'Available upon request',
+        founder_hostel: rawItem.founder_hostel || 'Hostel / Building not specified',
+        founder_room: rawItem.founder_room || 'Room not specified',
+        collection_instructions: rawItem.collection_instructions || 'Please coordinate with the finder to collect your belonging.'
+      }
     };
   },
 
@@ -87,6 +211,12 @@ const ItemManager = {
       contact: data.contact ? data.contact.trim() : '',
       description: data.description ? data.description.trim() : '',
       identifying_details: data.identifying_details ? data.identifying_details.trim() : '',
+      
+      // College Private Handover & Room Details (Protected from public listing)
+      founder_hostel: data.founder_hostel ? data.founder_hostel.trim() : (data.hostel ? data.hostel.trim() : ''),
+      founder_room: data.founder_room ? data.founder_room.trim() : (data.room ? data.room.trim() : ''),
+      collection_instructions: data.collection_instructions ? data.collection_instructions.trim() : '',
+
       image_path: primaryImage,
       images: images,
       // If submitted by public founder, status is 0 (Pending review). Otherwise, take from data.status or default 0.

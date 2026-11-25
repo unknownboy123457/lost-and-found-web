@@ -45,6 +45,9 @@ const reportServer = http.createServer((req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   const url = new URL(req.url, `http://localhost:${REPORT_PORT}`);
   
+  if (url.searchParams.has('log')) {
+    console.log(`[LOG] ${url.searchParams.get('log')}`);
+  }
   if (url.searchParams.has('step_pass')) {
     console.log(`[PASS] Step ${url.searchParams.get('step_pass')}`);
   }
@@ -90,9 +93,9 @@ async function main() {
   const chrome = spawn(chromePath, chromeArgs);
 
   const timeout = setTimeout(() => {
-    console.error('Timed out waiting for test report (60s)');
+    console.error('Timed out waiting for test report (45s)');
     reportResolve('TIMEOUT');
-  }, 60000);
+  }, 45000);
 
   const result = await reportPromise;
   clearTimeout(timeout);
