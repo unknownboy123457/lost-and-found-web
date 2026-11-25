@@ -510,14 +510,14 @@ img {
 }
 
 /* =========================================================
-   3. NAVIGATION BAR (SECTION 5)
+   3. NAVIGATION BAR & COLLAPSIBLE LEFT SIDEBAR
    ========================================================= */
 
 .header {
   background: #FFFFFF !important;
   border-bottom: 1px solid var(--border-light) !important;
   box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04) !important;
-  height: 68px;
+  height: 64px;
   z-index: 997;
   transition: all 0.3s;
 }
@@ -534,36 +534,273 @@ img {
   letter-spacing: -0.02em;
 }
 
-.header-nav .nav-link {
-  color: var(--text-slate) !important;
+.toggle-sidebar-btn {
+  font-size: 26px;
+  padding: 4px 8px;
+  cursor: pointer;
+  color: var(--primary-blue);
+  border-radius: 8px;
+  transition: background 0.2s, color 0.2s;
+}
+
+.toggle-sidebar-btn:hover {
+  background: #EFF6FF;
+  color: var(--primary-hover);
+}
+
+/* Public & Admin Left Sidebar - Shared Design System */
+.sidebar {
+  position: fixed;
+  top: 64px;
+  left: 0;
+  bottom: 0;
+  width: 280px;
+  z-index: 996;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 20px 14px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.06);
+  background-color: #FFFFFF;
+  border-right: 1px solid var(--border-light);
+}
+
+.sidebar::-webkit-scrollbar {
+  width: 5px;
+}
+.sidebar::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 4px;
+}
+
+.sidebar-nav {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.sidebar-nav .nav-item {
+  margin-bottom: 6px;
+}
+
+.sidebar-nav .nav-heading {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  color: #94A3B8;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  margin: 16px 0 8px 12px;
+}
+
+.sidebar-nav .nav-link {
+  display: flex;
+  align-items: center;
   font-size: 0.93rem;
   font-weight: 600;
-  padding: 0.5rem 0.85rem !important;
-  border-radius: 8px;
+  color: var(--primary-blue);
+  background: #EFF6FF;
+  padding: 10px 14px;
+  border-radius: 10px;
   transition: all 0.2s ease;
+  border-left: 3px solid var(--primary-blue);
+  text-decoration: none;
+}
+
+.sidebar-nav .nav-link i {
+  font-size: 1.15rem;
+  margin-right: 12px;
+  color: var(--primary-blue);
+  line-height: 1;
+}
+
+.sidebar-nav .nav-link.collapsed {
+  color: var(--text-navy);
+  background: transparent;
+  border-left: 3px solid transparent;
+  font-weight: 500;
+}
+
+.sidebar-nav .nav-link.collapsed i {
+  color: var(--text-slate);
+}
+
+.sidebar-nav .nav-link:hover {
+  color: var(--primary-blue);
+  background: #F0F7FF;
+}
+
+.sidebar-nav .nav-link:hover i {
+  color: var(--primary-blue);
+}
+
+/* Smooth Main Content Adjustment When Sidebar Toggles */
+#main,
+#footer {
+  transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+@media (min-width: 1200px) {
+  #main,
+  #footer {
+    margin-left: 280px !important;
+  }
+  
+  .toggle-sidebar #main,
+  .toggle-sidebar #footer {
+    margin-left: 0 !important;
+  }
+  
+  .toggle-sidebar .sidebar {
+    left: -280px;
+  }
+}
+
+@media (max-width: 1199.98px) {
+  .sidebar {
+    left: -280px;
+  }
+  
+  .toggle-sidebar .sidebar {
+    left: 0;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.25);
+  }
+  
+  #main,
+  #footer {
+    margin-left: 0 !important;
+  }
+}
+
+/* Mobile Slide-in Backdrop Overlay */
+.sidebar-overlay {
+  display: none;
+}
+
+@media (max-width: 1199.98px) {
+  .sidebar-overlay {
+    display: block;
+    position: fixed;
+    top: 64px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(15, 23, 42, 0.45);
+    backdrop-filter: blur(2px);
+    z-index: 995;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  
+  .toggle-sidebar .sidebar-overlay {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+/* Belonging Cards in Campus Hero */
+.belonging-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 12px;
+  padding: 12px 14px;
+}
+
+.belonging-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 14px rgba(37, 99, 235, 0.1);
+  border-color: #93C5FD !important;
+}
+
+.hero-college-section {
+  background: radial-gradient(120% 90% at 50% 0%, #EFF6FF 0%, #F8FAFC 50%, #FFFFFF 100%);
+  border-bottom: 1px solid #E2E8F0;
+  position: relative;
+  overflow: hidden;
+  padding: 48px 0 36px 0;
+}
+
+.hero-campus-desk {
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 20px;
+  box-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04);
+  padding: 22px;
   position: relative;
 }
 
-.header-nav .nav-link:hover {
-  color: var(--primary-blue) !important;
-  background-color: #EFF6FF;
-}
-
-.header-nav .nav-link.active {
-  color: var(--primary-blue) !important;
-  background-color: #DBEAFE;
+.desk-header-badge {
+  background: #EFF6FF;
+  border: 1px solid #DBEAFE;
+  color: #1E40AF;
+  font-size: 0.8rem;
   font-weight: 700;
+  padding: 5px 12px;
+  border-radius: 50rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
-.header-nav .nav-link.active::after {
-  content: '';
-  position: absolute;
-  bottom: -6px;
-  left: 20%;
-  right: 20%;
-  height: 3px;
-  background-color: var(--primary-blue);
-  border-radius: 2px;
+.desk-status-pill {
+  font-size: 0.75rem;
+  color: #059669;
+  font-weight: 600;
+  background: #ECFDF5;
+  border: 1px solid #A7F3D0;
+  padding: 3px 10px;
+  border-radius: 50rem;
+}
+
+.desk-belongings-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+@media (max-width: 575.98px) {
+  .desk-belongings-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.belonging-icon-box {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.btn-secondary-modern {
+  background: #FFFFFF !important;
+  color: #1E293B !important;
+  border: 1.5px solid #CBD5E1 !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+  font-weight: 600 !important;
+  border-radius: 14px !important;
+  transition: all 0.2s ease;
+}
+
+.btn-secondary-modern:hover {
+  background: #F8FAFC !important;
+  border-color: #94A3B8 !important;
+  color: #0F172A !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+.hero-search-container {
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 18px;
+  box-shadow: 0 12px 32px -8px rgba(15, 23, 42, 0.08);
+  padding: 14px 18px;
 }
 
 /* Profile dropdown */
