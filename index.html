@@ -87,39 +87,42 @@
 
   <!-- ======= Header ======= -->
   <header id="header" class="header fixed-top d-flex align-items-center">
-    <div class="container-lg d-flex justify-content-between px-4">
-      <div class="d-flex align-items-center justify-content-between">
-        <a href="./" class="logo d-flex align-items-center">
-          <img src="uploads/logo.png" alt="System Logo">
-          <span class="d-none d-lg-block" data-sys-short-name>LFIS</span>
+    <div class="container-xl d-flex justify-content-between align-items-center px-3 px-md-4">
+      <div class="d-flex align-items-center gap-2">
+        <button class="btn btn-light btn-sm d-lg-none border-0 p-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileNavOffcanvas" aria-controls="mobileNavOffcanvas" title="Toggle Navigation">
+          <i class="bi bi-list fs-4 text-primary"></i>
+        </button>
+        <a href="./" class="logo d-flex align-items-center text-decoration-none">
+          <img src="uploads/logo.png" alt="System Logo" style="height: 38px;">
+          <span class="d-none d-sm-block fw-bold fs-5 text-primary ms-2" data-sys-short-name>LFIS</span>
         </a>
       </div><!-- End Logo -->
-      <nav class="header-nav me-auto">
-        <ul class="d-flex align-items-center h-100 mb-0">
-          <li class="nav-item pe-3">
+      <nav class="header-nav d-none d-lg-block me-auto ms-4">
+        <ul class="d-flex align-items-center h-100 mb-0 list-unstyled gap-1">
+          <li class="nav-item">
               <a href="./" class="nav-link" id="nav-link-home">Home</a>
           </li>
-          <li class="nav-item pe-3">
+          <li class="nav-item">
               <a href="./?page=items" class="nav-link" id="nav-link-items">Lost and Found</a>
           </li>
-          <li class="nav-item pe-3">
+          <li class="nav-item">
               <a href="./?page=found" class="nav-link" id="nav-link-found">Post Found Item</a>
           </li>
-          <li class="nav-item pe-3" id="nav-item-my-reports" style="display:none;">
+          <li class="nav-item" id="nav-item-my-reports" style="display:none;">
               <a href="./?page=my-reports" class="nav-link position-relative" id="nav-link-my-reports">
                 My Reports & Claims
                 <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle d-none" id="nav-unread-dot"></span>
               </a>
           </li>
-          <li class="nav-item pe-3">
+          <li class="nav-item">
               <a href="./?page=about" class="nav-link" id="nav-link-about">About Us</a>
           </li>
-          <li class="nav-item pe-3">
+          <li class="nav-item">
               <a href="./?page=contact" class="nav-link" id="nav-link-contact">Contact Us</a>
           </li>
         </ul>
       </nav><!-- End Icons Navigation -->
-      <div class="d-flex align-items-center justify-content-between gap-2" id="nav-auth-container">
+      <div class="d-flex align-items-center gap-2" id="nav-auth-container">
         <a href="login.html" class="btn btn-primary btn-sm rounded-pill px-3 shadow-sm d-flex align-items-center">
           <i class="bi bi-box-arrow-in-right me-1"></i>
           <span>Sign In</span>
@@ -128,12 +131,60 @@
           <i class="bi bi-person-plus me-1"></i>
           <span>Register</span>
         </a>
-        <a href="admin/login.html" class="btn btn-outline-secondary btn-sm rounded-circle ms-1" title="Admin Portal" style="width: 32px; height: 32px; padding: 0; display: inline-flex; align-items: center; justify-content: center;">
-          <i class="bi bi-shield-lock" style="font-size: 0.85rem;"></i>
+        <a href="admin/login.html" class="btn btn-outline-secondary btn-sm rounded-circle ms-1" title="Admin Portal" style="width: 34px; height: 34px; padding: 0; display: inline-flex; align-items: center; justify-content: center;">
+          <i class="bi bi-shield-lock" style="font-size: 0.9rem;"></i>
         </a>
       </div>
     </div>
   </header><!-- End Header -->
+
+  <!-- Mobile Navigation Offcanvas -->
+  <div class="offcanvas offcanvas-start" tabindex="-1" id="mobileNavOffcanvas" aria-labelledby="mobileNavOffcanvasLabel">
+    <div class="offcanvas-header border-bottom py-3">
+      <div class="d-flex align-items-center gap-2">
+        <img src="uploads/logo.png" alt="Logo" style="height: 32px;">
+        <h5 class="offcanvas-title fw-bold text-primary mb-0" id="mobileNavOffcanvasLabel">LFIS Campus</h5>
+      </div>
+      <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body d-flex flex-column p-4">
+      <ul class="nav nav-pills flex-column gap-2 mb-auto">
+        <li class="nav-item">
+          <a href="./" class="nav-link text-dark fw-semibold d-flex align-items-center gap-2" id="m-nav-link-home">
+            <i class="bi bi-house-door text-primary fs-5"></i> Home
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="./?page=items" class="nav-link text-dark fw-semibold d-flex align-items-center gap-2" id="m-nav-link-items">
+            <i class="bi bi-search text-primary fs-5"></i> Lost and Found
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="./?page=found" class="nav-link text-dark fw-semibold d-flex align-items-center gap-2" id="m-nav-link-found">
+            <i class="bi bi-plus-circle text-primary fs-5"></i> Post Found Item
+          </a>
+        </li>
+        <li class="nav-item" id="m-nav-item-my-reports" style="display:none;">
+          <a href="./?page=my-reports" class="nav-link text-dark fw-semibold d-flex align-items-center gap-2" id="m-nav-link-my-reports">
+            <i class="bi bi-folder2-open text-primary fs-5"></i> My Reports &amp; Claims
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="./?page=about" class="nav-link text-dark fw-semibold d-flex align-items-center gap-2" id="m-nav-link-about">
+            <i class="bi bi-info-circle text-primary fs-5"></i> About Us
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="./?page=contact" class="nav-link text-dark fw-semibold d-flex align-items-center gap-2" id="m-nav-link-contact">
+            <i class="bi bi-envelope text-primary fs-5"></i> Contact Us
+          </a>
+        </li>
+      </ul>
+      <div class="border-top pt-3 mt-4" id="m-nav-auth-container">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+  </div>
 
   <!-- Content Wrapper. Contains page content -->
   <main id="main" class="main p-0">
@@ -323,9 +374,52 @@
   </div>
 
   <!-- ======= Footer ======= -->
-  <footer id="footer" class="footer">
-    <div class="copyright">
-      &copy; Copyright <strong><span data-sys-name>Lost and Found Information System</span></strong>. All Rights Reserved
+  <footer id="footer" class="app-footer">
+    <div class="container-xl px-4">
+      <div class="row g-4 mb-4">
+        <div class="col-lg-4 col-md-6">
+          <div class="d-flex align-items-center gap-2 mb-3">
+            <img src="uploads/logo.png" alt="LFIS Logo" style="height: 38px;">
+            <span class="fs-5 fw-bold text-white" data-sys-short-name>LFIS Campus</span>
+          </div>
+          <p class="text-secondary small pe-lg-3">
+            College Campus Lost & Found Information System. A secure, verified platform helping students and staff reunite with misplaced belongings across lecture halls, labs, libraries, and hostels.
+          </p>
+        </div>
+        <div class="col-lg-2 col-md-3 col-6">
+          <h6 class="text-white fw-bold mb-3">Navigation</h6>
+          <ul class="list-unstyled small mb-0 d-flex flex-column gap-2">
+            <li><a href="./" class="text-secondary text-decoration-none">Home</a></li>
+            <li><a href="./?page=items" class="text-secondary text-decoration-none">Lost and Found</a></li>
+            <li><a href="./?page=found" class="text-secondary text-decoration-none">Post Found Item</a></li>
+            <li><a href="./?page=my-reports" class="text-secondary text-decoration-none">My Reports</a></li>
+          </ul>
+        </div>
+        <div class="col-lg-2 col-md-3 col-6">
+          <h6 class="text-white fw-bold mb-3">Help & Trust</h6>
+          <ul class="list-unstyled small mb-0 d-flex flex-column gap-2">
+            <li><a href="./?page=about" class="text-secondary text-decoration-none">About Us</a></li>
+            <li><a href="./?page=contact" class="text-secondary text-decoration-none">Contact Us</a></li>
+            <li><a href="admin/login.html" class="text-secondary text-decoration-none">Admin Portal</a></li>
+          </ul>
+        </div>
+        <div class="col-lg-4 col-md-6">
+          <h6 class="text-white fw-bold mb-3">Campus Helpdesk</h6>
+          <ul class="list-unstyled small text-secondary mb-0 d-flex flex-column gap-2">
+            <li><i class="bi bi-geo-alt text-primary me-2"></i>Student Services Building, Room 108</li>
+            <li><i class="bi bi-telephone text-primary me-2"></i>+91 (080) 4567-8900</li>
+            <li><i class="bi bi-envelope text-primary me-2"></i>support@lfis.local</li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom d-flex justify-content-between align-items-center flex-wrap gap-2 pt-3 border-top border-secondary border-opacity-25">
+        <div class="text-secondary small">
+          &copy; 2026 <strong><span data-sys-name>Lost and Found Information System</span></strong>. All Rights Reserved.
+        </div>
+        <div class="text-secondary small">
+          Verified College Campus Recovery Network
+        </div>
+      </div>
     </div>
   </footer><!-- End Footer -->
 
@@ -350,6 +444,7 @@
           const userName = window.AuthManager.getUserDisplayName();
           const isAdmin = Number(currentUser.type) === 1;
           $('#nav-item-my-reports').show();
+          $('#m-nav-item-my-reports').show();
 
           let unreadNotifs = 0;
           try {
@@ -410,8 +505,19 @@
               </ul>
             </div>
           `);
+
+          $('#m-nav-auth-container').html(`
+            <div class="card bg-light border-0 p-3 mb-2">
+              <div class="fw-bold text-dark">${userName}</div>
+              <div class="small text-muted mb-2">${currentUser.email || currentUser.username}</div>
+              <a href="javascript:void(0)" onclick="window.AuthManager.logout('./')" class="btn btn-outline-danger btn-sm rounded-pill w-100">
+                <i class="bi bi-box-arrow-right me-1"></i> Sign Out
+              </a>
+            </div>
+          `);
         } else {
           $('#nav-item-my-reports').hide();
+          $('#m-nav-item-my-reports').hide();
           $('#nav-auth-container').html(`
             <a href="login.html" class="btn btn-primary btn-sm rounded-pill px-3 shadow-sm d-flex align-items-center">
               <i class="bi bi-box-arrow-in-right me-1"></i>
@@ -428,7 +534,19 @@
               <i class="bi bi-shield-lock" style="font-size: 0.85rem;"></i>
             </a>
           `);
+
+          $('#m-nav-auth-container').html(`
+            <div class="d-grid gap-2">
+              <a href="login.html" class="btn btn-primary btn-sm rounded-pill">
+                <i class="bi bi-box-arrow-in-right me-1"></i> Sign In
+              </a>
+              <a href="register.html" class="btn btn-outline-primary btn-sm rounded-pill">
+                <i class="bi bi-person-plus me-1"></i> Register
+              </a>
+            </div>
+          `);
         }
+      }
       }
       renderNavAuth();
 
@@ -1005,11 +1123,11 @@
             <div class="col-lg-4 col-md-6 col-sm-12 mb-4 item-item">
               <div class="card h-100 shadow-sm border-0 item-card-interactive">
                 <div class="position-relative">
-                  <div class="item-card-img-wrap" style="height: 200px; overflow: hidden; background: #f8f9fa;">
-                    <img src="${imgUrl}" alt="${row.title}" class="w-100 h-100" style="object-fit: cover;">
+                  <div class="item-card-img-wrap">
+                    <img src="${imgUrl}" alt="${row.title}">
                   </div>
-                  <span class="badge bg-primary position-absolute top-0 start-0 m-2 shadow-sm">${row.category || 'General'}</span>
-                  ${isReturned ? '<span class="badge bg-secondary position-absolute top-0 end-0 m-2 shadow-sm"><i class="bi bi-check2-all me-1"></i>Returned</span>' : '<span class="badge bg-success position-absolute top-0 end-0 m-2 shadow-sm"><i class="bi bi-shield-check me-1"></i>Available</span>'}
+                  <span class="badge bg-primary position-absolute top-0 start-0 m-2 shadow-sm rounded-pill">${row.category || 'General'}</span>
+                  ${isReturned ? '<span class="badge badge-status-recovered position-absolute top-0 end-0 m-2 shadow-sm"><i class="bi bi-check2-all me-1"></i>Returned</span>' : '<span class="badge badge-status-approved position-absolute top-0 end-0 m-2 shadow-sm"><i class="bi bi-shield-check me-1"></i>Available</span>'}
                 </div>
                 <div class="card-body d-flex flex-column pt-3">
                   <h5 class="card-title fw-bold mb-1 text-truncate" title="${row.title}">${row.title}</h5>
@@ -1019,10 +1137,10 @@
                     <span><i class="bi bi-calendar-event text-primary"></i> ${dateStr}</span>
                   </div>
                   <p class="card-text small text-muted truncate-3 mb-3">${cleanDesc}</p>
-                  <div class="mt-auto pt-2 border-top d-flex justify-content-between align-items-center">
-                    <span class="small text-muted">By: ${row.fullname || 'Anonymous'}</span>
-                    <a href="./?page=items/view&id=${row.id}" class="btn btn-outline-primary btn-sm rounded-pill px-3">
-                      View Details <i class="bi bi-arrow-right"></i>
+                  <div class="mt-auto pt-3 border-top d-flex justify-content-between align-items-center">
+                    <span class="small text-muted text-truncate" style="max-width: 110px;">By: ${row.fullname || 'Anonymous'}</span>
+                    <a href="./?page=items/view&id=${row.id}" class="btn btn-primary btn-sm rounded-pill px-3 shadow-sm">
+                      <span>View Details</span> <i class="bi bi-arrow-right"></i>
                     </a>
                   </div>
                 </div>
@@ -1542,10 +1660,13 @@
 
         <div class="row justify-content-center">
           <div class="col-lg-8 col-md-10 col-12">
-            <div class="card shadow-sm border-0 rounded-3">
+            <div class="card shadow-sm border-0 rounded-4">
               <div class="card-body p-4 p-md-5">
-                <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom flex-wrap gap-2">
-                  <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-clipboard-plus text-primary me-2"></i>Found Item Registration Form</h5>
+                <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom flex-wrap gap-2">
+                  <div>
+                    <h4 class="fw-bold mb-1 text-dark"><i class="bi bi-clipboard-plus text-primary me-2"></i>Found Item Registration</h4>
+                    <span class="small text-muted">Complete the 5 sections below to register this property safely</span>
+                  </div>
                   <span class="badge bg-light text-primary border px-3 py-2 rounded-pill"><i class="bi bi-person-check me-1"></i> Reporting as: ${userName}</span>
                 </div>
 
@@ -1556,88 +1677,128 @@
                   <input type="hidden" name="item_type" value="2">
                   <input type="hidden" name="user_id" value="${currentUser.id}">
 
-                  <div class="row g-3 mb-3">
-                    <div class="col-md-6">
-                      <label for="category_id" class="form-label fw-semibold">Item Category *</label>
-                      <select name="category_id" id="category_id" class="form-select" required>
-                        <option value="" disabled selected>Select Category</option>
-                        ${catOptions}
-                      </select>
-                    </div>
-                    <div class="col-md-6">
-                      <label for="title" class="form-label fw-semibold">Item Name / Title *</label>
-                      <input type="text" name="title" id="title" class="form-control" placeholder="e.g. Navy Blue Backpack, iPhone 14 Pro, Set of Keys" required/>
-                    </div>
-                  </div>
-
-                  <div class="row g-3 mb-3">
-                    <div class="col-md-6">
-                      <label for="item_date" class="form-label fw-semibold">Date Discovered *</label>
-                      <input type="date" name="item_date" id="item_date" class="form-control" value="${todayIso}" max="${todayIso}" required/>
-                    </div>
-                    <div class="col-md-6">
-                      <label for="location" class="form-label fw-semibold">Location Where Found *</label>
-                      <input type="text" name="location" id="location" class="form-control" placeholder="e.g. Science Library 2nd Floor, Room 204 or Bus #42" required/>
-                    </div>
-                  </div>
-
-                  <div class="row g-3 mb-3">
-                    <div class="col-md-6">
-                      <label for="fullname" class="form-label fw-semibold">Finder Name *</label>
-                      <input type="text" name="fullname" id="fullname" class="form-control" value="${userName}" required/>
-                    </div>
-                    <div class="col-md-6">
-                      <label for="contact" class="form-label fw-semibold">Contact Telephone *</label>
-                      <input type="tel" name="contact" id="contact" class="form-control" value="${userMobile}" required/>
-                    </div>
-                  </div>
-
-                  <div class="mb-3">
-                    <label for="description" class="form-label fw-semibold">Detailed Description *</label>
-                    <textarea rows="4" name="description" id="description" class="form-control" placeholder="Provide general details such as color, brand, condition, and any accessories found with it..." required></textarea>
-                    <div class="form-text text-muted">Note: Keep unique identifying secrets (like serial numbers or bag contents) out of this description so administrators can use them to test claimants.</div>
-                  </div>
-
-                  <!-- College Handover & Private Room Information -->
-                  <div class="card border-primary border-opacity-25 bg-primary bg-opacity-10 p-3 mb-4 rounded-3">
-                    <div class="d-flex align-items-center mb-2">
-                      <i class="bi bi-shield-lock-fill text-primary me-2 fs-5"></i>
-                      <span class="fw-bold text-dark">Private College Handover & Room Details</span>
-                      <span class="badge bg-secondary ms-auto small">Never Shown Publicly</span>
-                    </div>
-                    <p class="text-muted small mb-3">
-                      These details are kept strictly private and will <strong>only</strong> be unlocked for the true owner once their AI claim answers are approved by the college administrator.
-                    </p>
+                  <!-- SECTION A: Item Information -->
+                  <div class="mb-4">
+                    <h6 class="text-uppercase fw-bold text-primary small d-flex align-items-center gap-2 mb-3">
+                      <span class="badge rounded-circle bg-primary text-white p-1" style="width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;">A</span>
+                      <span>Item Information (Public)</span>
+                    </h6>
                     <div class="row g-3">
                       <div class="col-md-6">
-                        <label for="founder_hostel" class="form-label fw-semibold">Hostel / Campus Building Name *</label>
-                        <input type="text" name="founder_hostel" id="founder_hostel" class="form-control bg-white" placeholder="e.g. Tagore Hostel - Block B, or Library Admin" required/>
+                        <label for="category_id" class="form-label fw-semibold">Item Category <span class="text-danger">*</span></label>
+                        <select name="category_id" id="category_id" class="form-select" required>
+                          <option value="" disabled selected>Select Category</option>
+                          ${catOptions}
+                        </select>
                       </div>
                       <div class="col-md-6">
-                        <label for="founder_room" class="form-label fw-semibold">Room Number / Office Desk *</label>
-                        <input type="text" name="founder_room" id="founder_room" class="form-control bg-white" placeholder="e.g. Room 204, or Desk 3" required/>
+                        <label for="title" class="form-label fw-semibold">Item Name / Title <span class="text-danger">*</span></label>
+                        <input type="text" name="title" id="title" class="form-control" placeholder="e.g. Navy Blue Backpack, Fossil Watch, iPhone 14" required/>
                       </div>
                       <div class="col-12">
-                        <label for="collection_instructions" class="form-label fw-semibold">Handover Availability / Special Instructions</label>
-                        <input type="text" name="collection_instructions" id="collection_instructions" class="form-control bg-white" placeholder="e.g. Available weekdays after 5:00 PM, or WhatsApp me before visiting"/>
+                        <label for="description" class="form-label fw-semibold">Public Description <span class="text-danger">*</span></label>
+                        <textarea rows="3" name="description" id="description" class="form-control" placeholder="Describe visible properties such as color, brand, condition, and any accessories found with it..." required></textarea>
+                        <div class="form-text text-muted small">Visible to all students in public listings. Keep confidential details private for verification.</div>
                       </div>
                     </div>
                   </div>
 
-                  <!-- Multiple Photographs Upload -->
+                  <!-- SECTION B: Item Photographs -->
                   <div class="mb-4">
-                    <label class="form-label fw-semibold d-flex justify-content-between">
-                      <span>Item Photographs (Upload 1 or more) *</span>
-                      <small class="text-muted">Max 5 photos, 5MB each (JPEG, PNG, WebP)</small>
-                    </label>
-                    <div class="border rounded p-3 bg-light text-center">
-                      <input type="file" class="form-control" id="foundImagesInput" multiple accept="image/png, image/jpeg, image/webp">
+                    <h6 class="text-uppercase fw-bold text-primary small d-flex align-items-center gap-2 mb-3">
+                      <span class="badge rounded-circle bg-primary text-white p-1" style="width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;">B</span>
+                      <span>Item Photographs (Public &amp; Admin)</span>
+                    </h6>
+                    <div class="border rounded-3 p-3 bg-light text-center">
+                      <input type="file" class="form-control mb-2" id="foundImagesInput" multiple accept="image/png, image/jpeg, image/webp">
+                      <small class="text-muted d-block">Upload up to 5 clear photographs (JPEG, PNG, WebP — max 5MB each)</small>
                       <div id="multi-preview-container" class="d-flex gap-2 flex-wrap justify-content-center mt-3"></div>
                     </div>
                   </div>
 
-                  <div class="d-grid gap-2 col-md-6 col-12 mx-auto pt-2">
+                  <!-- SECTION C: Found Location and Date -->
+                  <div class="mb-4">
+                    <h6 class="text-uppercase fw-bold text-primary small d-flex align-items-center gap-2 mb-3">
+                      <span class="badge rounded-circle bg-primary text-white p-1" style="width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;">C</span>
+                      <span>Found Location &amp; Date (Public)</span>
+                    </h6>
+                    <div class="row g-3">
+                      <div class="col-md-6">
+                        <label for="item_date" class="form-label fw-semibold">Date Discovered <span class="text-danger">*</span></label>
+                        <input type="date" name="item_date" id="item_date" class="form-control" value="${todayIso}" max="${todayIso}" required/>
+                      </div>
+                      <div class="col-md-6">
+                        <label for="location" class="form-label fw-semibold">Location Where Found <span class="text-danger">*</span></label>
+                        <input type="text" name="location" id="location" class="form-control" placeholder="e.g. Science Auditorium Foyer, Library 2nd Floor, Cafeteria" required/>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- SECTION D: Private Identifying Details -->
+                  <div class="mb-4">
+                    <div class="card p-3 border-secondary border-opacity-25 bg-light rounded-3">
+                      <h6 class="text-uppercase fw-bold text-dark small d-flex align-items-center gap-2 mb-2">
+                        <span class="badge rounded-circle bg-secondary text-white p-1" style="width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;">D</span>
+                        <span>Private Identifying Details</span>
+                        <span class="badge bg-secondary ms-auto" style="font-size:0.7rem;">Admin Only</span>
+                      </h6>
+                      <p class="text-muted small mb-2">
+                        Enter secret details only the true owner would know (e.g. hidden initials, wallpaper photo, wallet contents, scratches). Never shown publicly.
+                      </p>
+                      <textarea rows="2" name="identifying_details" id="identifying_details" class="form-control bg-white" placeholder="e.g. Initials 'R.V.' engraved on back casing, key chain attached to inner zipper..."></textarea>
+                    </div>
+                  </div>
+
+                  <!-- SECTION E: Private College Handover & Room Details -->
+                  <div class="mb-4">
+                    <div class="card p-3 border-primary border-opacity-25 bg-primary bg-opacity-10 rounded-3">
+                      <div class="d-flex align-items-center mb-2">
+                        <span class="badge rounded-circle bg-primary text-white p-1 me-2" style="width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;">E</span>
+                        <span class="fw-bold text-dark">Private College Handover &amp; Room Details</span>
+                        <span class="badge bg-primary ms-auto" style="font-size:0.7rem;"><i class="bi bi-shield-lock-fill me-1"></i>Protected Until Approved</span>
+                      </div>
+                      <p class="text-muted small mb-3">
+                        Strict Privacy Guarantee: Your hostel name, room number, and phone number are <strong>never</strong> exposed in public listings. They are unlocked <strong>only</strong> for the genuine owner once the administrator approves their verified claim.
+                      </p>
+                      <div class="row g-3">
+                        <div class="col-md-6">
+                          <label for="fullname" class="form-label fw-semibold">Finder Name <span class="text-danger">*</span></label>
+                          <input type="text" name="fullname" id="fullname" class="form-control bg-white" value="${userName}" required/>
+                        </div>
+                        <div class="col-md-6">
+                          <label for="contact" class="form-label fw-semibold">Contact Mobile <span class="text-danger">*</span></label>
+                          <div class="input-group">
+                            <span class="input-group-text phone-addon-prefix bg-light fw-bold text-dark">+91</span>
+                            <input type="tel" name="contact" id="contact" class="form-control bg-white phone-addon-input" value="${userMobile}" placeholder="98765 43210" required/>
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <label for="founder_hostel" class="form-label fw-semibold">Hostel / Campus Building Name <span class="text-danger">*</span></label>
+                          <input type="text" name="founder_hostel" id="founder_hostel" class="form-control bg-white" placeholder="e.g. Tagore Hostel - Block B, or Central Library" required/>
+                        </div>
+                        <div class="col-md-6">
+                          <label for="founder_room" class="form-label fw-semibold">Room Number / Office Desk <span class="text-danger">*</span></label>
+                          <input type="text" name="founder_room" id="founder_room" class="form-control bg-white" placeholder="e.g. Room 208, or Staff Room 12" required/>
+                        </div>
+                        <div class="col-12">
+                          <label for="collection_instructions" class="form-label fw-semibold">Handover Hours &amp; Collection Instructions</label>
+                          <input type="text" name="collection_instructions" id="collection_instructions" class="form-control bg-white" placeholder="e.g. Available weekdays after 5:00 PM, or message on WhatsApp before coming"/>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="d-grid gap-2 col-md-8 col-12 mx-auto pt-2">
                     <button type="submit" class="btn btn-primary btn-lg rounded-pill shadow-sm" id="btnSubmitFound">
+                      <span class="spinner-border spinner-border-sm d-none me-2" role="status"></span>
+                      <i class="bi bi-send-fill me-1"></i> Submit Found Item Report
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
                       <span class="spinner-border spinner-border-sm d-none me-2" role="status"></span>
                       <i class="bi bi-send-fill me-1"></i> Submit Found Item Report
                     </button>
@@ -2250,13 +2411,52 @@
     function renderAboutPage(sysInfo = {}) {
       sysInfo = sysInfo || {};
       $('#site-header-container').empty();
-      const content = sysInfo.about || '<p>About Lost and Found Information System.</p>';
+      const content = sysInfo.about || '<p class="lead text-secondary">The Lost and Found Information System (LFIS) is a dedicated campus utility connecting students, faculty, and administrative staff to easily report and reclaim lost items with verified ownership integrity.</p>';
       $('#page-content-area').html(`
-        <div class="col-12">
-          <div class="card shadow-sm border-0">
-            <div class="card-body pt-4">
-              <div class="container-fluid page-content">
+        <div class="col-12 py-3">
+          <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4">
+            <div class="p-4 p-md-5" style="background: linear-gradient(135deg, #1E3A8A 0%, #2563EB 50%, #0284C7 100%); color: #fff;">
+              <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill bg-white bg-opacity-20 text-white small fw-bold mb-3">
+                <i class="bi bi-info-circle"></i> About LFIS Portal
+              </div>
+              <h1 class="fw-bold mb-2">Campus Lost &amp; Found Information System</h1>
+              <p class="text-white text-opacity-75 lead mb-0" style="max-width: 680px;">
+                Fostering trust, integrity, and seamless item recovery across our entire university campus community.
+              </p>
+            </div>
+            <div class="card-body p-4 p-md-5 bg-white">
+              <div class="container-fluid page-content text-dark" style="font-size: 1.05rem; line-height: 1.7;">
                 ${content}
+              </div>
+
+              <div class="row g-4 mt-4 pt-4 border-top">
+                <div class="col-md-4">
+                  <div class="p-4 rounded-3 h-100 border" style="background-color: var(--bg-canvas);">
+                    <div class="rounded-circle d-inline-flex align-items-center justify-content-center text-primary bg-primary bg-opacity-10 mb-3" style="width: 48px; height: 48px;">
+                      <i class="bi bi-shield-check fs-4"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark">Verified Ownership</h5>
+                    <p class="text-muted small mb-0">AI-assisted questionnaire and administrative verification safeguard every item from fraudulent claims.</p>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="p-4 rounded-3 h-100 border" style="background-color: var(--bg-canvas);">
+                    <div class="rounded-circle d-inline-flex align-items-center justify-content-center text-info bg-info bg-opacity-10 mb-3" style="width: 48px; height: 48px;">
+                      <i class="bi bi-lock-fill fs-4"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark">Private Handover</h5>
+                    <p class="text-muted small mb-0">Sensitive identifiers, serial codes, and student room coordinates remain strictly private until claim approval.</p>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="p-4 rounded-3 h-100 border" style="background-color: var(--bg-canvas);">
+                    <div class="rounded-circle d-inline-flex align-items-center justify-content-center text-success bg-success bg-opacity-10 mb-3" style="width: 48px; height: 48px;">
+                      <i class="bi bi-people-fill fs-4"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark">Student Centered</h5>
+                    <p class="text-muted small mb-0">Designed specifically for student dormitories, lecture halls, campus cafeterias, and academic libraries.</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -2269,52 +2469,104 @@
       sysInfo = sysInfo || {};
       $('#site-header-container').empty();
       $('#page-content-area').html(`
-        <h1 class="pageTitle text-center">Our Contact Information</h1>
-        <hr class="mx-auto bg-primary border-primary opacity-100" style="width:50px">
-        <div class="row">
-          <div class="col-lg-7 col-md-6 col-sm-12 col-12">
-            <div class="card shadow-sm border-0">
-              <div class="card-body py-4">
-                <dl>
-                  <dt><b>Our Main Office is Located at:</b></dt>
-                  <dd class="ps-4">${sysInfo.address || '4226 Florence Street, Arlington, Texas, 76011'}</dd>
-                  <dt><b>Email us:</b></dt>
-                  <dd class="ps-4">${sysInfo.email || 'info@simpleorganization.org'}</dd>
-                  <dt><b>Telephone #:</b></dt>
-                  <dd class="ps-4">${sysInfo.phone || '903-436-9356'}</dd>
-                  <dt><b>Mobile #:</b></dt>
-                  <dd class="ps-4">${sysInfo.mobile || '0917-351-8047'}</dd>
-                </dl>
+        <div class="col-12 py-3">
+          <div class="text-center mb-5">
+            <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill fw-bold text-uppercase" style="letter-spacing: 0.05em; font-size: 0.75rem;">Support &amp; Inquiries</span>
+            <h1 class="fw-bold text-dark mt-2 mb-2">Get In Touch With Campus Support</h1>
+            <p class="text-secondary mx-auto" style="max-width: 580px;">Have questions about a lost item, need administrative assistance with a claim, or wish to report a campus facility matter? We are here to help.</p>
+          </div>
+
+          <div class="row g-4">
+            <div class="col-lg-5 col-md-12">
+              <div class="card border-0 shadow-sm rounded-4 h-100 overflow-hidden">
+                <div class="p-4 bg-primary text-white">
+                  <h4 class="fw-bold mb-1">Campus Help Desk</h4>
+                  <p class="text-white text-opacity-75 small mb-0">Student Affairs &amp; Campus Security Administration</p>
+                </div>
+                <div class="card-body p-4 d-flex flex-column gap-3">
+                  <div class="d-flex align-items-start gap-3 p-3 rounded-3" style="background: var(--bg-canvas);">
+                    <div class="rounded-circle bg-white shadow-sm d-flex align-items-center justify-content-center text-primary flex-shrink-0" style="width: 42px; height: 42px;">
+                      <i class="bi bi-geo-alt-fill fs-5"></i>
+                    </div>
+                    <div>
+                      <small class="text-muted d-block text-uppercase fw-bold" style="font-size:0.7rem; letter-spacing: 0.04em;">Campus Location</small>
+                      <span class="text-dark fw-semibold">${sysInfo.address || 'Student Welfare Center, Main Academic Campus'}</span>
+                    </div>
+                  </div>
+
+                  <div class="d-flex align-items-start gap-3 p-3 rounded-3" style="background: var(--bg-canvas);">
+                    <div class="rounded-circle bg-white shadow-sm d-flex align-items-center justify-content-center text-primary flex-shrink-0" style="width: 42px; height: 42px;">
+                      <i class="bi bi-envelope-fill fs-5"></i>
+                    </div>
+                    <div>
+                      <small class="text-muted d-block text-uppercase fw-bold" style="font-size:0.7rem; letter-spacing: 0.04em;">Official Email</small>
+                      <a href="mailto:${sysInfo.email || 'support@campus-lfis.edu'}" class="text-dark fw-semibold text-decoration-none">${sysInfo.email || 'support@campus-lfis.edu'}</a>
+                    </div>
+                  </div>
+
+                  <div class="d-flex align-items-start gap-3 p-3 rounded-3" style="background: var(--bg-canvas);">
+                    <div class="rounded-circle bg-white shadow-sm d-flex align-items-center justify-content-center text-primary flex-shrink-0" style="width: 42px; height: 42px;">
+                      <i class="bi bi-telephone-fill fs-5"></i>
+                    </div>
+                    <div>
+                      <small class="text-muted d-block text-uppercase fw-bold" style="font-size:0.7rem; letter-spacing: 0.04em;">Campus Helpline</small>
+                      <span class="text-dark fw-semibold">${sysInfo.phone || '+91 11-2345-6789'}</span>
+                    </div>
+                  </div>
+
+                  <div class="d-flex align-items-start gap-3 p-3 rounded-3" style="background: var(--bg-canvas);">
+                    <div class="rounded-circle bg-white shadow-sm d-flex align-items-center justify-content-center text-primary flex-shrink-0" style="width: 42px; height: 42px;">
+                      <i class="bi bi-phone-fill fs-5"></i>
+                    </div>
+                    <div>
+                      <small class="text-muted d-block text-uppercase fw-bold" style="font-size:0.7rem; letter-spacing: 0.04em;">Emergency Mobile</small>
+                      <span class="text-dark fw-semibold">${sysInfo.mobile || '+91 98765-43210'}</span>
+                    </div>
+                  </div>
+
+                  <div class="mt-auto p-3 rounded-3 border bg-light text-muted small">
+                    <i class="bi bi-clock-history me-1 text-primary"></i> Operating Hours: Monday – Saturday, 8:30 AM to 6:00 PM IST.
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-          <div class="col-lg-5 col-md-6 col-sm-12 col-12">
-            <div class="card shadow-sm border-0">
-              <div class="card-body py-4">
-                <h4 class="pageTitle">Send us a Message</h4>
-                <form action="" id="inquiry-form">
-                  <input type="hidden" name="visitor" value="true">
-                  <div class="mb-3">
-                    <label for="fullname" class="form-label fw-semibold">Fullname *</label>
-                    <input type="text" class="form-control" id="fullname" name="fullname" required>
-                  </div>
-                  <div class="mb-3">
-                    <label for="email" class="form-label fw-semibold">Email *</label>
-                    <input type="email" class="form-control" id="email" name="email" required>
-                  </div>
-                  <div class="mb-3">
-                    <label for="contact" class="form-label fw-semibold">Contact No. *</label>
-                    <input type="text" class="form-control" id="contact" name="contact" required>
-                  </div>
-                  <div class="mb-3">
-                    <label for="message" class="form-label fw-semibold">Message *</label>
-                    <textarea rows="5" class="form-control" id="message" name="message" required></textarea>
-                  </div>
-                </form>
-              </div>
-              <div class="card-footer bg-white border-top py-3">
-                <div class="col-lg-6 col-md-8 col-sm-10 col-12 mx-auto">
-                  <button class="btn btn-primary w-100 rounded-pill shadow-sm" form="inquiry-form"><i class="bi bi-send me-1"></i> Send Message</button>
+
+            <div class="col-lg-7 col-md-12">
+              <div class="card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-header bg-white border-bottom p-4">
+                  <h4 class="fw-bold text-dark mb-1">Send an Inquiry or Message</h4>
+                  <p class="text-muted small mb-0">Fill out this direct message form and our team will get back to you within 24 hours.</p>
+                </div>
+                <div class="card-body p-4">
+                  <form action="" id="inquiry-form">
+                    <input type="hidden" name="visitor" value="true">
+                    <div class="row g-3">
+                      <div class="col-md-6">
+                        <label for="fullname" class="form-label fw-semibold text-dark">Full Name *</label>
+                        <input type="text" class="form-control rounded-3" id="fullname" name="fullname" placeholder="e.g. Rahul Sharma" required>
+                      </div>
+                      <div class="col-md-6">
+                        <label for="email" class="form-label fw-semibold text-dark">Email Address *</label>
+                        <input type="email" class="form-control rounded-3" id="email" name="email" placeholder="e.g. rahul@college.edu" required>
+                      </div>
+                      <div class="col-12">
+                        <label for="contact" class="form-label fw-semibold text-dark">Contact Phone *</label>
+                        <div class="input-group">
+                          <span class="input-group-text bg-light text-muted fw-bold border-end-0 rounded-start-3">+91</span>
+                          <input type="text" class="form-control rounded-end-3" id="contact" name="contact" placeholder="9876543210" required>
+                        </div>
+                      </div>
+                      <div class="col-12">
+                        <label for="message" class="form-label fw-semibold text-dark">Your Message / Inquiry *</label>
+                        <textarea rows="4" class="form-control rounded-3" id="message" name="message" placeholder="Please provide details about your question, lost item reference, or feedback..." required></textarea>
+                      </div>
+                      <div class="col-12 pt-2">
+                        <button type="submit" class="btn btn-primary px-4 py-2 rounded-pill shadow-sm" form="inquiry-form">
+                          <i class="bi bi-send-fill me-2"></i> Send Inquiry Message
+                        </button>
+                      </div>
+                    </div>
+                  </form>
                 </div>
               </div>
             </div>

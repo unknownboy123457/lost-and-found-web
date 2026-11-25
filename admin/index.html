@@ -532,146 +532,139 @@
               <div class="row">
 
                 <!-- Section Header: Items & Reports -->
-                <div class="col-12 mb-2">
+                <!-- Section Header: Items & Reports -->
+                <div class="col-12 mb-3">
                   <h6 class="text-uppercase fw-bold text-muted small"><i class="bi bi-box-seam me-1 text-primary"></i> Found Items & Inventory</h6>
                 </div>
 
                 <!-- Total Found Items -->
-                <div class="col-xxl-3 col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12">
-                  <div class="card info-card">
-                    <div class="card-body">
-                      <h5 class="card-title">Found Items <span>| Total</span></h5>
-                      <div class="d-flex align-items-center justify-content-between">
-                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-info bg-opacity-25 text-info">
-                          <i class="bi bi-box-seam"></i>
-                        </div>
-                        <div class="ps-3">
-                          <h6>${format_num(stats.totalFoundItems)}</h6>
-                        </div>
+                <div class="col-xxl-3 col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12 mb-3">
+                  <div class="stat-card">
+                    <div class="d-flex align-items-center justify-content-between">
+                      <div>
+                        <span class="text-muted small fw-semibold text-uppercase d-block mb-1">Total Found Items</span>
+                        <h3 class="fw-bold text-dark mb-0">${format_num(stats.totalFoundItems)}</h3>
+                        <small class="text-primary mt-1 d-inline-block"><i class="bi bi-box-seam me-1"></i>Campus Registry</small>
+                      </div>
+                      <div class="stat-icon-wrap bg-primary bg-opacity-10 text-primary">
+                        <i class="bi bi-box-seam"></i>
                       </div>
                     </div>
                   </div>
                 </div>
 
                 <!-- Published Items -->
-                <div class="col-xxl-3 col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12">
-                  <div class="card info-card">
-                    <div class="card-body">
-                      <h5 class="card-title">Listings <span>| Published</span></h5>
-                      <div class="d-flex align-items-center justify-content-between">
-                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-primary bg-opacity-25 text-primary">
-                          <i class="bi bi-eye"></i>
-                        </div>
-                        <div class="ps-3">
-                          <h6>${format_num(stats.publishedItems)}</h6>
-                        </div>
+                <div class="col-xxl-3 col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12 mb-3">
+                  <div class="stat-card">
+                    <div class="d-flex align-items-center justify-content-between">
+                      <div>
+                        <span class="text-muted small fw-semibold text-uppercase d-block mb-1">Live Listings</span>
+                        <h3 class="fw-bold text-dark mb-0">${format_num(stats.publishedItems)}</h3>
+                        <small class="text-success mt-1 d-inline-block"><i class="bi bi-eye me-1"></i>Visible Online</small>
+                      </div>
+                      <div class="stat-icon-wrap bg-success bg-opacity-10 text-success">
+                        <i class="bi bi-eye"></i>
                       </div>
                     </div>
                   </div>
                 </div>
 
                 <!-- Pending Item Moderation -->
-                <div class="col-xxl-3 col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12">
-                  <div class="card info-card">
-                    <div class="card-body">
-                      <h5 class="card-title">Item Reports <span>| Pending</span></h5>
-                      <div class="d-flex align-items-center justify-content-between">
-                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-warning bg-opacity-25 text-warning">
-                          <i class="bi bi-hourglass-split"></i>
-                        </div>
-                        <div class="ps-3">
-                          <h6>${format_num(stats.pendingItems)}</h6>
-                        </div>
+                <div class="col-xxl-3 col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12 mb-3">
+                  <div class="stat-card">
+                    <div class="d-flex align-items-center justify-content-between">
+                      <div>
+                        <span class="text-muted small fw-semibold text-uppercase d-block mb-1">Pending Moderation</span>
+                        <h3 class="fw-bold text-dark mb-0">${format_num(stats.pendingItems)}</h3>
+                        <small class="text-warning mt-1 d-inline-block"><i class="bi bi-hourglass-split me-1"></i>Awaiting Review</small>
+                      </div>
+                      <div class="stat-icon-wrap bg-warning bg-opacity-15 text-warning">
+                        <i class="bi bi-hourglass-split"></i>
                       </div>
                     </div>
                   </div>
                 </div>
 
                 <!-- Returned Items -->
-                <div class="col-xxl-3 col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12">
-                  <div class="card info-card">
-                    <div class="card-body">
-                      <h5 class="card-title">Returned <span>| To Owners</span></h5>
-                      <div class="d-flex align-items-center justify-content-between">
-                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-success bg-opacity-25 text-success">
-                          <i class="bi bi-check2-circle"></i>
-                        </div>
-                        <div class="ps-3">
-                          <h6>${format_num(stats.returnedItems)}</h6>
-                        </div>
+                <div class="col-xxl-3 col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12 mb-3">
+                  <div class="stat-card">
+                    <div class="d-flex align-items-center justify-content-between">
+                      <div>
+                        <span class="text-muted small fw-semibold text-uppercase d-block mb-1">Returned to Owners</span>
+                        <h3 class="fw-bold text-dark mb-0">${format_num(stats.returnedItems)}</h3>
+                        <small class="text-teal mt-1 d-inline-block"><i class="bi bi-check2-circle me-1"></i>Reunited</small>
+                      </div>
+                      <div class="stat-icon-wrap bg-teal bg-opacity-10 text-teal" style="background:#ccfbf1; color:#0f766e;">
+                        <i class="bi bi-check2-circle"></i>
                       </div>
                     </div>
                   </div>
                 </div>
 
                 <!-- Section Header: Claims & Recovery -->
-                <div class="col-12 mt-2 mb-2">
-                  <h6 class="text-uppercase fw-bold text-muted small"><i class="bi bi-shield-check me-1 text-teal"></i> Claims & Ownership Verification</h6>
+                <div class="col-12 mt-2 mb-3">
+                  <h6 class="text-uppercase fw-bold text-muted small"><i class="bi bi-shield-check me-1 text-primary"></i> Claims & Ownership Verification</h6>
                 </div>
 
                 <!-- Pending Claims -->
-                <div class="col-xxl-3 col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12">
-                  <div class="card info-card">
-                    <div class="card-body">
-                      <h5 class="card-title">Claims <span>| Pending Review</span></h5>
-                      <div class="d-flex align-items-center justify-content-between">
-                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-danger bg-opacity-25 text-danger">
-                          <i class="bi bi-shield-exclamation"></i>
-                        </div>
-                        <div class="ps-3">
-                          <h6>${format_num(stats.pendingClaims)}</h6>
-                        </div>
+                <div class="col-xxl-3 col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12 mb-3">
+                  <div class="stat-card">
+                    <div class="d-flex align-items-center justify-content-between">
+                      <div>
+                        <span class="text-muted small fw-semibold text-uppercase d-block mb-1">Pending Review</span>
+                        <h3 class="fw-bold text-dark mb-0">${format_num(stats.pendingClaims)}</h3>
+                        <small class="text-danger mt-1 d-inline-block"><i class="bi bi-shield-exclamation me-1"></i>Action Needed</small>
+                      </div>
+                      <div class="stat-icon-wrap bg-danger bg-opacity-10 text-danger">
+                        <i class="bi bi-shield-exclamation"></i>
                       </div>
                     </div>
                   </div>
                 </div>
 
                 <!-- Approved Claims -->
-                <div class="col-xxl-3 col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12">
-                  <div class="card info-card">
-                    <div class="card-body">
-                      <h5 class="card-title">Claims <span>| Approved</span></h5>
-                      <div class="d-flex align-items-center justify-content-between">
-                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-info bg-opacity-25 text-info">
-                          <i class="bi bi-shield-check"></i>
-                        </div>
-                        <div class="ps-3">
-                          <h6>${format_num(stats.approvedClaims)}</h6>
-                        </div>
+                <div class="col-xxl-3 col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12 mb-3">
+                  <div class="stat-card">
+                    <div class="d-flex align-items-center justify-content-between">
+                      <div>
+                        <span class="text-muted small fw-semibold text-uppercase d-block mb-1">Approved Claims</span>
+                        <h3 class="fw-bold text-dark mb-0">${format_num(stats.approvedClaims)}</h3>
+                        <small class="text-success mt-1 d-inline-block"><i class="bi bi-shield-check me-1"></i>Verified</small>
+                      </div>
+                      <div class="stat-icon-wrap bg-success bg-opacity-10 text-success">
+                        <i class="bi bi-shield-check"></i>
                       </div>
                     </div>
                   </div>
                 </div>
 
                 <!-- Awaiting Collection -->
-                <div class="col-xxl-3 col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12">
-                  <div class="card info-card">
-                    <div class="card-body">
-                      <h5 class="card-title">Handover <span>| Awaiting Collection</span></h5>
-                      <div class="d-flex align-items-center justify-content-between">
-                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-primary bg-opacity-25 text-primary">
-                          <i class="bi bi-geo-alt"></i>
-                        </div>
-                        <div class="ps-3">
-                          <h6>${format_num(stats.awaitingCollection)}</h6>
-                        </div>
+                <div class="col-xxl-3 col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12 mb-3">
+                  <div class="stat-card">
+                    <div class="d-flex align-items-center justify-content-between">
+                      <div>
+                        <span class="text-muted small fw-semibold text-uppercase d-block mb-1">Awaiting Pickup</span>
+                        <h3 class="fw-bold text-dark mb-0">${format_num(stats.awaitingCollection)}</h3>
+                        <small class="text-primary mt-1 d-inline-block"><i class="bi bi-geo-alt me-1"></i>Scheduled Desk</small>
+                      </div>
+                      <div class="stat-icon-wrap bg-primary bg-opacity-10 text-primary">
+                        <i class="bi bi-geo-alt"></i>
                       </div>
                     </div>
                   </div>
                 </div>
 
                 <!-- Rejected Claims -->
-                <div class="col-xxl-3 col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12">
-                  <div class="card info-card">
-                    <div class="card-body">
-                      <h5 class="card-title">Claims <span>| Rejected</span></h5>
-                      <div class="d-flex align-items-center justify-content-between">
-                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-secondary bg-opacity-25 text-secondary">
-                          <i class="bi bi-shield-x"></i>
-                        </div>
-                        <div class="ps-3">
-                          <h6>${format_num(stats.rejectedClaims)}</h6>
-                        </div>
+                <div class="col-xxl-3 col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12 mb-3">
+                  <div class="stat-card">
+                    <div class="d-flex align-items-center justify-content-between">
+                      <div>
+                        <span class="text-muted small fw-semibold text-uppercase d-block mb-1">Rejected Claims</span>
+                        <h3 class="fw-bold text-dark mb-0">${format_num(stats.rejectedClaims)}</h3>
+                        <small class="text-secondary mt-1 d-inline-block"><i class="bi bi-shield-x me-1"></i>Closed</small>
+                      </div>
+                      <div class="stat-icon-wrap bg-secondary bg-opacity-10 text-secondary">
+                        <i class="bi bi-shield-x"></i>
                       </div>
                     </div>
                   </div>
@@ -765,13 +758,13 @@
             </td>
             <td class="text-center align-middle">
               <div class="dropdown">
-                <button type="button" class="btn btn-flat p-1 btn-default btn-sm border dropdown-toggle dropdown-icon" data-bs-toggle="dropdown">Action</button>
-                <div class="dropdown-menu">
-                  <a class="dropdown-item" href="./?page=categories/view_category&id=${cat.id}"><span class="bi bi-card-text text-dark"></span> View</a>
+                <button type="button" class="btn btn-outline-primary btn-sm rounded-pill px-3 dropdown-toggle shadow-sm" data-bs-toggle="dropdown">Action</button>
+                <div class="dropdown-menu shadow border-0 rounded-3">
+                  <a class="dropdown-item py-2" href="./?page=categories/view_category&id=${cat.id}"><span class="bi bi-card-text text-dark me-2"></span> View</a>
                   <div class="dropdown-divider"></div>
-                  <a class="dropdown-item" href="./?page=categories/manage_category&id=${cat.id}"><span class="bi bi-pencil-square text-primary"></span> Edit</a>
+                  <a class="dropdown-item py-2" href="./?page=categories/manage_category&id=${cat.id}"><span class="bi bi-pencil-square text-primary me-2"></span> Edit</a>
                   <div class="dropdown-divider"></div>
-                  <a class="dropdown-item delete_cat_btn" href="javascript:void(0)" data-id="${cat.id}"><span class="bi bi-trash text-danger"></span> Delete</a>
+                  <a class="dropdown-item py-2 delete_cat_btn text-danger" href="javascript:void(0)" data-id="${cat.id}"><span class="bi bi-trash text-danger me-2"></span> Delete</a>
                 </div>
               </div>
             </td>
@@ -780,16 +773,17 @@
       });
 
       $('#admin-content-area').html(`
-        <div class="card card-outline rounded-0 card-navy">
-          <div class="card-header">
-            <div class="card-tools d-flex justify-content-end">
-              <a href="./?page=categories/manage_category" class="btn btn-flat btn-primary bg-gradient-teal border-0 rounded-0"><i class="bi bi-plus-lg"></i> Create New</a>
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+          <div class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center">
+            <h5 class="fw-bold text-dark mb-0"><i class="bi bi-folder-fill text-primary me-2"></i> Category Management</h5>
+            <div class="card-tools">
+              <a href="./?page=categories/manage_category" class="btn btn-primary rounded-pill btn-sm px-3 shadow-sm"><i class="bi bi-plus-lg me-1"></i> Create New</a>
             </div>
           </div>
           <div class="card-body pt-3">
             <div class="table-responsive">
-              <table class="table table-sm table-hover table-striped table-bordered" id="cat-list-tbl">
-                <thead>
+              <table class="table table-hover align-middle" id="cat-list-tbl">
+                <thead class="table-light">
                   <tr>
                     <th>#</th>
                     <th>Date Created</th>
@@ -970,13 +964,13 @@
             <td class="text-center align-middle">${statusBadge}</td>
             <td class="text-center align-middle">
               <div class="dropdown">
-                <button type="button" class="btn btn-flat p-1 btn-default btn-sm border dropdown-toggle dropdown-icon" data-bs-toggle="dropdown">Action</button>
-                <div class="dropdown-menu">
-                  <a class="dropdown-item" href="./?page=items/view_item&id=${item.id}"><span class="bi bi-card-text text-dark"></span> View</a>
+                <button type="button" class="btn btn-outline-primary btn-sm rounded-pill px-3 dropdown-toggle shadow-sm" data-bs-toggle="dropdown">Action</button>
+                <div class="dropdown-menu shadow border-0 rounded-3">
+                  <a class="dropdown-item py-2" href="./?page=items/view_item&id=${item.id}"><span class="bi bi-card-text text-dark me-2"></span> View</a>
                   <div class="dropdown-divider"></div>
-                  <a class="dropdown-item" href="./?page=items/manage_item&id=${item.id}"><span class="bi bi-pencil-square text-primary"></span> Edit</a>
+                  <a class="dropdown-item py-2" href="./?page=items/manage_item&id=${item.id}"><span class="bi bi-pencil-square text-primary me-2"></span> Edit</a>
                   <div class="dropdown-divider"></div>
-                  <a class="dropdown-item delete_item_btn" href="javascript:void(0)" data-id="${item.id}"><span class="bi bi-trash text-danger"></span> Delete</a>
+                  <a class="dropdown-item py-2 delete_item_btn text-danger" href="javascript:void(0)" data-id="${item.id}"><span class="bi bi-trash text-danger me-2"></span> Delete</a>
                 </div>
               </div>
             </td>
@@ -985,16 +979,17 @@
       });
 
       $('#admin-content-area').html(`
-        <div class="card card-outline rounded-0 card-navy">
-          <div class="card-header">
-            <div class="card-tools d-flex justify-content-end">
-              <a href="./?page=items/manage_item" class="btn btn-flat btn-primary bg-gradient-teal border-0 rounded-0"><i class="bi bi-plus-lg"></i> Create New</a>
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+          <div class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center">
+            <h5 class="fw-bold text-dark mb-0"><i class="bi bi-box-seam-fill text-primary me-2"></i> Items Management</h5>
+            <div class="card-tools">
+              <a href="./?page=items/manage_item" class="btn btn-primary rounded-pill btn-sm px-3 shadow-sm"><i class="bi bi-plus-lg me-1"></i> Create New</a>
             </div>
           </div>
           <div class="card-body pt-3">
             <div class="table-responsive">
-              <table class="table table-sm table-hover table-striped table-bordered" id="item-list-tbl">
-                <thead>
+              <table class="table table-hover align-middle" id="item-list-tbl">
+                <thead class="table-light">
                   <tr>
                     <th>#</th>
                     <th>Date Created</th>
@@ -3136,69 +3131,69 @@
           const itemImgUrl = window.StorageManager.getImageUrl(item.image_path, '../uploads/logo.png', '../');
           const isCompeting = (claimsPerItem[claim.item_id] || 0) > 1;
 
-          // Status Badge
+          // Status Badge adhering to color theme
           let statusBadge = '';
           switch (claim.status) {
             case 'pending':
             case 'pending_admin_approval':
-              statusBadge = '<span class="badge bg-warning text-dark"><i class="bi bi-clock-history me-1"></i> Pending AI Review</span>';
+              statusBadge = '<span class="badge badge-status badge-status-pending"><i class="bi bi-hourglass-split me-1"></i> Pending AI Review</span>';
               break;
             case 'info_requested':
-              statusBadge = '<span class="badge bg-secondary"><i class="bi bi-question-circle me-1"></i> More Info Requested</span>';
+              statusBadge = '<span class="badge badge-status badge-status-pending"><i class="bi bi-question-circle me-1"></i> More Info Requested</span>';
               break;
             case 'approved':
             case 'approved_for_collection':
-              statusBadge = '<span class="badge bg-success text-white"><i class="bi bi-unlock-fill me-1"></i> Approved (Room Details Unlocked)</span>';
+              statusBadge = '<span class="badge badge-status badge-status-approved"><i class="bi bi-unlock-fill me-1"></i> Approved (Room Unlocked)</span>';
               break;
             case 'ready_for_scheduling':
-              statusBadge = '<span class="badge bg-primary"><i class="bi bi-pin-map me-1"></i> Address Received</span>';
+              statusBadge = '<span class="badge badge-status badge-status-collection"><i class="bi bi-pin-map me-1"></i> Address Received</span>';
               break;
             case 'scheduled':
-              statusBadge = '<span class="badge bg-primary text-light"><i class="bi bi-calendar-check me-1"></i> Collection Scheduled</span>';
+              statusBadge = '<span class="badge badge-status badge-status-collection"><i class="bi bi-calendar-check me-1"></i> Collection Scheduled</span>';
               break;
             case 'completed':
             case 'returned':
-              statusBadge = '<span class="badge bg-dark"><i class="bi bi-patch-check-fill text-success me-1"></i> Handover Completed & Returned</span>';
+              statusBadge = '<span class="badge badge-status badge-status-recovered"><i class="bi bi-patch-check-fill me-1"></i> Handover Completed & Returned</span>';
               break;
             case 'rejected':
-              statusBadge = '<span class="badge bg-danger"><i class="bi bi-x-circle me-1"></i> Rejected</span>';
+              statusBadge = '<span class="badge badge-status badge-status-rejected"><i class="bi bi-x-circle me-1"></i> Claim Rejected</span>';
               break;
             default:
-              statusBadge = `<span class="badge bg-secondary">${escapeHtml(claim.status)}</span>`;
+              statusBadge = `<span class="badge badge-status bg-light text-dark">${escapeHtml(claim.status)}</span>`;
           }
 
-          // Action buttons
+          // Action buttons with 3D styling
           let actionButtons = '';
           if (claim.status === 'pending' || claim.status === 'pending_admin_approval' || claim.status === 'info_requested') {
             actionButtons = `
-              <button class="btn btn-sm btn-success bg-gradient-success border-0 btn-approve-claim" data-id="${claim.id}">
+              <button class="btn btn-sm btn-success btn-approve-claim shadow-sm" data-id="${claim.id}">
                 <i class="bi bi-check-lg me-1"></i> Approve Claim & Unlock Room
               </button>
-              <button class="btn btn-sm btn-warning border-0 btn-info-claim" data-id="${claim.id}">
+              <button class="btn btn-sm btn-outline-secondary btn-info-claim shadow-sm" data-id="${claim.id}">
                 <i class="bi bi-chat-left-dots me-1"></i> Request Info
               </button>
-              <button class="btn btn-sm btn-danger bg-gradient-danger border-0 btn-reject-claim" data-id="${claim.id}">
+              <button class="btn btn-sm btn-danger btn-reject-claim shadow-sm" data-id="${claim.id}">
                 <i class="bi bi-x-lg me-1"></i> Reject Claim
               </button>
             `;
           } else if (claim.status === 'approved' || claim.status === 'approved_for_collection' || claim.status === 'ready_for_scheduling') {
             actionButtons = `
-              <button class="btn btn-sm btn-success bg-gradient-success border-0 btn-confirm-handover" data-id="${claim.id}">
+              <button class="btn btn-sm btn-success btn-confirm-handover shadow-sm" data-id="${claim.id}">
                 <i class="bi bi-box-arrow-down me-1"></i> Confirm Handover & Mark Returned
               </button>
-              <button class="btn btn-sm btn-primary bg-gradient-teal border-0 btn-assign-location" data-id="${claim.id}">
+              <button class="btn btn-sm btn-primary btn-assign-location shadow-sm" data-id="${claim.id}">
                 <i class="bi bi-geo-alt-fill me-1"></i> Assign Official Desk
               </button>
-              <button class="btn btn-sm btn-outline-danger btn-reject-claim" data-id="${claim.id}">
+              <button class="btn btn-sm btn-outline-danger btn-reject-claim shadow-sm" data-id="${claim.id}">
                 <i class="bi bi-x-circle me-1"></i> Reject
               </button>
             `;
           } else if (claim.status === 'scheduled') {
             actionButtons = `
-              <button class="btn btn-sm btn-success bg-gradient-success border-0 btn-confirm-handover" data-id="${claim.id}">
+              <button class="btn btn-sm btn-success btn-confirm-handover shadow-sm" data-id="${claim.id}">
                 <i class="bi bi-box-arrow-down me-1"></i> Confirm Handover & Mark Returned
               </button>
-              <button class="btn btn-sm btn-outline-primary btn-assign-location" data-id="${claim.id}">
+              <button class="btn btn-sm btn-outline-primary btn-assign-location shadow-sm" data-id="${claim.id}">
                 <i class="bi bi-pencil-square me-1"></i> Update Collection Desk
               </button>
             `;

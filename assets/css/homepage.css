@@ -193,15 +193,16 @@
 }
 
 .btn-hero-reclaim {
-  background: var(--lf-accent);
+  background: linear-gradient(180deg, #10B981 0%, #059669 100%);
   color: #ffffff !important;
   font-weight: 700;
   font-size: 1.05rem;
-  padding: 14px 34px;
+  padding: 13px 32px;
   border-radius: 50px;
-  border: none;
-  box-shadow: 0 4px 18px rgba(16, 185, 129, 0.4);
-  transition: all 0.25s ease;
+  border: 1px solid #047857;
+  border-bottom: 3.5px solid #065F46;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+  transition: all 0.2s ease;
   text-decoration: none;
   display: inline-flex;
   align-items: center;
@@ -209,21 +210,28 @@
 }
 
 .btn-hero-reclaim:hover {
-  background: var(--lf-accent-dark);
+  background: linear-gradient(180deg, #059669 0%, #047857 100%);
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.5);
+  border-bottom: 4.5px solid #065F46;
+  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.45);
+}
+
+.btn-hero-reclaim:active {
+  transform: translateY(2px);
+  border-bottom: 1px solid #065F46;
 }
 
 .btn-hero-how {
   background: #ffffff;
   color: #0f172a !important;
   font-weight: 700;
-  font-size: 1.05rem;
-  padding: 14px 30px;
+  font-size: 0.95rem;
+  padding: 13px 26px;
   border-radius: 50px;
-  border: none;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-  transition: all 0.25s ease;
+  border: 1.5px solid #cbd5e1;
+  border-bottom: 3.5px solid #94a3b8;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+  transition: all 0.2s ease;
   text-decoration: none;
   display: inline-flex;
   align-items: center;
@@ -233,32 +241,26 @@
 .btn-hero-how:hover {
   background: #f8fafc;
   transform: translateY(-2px);
-  color: var(--lf-primary) !important;
+  border-bottom: 4.5px solid #94a3b8;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
 }
 
-.btn-hero-how .play-icon {
-  width: 28px;
-  height: 28px;
-  background: linear-gradient(135deg, #f59e0b, #ef4444);
-  border-radius: 50%;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: #ffffff;
-  font-size: 0.75rem;
-  padding-left: 2px;
+.btn-hero-how:active {
+  transform: translateY(2px);
+  border-bottom: 1px solid #94a3b8;
 }
 
 .btn-hero-found {
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(6px);
+  background: linear-gradient(180deg, #3B82F6 0%, #2563EB 100%);
   color: #ffffff !important;
-  font-weight: 600;
-  font-size: 1rem;
+  font-weight: 700;
+  font-size: 0.95rem;
   padding: 13px 26px;
   border-radius: 50px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  transition: all 0.25s ease;
+  border: 1px solid #1D4ED8;
+  border-bottom: 3.5px solid #1E40AF;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
+  transition: all 0.2s ease;
   text-decoration: none;
   display: inline-flex;
   align-items: center;
@@ -266,8 +268,15 @@
 }
 
 .btn-hero-found:hover {
-  background: rgba(255, 255, 255, 0.25);
+  background: linear-gradient(180deg, #2563EB 0%, #1D4ED8 100%);
   transform: translateY(-2px);
+  border-bottom: 4.5px solid #1E40AF;
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4);
+}
+
+.btn-hero-found:active {
+  transform: translateY(2px);
+  border-bottom: 1px solid #1E40AF;
 }
 
 /* Multi-Field Working Search Box */
@@ -321,13 +330,15 @@
 }
 
 .btn-search-submit {
-  background: var(--lf-primary);
-  color: #ffffff;
+  background: linear-gradient(180deg, #3B82F6 0%, #2563EB 100%);
+  color: #ffffff !important;
   font-weight: 700;
   font-size: 1rem;
-  padding: 12px 28px;
+  padding: 11px 26px;
   border-radius: 12px;
-  border: none;
+  border: 1px solid #1D4ED8;
+  border-bottom: 3.5px solid #1E40AF;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -335,7 +346,15 @@
 }
 
 .btn-search-submit:hover {
-  background: var(--lf-primary-dark);
+  background: linear-gradient(180deg, #2563EB 0%, #1D4ED8 100%);
+  transform: translateY(-2px);
+  border-bottom: 4.5px solid #1E40AF;
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
+}
+
+.btn-search-submit:active {
+  transform: translateY(2px);
+  border-bottom: 1px solid #1E40AF;
 }
 
 /* 2. PARTNERS CAROUSEL (Infinite Ticker) */

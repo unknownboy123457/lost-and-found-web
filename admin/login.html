@@ -24,19 +24,40 @@
 
   <style>
     body {
-      background-image: url("../uploads/cover.png");
+      background: linear-gradient(135deg, #0F172A 0%, #1E3A8A 50%, #0369A1 100%);
       background-size: cover;
+      background-position: center center;
       background-repeat: no-repeat;
-      backdrop-filter: brightness(.7);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       overflow-x: hidden;
     }
+    .card {
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      border-radius: 16px;
+      box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.35);
+      background: #FFFFFF;
+    }
     .logo img {
-      max-height: 55px;
-      margin-right: 25px;
+      max-height: 48px;
+      margin-right: 15px;
     }
     .logo span {
-      color: #fff;
-      text-shadow: 0px 0px 10px #000;
+      color: #FFFFFF;
+      font-weight: 700;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+    .form-control {
+      border: 1.5px solid #CBD5E1;
+      padding: 0.65rem 0.95rem;
+      font-size: 0.95rem;
+    }
+    .form-control:focus {
+      border-color: #2563EB;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.18);
     }
   </style>
 
