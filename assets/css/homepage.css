@@ -193,16 +193,19 @@
 }
 
 .btn-hero-reclaim {
-  background: linear-gradient(180deg, #10B981 0%, #059669 100%);
+  background: linear-gradient(180deg, #38BDF8 0%, #0EA5E9 45%, #0284C7 100%) !important;
   color: #ffffff !important;
   font-weight: 700;
   font-size: 1.05rem;
   padding: 13px 32px;
   border-radius: 50px;
-  border: 1px solid #047857;
-  border-bottom: 3.5px solid #065F46;
-  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
-  transition: all 0.2s ease;
+  border: 2px solid #38BDF8 !important;
+  box-shadow: 
+    inset 0 1px 0 rgba(255, 255, 255, 0.85),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.2),
+    0 4px 0 #0369A1,
+    0 8px 18px rgba(2, 132, 199, 0.28) !important;
+  transition: all 0.16s cubic-bezier(0.4, 0, 0.2, 1);
   text-decoration: none;
   display: inline-flex;
   align-items: center;
@@ -210,15 +213,23 @@
 }
 
 .btn-hero-reclaim:hover {
-  background: linear-gradient(180deg, #059669 0%, #047857 100%);
+  background: linear-gradient(180deg, #38BDF8 0%, #0284C7 100%) !important;
+  border-color: #7DD3FC !important;
   transform: translateY(-2px);
-  border-bottom: 4.5px solid #065F46;
-  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.45);
+  box-shadow: 
+    0 0 0 5px rgba(56, 189, 248, 0.42),
+    inset 0 1px 1px rgba(255, 255, 255, 0.95),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.2),
+    0 4px 0 #0369A1,
+    0 12px 24px rgba(2, 132, 199, 0.38) !important;
 }
 
 .btn-hero-reclaim:active {
-  transform: translateY(2px);
-  border-bottom: 1px solid #065F46;
+  transform: translateY(3px) !important;
+  box-shadow: 
+    0 1px 0 #0369A1,
+    0 0 0 3px rgba(56, 189, 248, 0.4),
+    inset 0 2px 4px rgba(0, 0, 0, 0.25) !important;
 }
 
 .btn-hero-how {

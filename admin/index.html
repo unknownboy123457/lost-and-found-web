@@ -531,72 +531,140 @@
             <div class="col-lg-12 col-md-12 col-sm-12 col-12">
               <div class="row">
 
-                <!-- Section Header: Items & Reports -->
+                <!-- Mantis-Style Welcome Banner Card (Image 3) -->
+                <div class="col-12 mb-3">
+                  <div class="mantis-welcome-card d-flex align-items-center justify-content-between flex-wrap gap-3">
+                    <div style="max-width: 640px; z-index: 2;">
+                      <span class="badge bg-white bg-opacity-20 text-white rounded-pill px-3 py-1 mb-2 fw-semibold">
+                        <i class="bi bi-shield-check me-1"></i> LFIS Campus Control Center
+                      </span>
+                      <h2 class="fw-bold mb-2">Welcome to LFIS Administrator</h2>
+                      <p class="text-white text-opacity-80 mb-3" style="font-size: 0.95rem;">
+                        Moderate campus lost &amp; found listings, review AI-assisted student ownership claims, and authorize verified hostel room pickups.
+                      </p>
+                      <a href="./?page=claims" class="btn btn-light rounded-pill px-4 fw-bold shadow-sm" style="color: #1E3A8A;">
+                        <i class="bi bi-shield-lock-fill me-1 text-primary"></i> Review Claims &amp; Recovery
+                      </a>
+                    </div>
+                    <div class="d-none d-md-flex align-items-center justify-content-center text-white text-opacity-25" style="z-index: 1;">
+                      <i class="bi bi-shield-shaded" style="font-size: 5.5rem;"></i>
+                    </div>
+                  </div>
+                </div>
+
                 <!-- Section Header: Items & Reports -->
                 <div class="col-12 mb-3">
-                  <h6 class="text-uppercase fw-bold text-muted small"><i class="bi bi-box-seam me-1 text-primary"></i> Found Items & Inventory</h6>
+                  <h6 class="text-uppercase fw-bold text-muted small"><i class="bi bi-graph-up me-1 text-primary"></i> Campus Activity &amp; Metric Trends (Mantis View)</h6>
                 </div>
 
-                <!-- Total Found Items -->
+                <!-- 1. Total Found Items (Mantis Card + Blue Sparkline) -->
                 <div class="col-xxl-3 col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12 mb-3">
-                  <div class="stat-card">
-                    <div class="d-flex align-items-center justify-content-between">
-                      <div>
-                        <span class="text-muted small fw-semibold text-uppercase d-block mb-1">Total Found Items</span>
-                        <h3 class="fw-bold text-dark mb-0">${format_num(stats.totalFoundItems)}</h3>
-                        <small class="text-primary mt-1 d-inline-block"><i class="bi bi-box-seam me-1"></i>Campus Registry</small>
+                  <div class="mantis-stat-card">
+                    <div>
+                      <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span class="text-muted small fw-semibold text-uppercase">Total Found Items</span>
+                        <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-2 py-1 small">+14.2%</span>
                       </div>
-                      <div class="stat-icon-wrap bg-primary bg-opacity-10 text-primary">
-                        <i class="bi bi-box-seam"></i>
-                      </div>
+                      <h3 class="fw-bold text-dark mb-1">${format_num(stats.totalFoundItems)}</h3>
+                      <span class="text-muted small d-block mb-2">Campus Registry Items</span>
+                    </div>
+                    <div class="sparkline-bars sparkline-blue">
+                      <div class="sparkline-bar" style="height:35%"></div>
+                      <div class="sparkline-bar" style="height:55%"></div>
+                      <div class="sparkline-bar" style="height:40%"></div>
+                      <div class="sparkline-bar" style="height:70%"></div>
+                      <div class="sparkline-bar" style="height:60%"></div>
+                      <div class="sparkline-bar" style="height:85%"></div>
+                      <div class="sparkline-bar" style="height:75%"></div>
+                      <div class="sparkline-bar" style="height:100%"></div>
+                      <div class="sparkline-bar" style="height:90%"></div>
+                      <div class="sparkline-bar" style="height:65%"></div>
+                      <div class="sparkline-bar" style="height:80%"></div>
+                      <div class="sparkline-bar" style="height:95%"></div>
                     </div>
                   </div>
                 </div>
 
-                <!-- Published Items -->
+                <!-- 2. Pending Claims (Mantis Card + Red Sparkline) -->
                 <div class="col-xxl-3 col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12 mb-3">
-                  <div class="stat-card">
-                    <div class="d-flex align-items-center justify-content-between">
-                      <div>
-                        <span class="text-muted small fw-semibold text-uppercase d-block mb-1">Live Listings</span>
-                        <h3 class="fw-bold text-dark mb-0">${format_num(stats.publishedItems)}</h3>
-                        <small class="text-success mt-1 d-inline-block"><i class="bi bi-eye me-1"></i>Visible Online</small>
+                  <div class="mantis-stat-card">
+                    <div>
+                      <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span class="text-muted small fw-semibold text-uppercase">Pending Claims</span>
+                        <span class="badge bg-danger bg-opacity-10 text-danger rounded-pill px-2 py-1 small">${stats.pendingClaims > 0 ? 'Action Needed' : 'All Clear'}</span>
                       </div>
-                      <div class="stat-icon-wrap bg-success bg-opacity-10 text-success">
-                        <i class="bi bi-eye"></i>
-                      </div>
+                      <h3 class="fw-bold text-dark mb-1">${format_num(stats.pendingClaims)}</h3>
+                      <span class="text-muted small d-block mb-2">Awaiting Verification</span>
+                    </div>
+                    <div class="sparkline-bars sparkline-red">
+                      <div class="sparkline-bar" style="height:80%"></div>
+                      <div class="sparkline-bar" style="height:65%"></div>
+                      <div class="sparkline-bar" style="height:90%"></div>
+                      <div class="sparkline-bar" style="height:70%"></div>
+                      <div class="sparkline-bar" style="height:60%"></div>
+                      <div class="sparkline-bar" style="height:45%"></div>
+                      <div class="sparkline-bar" style="height:50%"></div>
+                      <div class="sparkline-bar" style="height:40%"></div>
+                      <div class="sparkline-bar" style="height:35%"></div>
+                      <div class="sparkline-bar" style="height:30%"></div>
+                      <div class="sparkline-bar" style="height:25%"></div>
+                      <div class="sparkline-bar" style="height:20%"></div>
                     </div>
                   </div>
                 </div>
 
-                <!-- Pending Item Moderation -->
+                <!-- 3. Awaiting Pickup / Collection (Mantis Card + Amber Sparkline) -->
                 <div class="col-xxl-3 col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12 mb-3">
-                  <div class="stat-card">
-                    <div class="d-flex align-items-center justify-content-between">
-                      <div>
-                        <span class="text-muted small fw-semibold text-uppercase d-block mb-1">Pending Moderation</span>
-                        <h3 class="fw-bold text-dark mb-0">${format_num(stats.pendingItems)}</h3>
-                        <small class="text-warning mt-1 d-inline-block"><i class="bi bi-hourglass-split me-1"></i>Awaiting Review</small>
+                  <div class="mantis-stat-card">
+                    <div>
+                      <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span class="text-muted small fw-semibold text-uppercase">Ready for Pickup</span>
+                        <span class="badge bg-warning bg-opacity-15 text-warning rounded-pill px-2 py-1 small">Hostel Scheduled</span>
                       </div>
-                      <div class="stat-icon-wrap bg-warning bg-opacity-15 text-warning">
-                        <i class="bi bi-hourglass-split"></i>
-                      </div>
+                      <h3 class="fw-bold text-dark mb-1">${format_num(stats.awaitingCollection)}</h3>
+                      <span class="text-muted small d-block mb-2">Verified Handover Desks</span>
+                    </div>
+                    <div class="sparkline-bars sparkline-yellow">
+                      <div class="sparkline-bar" style="height:40%"></div>
+                      <div class="sparkline-bar" style="height:60%"></div>
+                      <div class="sparkline-bar" style="height:75%"></div>
+                      <div class="sparkline-bar" style="height:70%"></div>
+                      <div class="sparkline-bar" style="height:85%"></div>
+                      <div class="sparkline-bar" style="height:90%"></div>
+                      <div class="sparkline-bar" style="height:80%"></div>
+                      <div class="sparkline-bar" style="height:95%"></div>
+                      <div class="sparkline-bar" style="height:85%"></div>
+                      <div class="sparkline-bar" style="height:70%"></div>
+                      <div class="sparkline-bar" style="height:60%"></div>
+                      <div class="sparkline-bar" style="height:55%"></div>
                     </div>
                   </div>
                 </div>
 
-                <!-- Returned Items -->
+                <!-- 4. Returned to Owners (Mantis Card + Teal Sparkline) -->
                 <div class="col-xxl-3 col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12 mb-3">
-                  <div class="stat-card">
-                    <div class="d-flex align-items-center justify-content-between">
-                      <div>
-                        <span class="text-muted small fw-semibold text-uppercase d-block mb-1">Returned to Owners</span>
-                        <h3 class="fw-bold text-dark mb-0">${format_num(stats.returnedItems)}</h3>
-                        <small class="text-teal mt-1 d-inline-block"><i class="bi bi-check2-circle me-1"></i>Reunited</small>
+                  <div class="mantis-stat-card">
+                    <div>
+                      <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span class="text-muted small fw-semibold text-uppercase">Returned to Students</span>
+                        <span class="badge bg-teal bg-opacity-10 text-teal rounded-pill px-2 py-1 small" style="color:#0f766e; background:#ccfbf1;">94.5% Rate</span>
                       </div>
-                      <div class="stat-icon-wrap bg-teal bg-opacity-10 text-teal" style="background:#ccfbf1; color:#0f766e;">
-                        <i class="bi bi-check2-circle"></i>
-                      </div>
+                      <h3 class="fw-bold text-dark mb-1">${format_num(stats.returnedItems)}</h3>
+                      <span class="text-muted small d-block mb-2">Reunited Successfully</span>
+                    </div>
+                    <div class="sparkline-bars sparkline-teal">
+                      <div class="sparkline-bar" style="height:25%"></div>
+                      <div class="sparkline-bar" style="height:40%"></div>
+                      <div class="sparkline-bar" style="height:45%"></div>
+                      <div class="sparkline-bar" style="height:55%"></div>
+                      <div class="sparkline-bar" style="height:60%"></div>
+                      <div class="sparkline-bar" style="height:75%"></div>
+                      <div class="sparkline-bar" style="height:70%"></div>
+                      <div class="sparkline-bar" style="height:85%"></div>
+                      <div class="sparkline-bar" style="height:90%"></div>
+                      <div class="sparkline-bar" style="height:95%"></div>
+                      <div class="sparkline-bar" style="height:90%"></div>
+                      <div class="sparkline-bar" style="height:100%"></div>
                     </div>
                   </div>
                 </div>
