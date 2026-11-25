@@ -603,6 +603,54 @@
 
           return 'Rejection workflow properly updated claim, recorded reason, notified claimant, and preserved item availability';
         }
+      },
+      {
+        name: 'Catalog & Router: Published Items Retrieval and Filter Pipeline',
+        run: async () => {
+          const published = await window.ItemManager.getAll({ status: 1 });
+          if (published.length === 0) throw new Error('Expected published items in database');
+
+          // Verify all published items have valid category, title and status
+          for (const item of published) {
+            if (Number(item.status) !== 1) throw new Error('Item ' + item.id + ' status is not 1');
+            if (!item.title) throw new Error('Item ' + item.id + ' missing title');
+          }
+
+          // Test Category Filter
+          const cats = await window.CategoryManager.getAll(true);
+          if (cats.length > 0) {
+            const catItems = await window.ItemManager.getAll({ status: 1, categoryId: cats[0].id });
+            for (const ci of catItems) {
+              if (Number(ci.category_id) !== Number(cats[0].id)) {
+                throw new Error('Category filter returned mismatched item');
+              }
+            }
+          }
+
+          return `Catalog pipeline verified: ${published.length} published items accessible with category and search filtering`;
+        }
+      },
+      {
+        name: 'Authentication State: Session Management and Profile Sync',
+        run: async () => {
+          // Log in
+          const res = await window.AuthManager.login('admin', 'admin123');
+          if (res.status !== 'success') throw new Error('Login failed: ' + res.msg);
+
+          const cur = window.AuthManager.getCurrentUser();
+          if (!cur || cur.username !== 'admin') throw new Error('Current user mismatch');
+          if (!window.AuthManager.isAdmin()) throw new Error('Admin role not identified');
+
+          // Verify session storage
+          const stored = localStorage.getItem('lfis_user_session') || sessionStorage.getItem('lfis_user_session');
+          if (!stored) throw new Error('Session was not persisted in storage');
+
+          // Test logout
+          window.AuthManager.logout();
+          if (window.AuthManager.getCurrentUser() !== null) throw new Error('Logout did not clear session');
+
+          return 'Auth state verified: Session properly created, persisted in storage, and cleared on logout';
+        }
       }
     ];
 

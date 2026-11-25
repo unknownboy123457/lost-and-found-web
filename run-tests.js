@@ -90,9 +90,9 @@ async function main() {
   const chrome = spawn(chromePath, chromeArgs);
 
   const timeout = setTimeout(() => {
-    console.error('Timed out waiting for test report (30s)');
+    console.error('Timed out waiting for test report (60s)');
     reportResolve('TIMEOUT');
-  }, 30000);
+  }, 60000);
 
   const result = await reportPromise;
   clearTimeout(timeout);
