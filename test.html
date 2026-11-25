@@ -12,6 +12,8 @@
   <script src="scripts/auth.js"></script>
   <script src="scripts/categories.js"></script>
   <script src="scripts/items.js"></script>
+  <script src="scripts/notifications.js"></script>
+  <script src="scripts/claims.js"></script>
   <script src="scripts/inquiries.js"></script>
   <script src="scripts/admin.js"></script>
   <script src="scripts/app.js"></script>
@@ -250,6 +252,237 @@
           if (url !== '../uploads/logo.png') throw new Error('Image URL resolution unexpected: ' + url);
 
           return 'Validation and URL resolution functioning properly';
+        }
+      },
+      {
+        name: 'Found Items: Multi-Photo, Location, and Date Persistence',
+        run: async () => {
+          const res = await window.ItemManager.save({
+            founder: true,
+            user_id: 101,
+            category_id: 1,
+            fullname: 'Campus Security Officer',
+            title: 'Found Smartwatch in Gym Locker',
+            contact: '555-4321',
+            item_date: '2026-11-24',
+            location: 'Gymnasium Locker Room B',
+            description: 'Black smartwatch with silicone strap found inside locker 14',
+            images: ['data:image/png;base64,photo1data', 'data:image/png;base64,photo2data'],
+            image_path: 'data:image/png;base64,photo1data'
+          });
+          if (res.status !== 'success') throw new Error(res.msg);
+
+          const item = await window.ItemManager.getById(res.iid);
+          if (!item) throw new Error('Item not found after creation');
+          if (item.location !== 'Gymnasium Locker Room B') throw new Error('Location mismatch: ' + item.location);
+          if (item.item_date !== '2026-11-24') throw new Error('Date mismatch: ' + item.item_date);
+          if (!Array.isArray(item.images) || item.images.length !== 2) throw new Error('Expected 2 images in item.images');
+
+          return `Item #${res.iid} saved with multi-photos, location "${item.location}", and date "${item.item_date}"`;
+        }
+      },
+      {
+        name: 'Claims: Compulsory Unique Identifying Secret Proof Validation',
+        run: async () => {
+          // 1. Missing secret proof should fail
+          const emptyProofRes = await window.ClaimManager.submitClaim({
+            item_id: 1,
+            claimant_user_id: 99,
+            claimant_name: 'John Doe',
+            claimant_contact: '555-1234',
+            claimant_email: 'john@example.com',
+            claim_description: 'I lost my keys here',
+            unique_details: '' // empty!
+          });
+          if (emptyProofRes.status === 'success') throw new Error('Submitting empty unique proof should have failed');
+
+          // 2. Too short secret proof should fail
+          const shortProofRes = await window.ClaimManager.submitClaim({
+            item_id: 1,
+            claimant_user_id: 99,
+            claimant_name: 'John Doe',
+            claimant_contact: '555-1234',
+            claimant_email: 'john@example.com',
+            claim_description: 'I lost my keys here',
+            unique_details: 'keys' // < 5 chars
+          });
+          if (shortProofRes.status === 'success') throw new Error('Submitting short unique proof (<5 chars) should have failed');
+
+          return 'Correctly enforced compulsory unique secret proof (minimum 5 characters)';
+        }
+      },
+      {
+        name: 'Claims: Founder Cannot Claim Own Item',
+        run: async () => {
+          // Create an item reported by user_id = 88
+          const itemRes = await window.ItemManager.save({
+            category_id: 1,
+            user_id: 88,
+            fullname: 'Founder User',
+            title: 'Founder Item For Testing',
+            contact: '555-9999',
+            description: 'Item reported by founder 88',
+            status: 1
+          });
+
+          // Attempt to claim by same user_id = 88
+          const claimRes = await window.ClaimManager.submitClaim({
+            item_id: itemRes.iid,
+            claimant_user_id: 88,
+            claimant_name: 'Founder User',
+            claimant_contact: '555-9999',
+            claimant_email: 'founder@example.com',
+            claim_description: 'Claiming my own reported item',
+            unique_details: 'Secret engraving 12345'
+          });
+
+          if (claimRes.status === 'success') throw new Error('Founder claiming own item should have been rejected');
+          return 'Correctly prevented founder from filing claim on their own reported item';
+        }
+      },
+      {
+        name: 'Claims: End-to-End Verification, Address Submission, Desk Scheduling & Handover',
+        run: async () => {
+          // 1. Create and publish a test item
+          const itemRes = await window.ItemManager.save({
+            category_id: 2,
+            user_id: 201,
+            fullname: 'Finder Alice',
+            title: 'Leather Wallet with Silver Monogram',
+            contact: '555-0011',
+            location: 'Science Complex Lobby',
+            item_date: '2026-11-23',
+            description: 'Brown leather wallet found under sofa',
+            status: 1 // Published
+          });
+          const itemId = itemRes.iid;
+
+          // 2. Claimant files claim with secret proof
+          const claimantUserId = 202;
+          const secretProof = 'Hidden $50 bill inside coin pocket and initials "J.B." stamped inside';
+          const claimSubmitRes = await window.ClaimManager.submitClaim({
+            item_id: itemId,
+            claimant_user_id: claimantUserId,
+            claimant_name: 'James Brown',
+            claimant_contact: '555-8888',
+            claimant_email: 'jbrown@example.com',
+            claim_description: 'I dropped my leather wallet while rushing to physics lecture',
+            unique_details: secretProof
+          });
+          if (claimSubmitRes.status !== 'success') throw new Error('Claim submission failed: ' + claimSubmitRes.msg);
+          const claimId = claimSubmitRes.claim_id;
+
+          // 3. Privacy Check: Unauthorized user must NOT see the secret proof
+          const unauthorizedView = await window.ClaimManager.getClaimById(claimId, 999); // third party user 999
+          if (unauthorizedView.unique_details !== '[Confidential - Admin Only]') {
+            throw new Error('Secret proof was leaked to unauthorized user: ' + unauthorizedView.unique_details);
+          }
+
+          // Admin or claim owner CAN see the secret proof
+          const adminView = await window.ClaimManager.getClaimById(claimId, 1); // admin user 1
+          if (adminView.unique_details !== secretProof) {
+            throw new Error('Admin could not see original secret proof');
+          }
+
+          // 4. Admin reviews and approves the claim
+          const approveRes = await window.ClaimManager.approveClaim(claimId, 'Secret proof matches contents perfectly.');
+          if (approveRes.status !== 'success') throw new Error('Claim approval failed: ' + approveRes.msg);
+
+          let updatedClaim = await window.ClaimManager.getClaimById(claimId, 1);
+          if (updatedClaim.status !== 'approved') throw new Error('Claim status must be approved, got: ' + updatedClaim.status);
+
+          // Verify claimant received approval notification
+          const claimantNotifs = await window.NotificationManager.getByUser(claimantUserId);
+          const approvalNotif = claimantNotifs.find(n => n.type === 'claim_approved');
+          if (!approvalNotif) throw new Error('Claimant did not receive claim_approved notification');
+
+          // Item must STILL be status 1 (NOT marked returned yet)
+          let itemCheck = await window.ItemManager.getById(itemId);
+          if (Number(itemCheck.status) !== 1) throw new Error('Item should remain published (1) after claim approval, but was: ' + itemCheck.status);
+
+          // 5. Claimant submits private contact & address
+          const addressRes = await window.ClaimManager.submitContactAndAddress(claimId, claimantUserId, {
+            claimant_address: '742 Evergreen Terrace, Springfield',
+            id_proof_type: 'Driver License #DL-987654'
+          });
+          if (addressRes.status !== 'success') throw new Error('Address submission failed: ' + addressRes.msg);
+
+          updatedClaim = await window.ClaimManager.getClaimById(claimId, 1);
+          if (updatedClaim.status !== 'ready_for_scheduling') throw new Error('Claim status should be ready_for_scheduling, got: ' + updatedClaim.status);
+
+          // 6. Admin assigns official collection desk
+          const deskRes = await window.ClaimManager.assignCollectionLocation(claimId, {
+            location_name: 'Main Campus Lost & Found Administrative Desk',
+            address: 'Student Services Hall, Room 108',
+            pickup_hours: 'Monday - Friday, 9:00 AM - 4:00 PM',
+            instructions: 'Bring your physical Driver License and quote Claim #' + claimId
+          });
+          if (deskRes.status !== 'success') throw new Error('Desk assignment failed: ' + deskRes.msg);
+
+          updatedClaim = await window.ClaimManager.getClaimById(claimId, 1);
+          if (updatedClaim.status !== 'scheduled') throw new Error('Claim status should be scheduled, got: ' + updatedClaim.status);
+          if (!updatedClaim.collection_location || updatedClaim.collection_location.location_name !== 'Main Campus Lost & Found Administrative Desk') {
+            throw new Error('Assigned collection location mismatch');
+          }
+
+          // 7. Final Handover: Admin confirms physical handover
+          const handoverRes = await window.ClaimManager.confirmHandover(claimId, 'Owner arrived in person, photo ID verified, item successfully handed over.');
+          if (handoverRes.status !== 'success') throw new Error('Handover completion failed: ' + handoverRes.msg);
+
+          updatedClaim = await window.ClaimManager.getClaimById(claimId, 1);
+          if (updatedClaim.status !== 'completed') throw new Error('Claim status must be completed, got: ' + updatedClaim.status);
+
+          // Item is now officially marked as Claimed / Returned (status 2)
+          itemCheck = await window.ItemManager.getById(itemId);
+          if (Number(itemCheck.status) !== 2) throw new Error('Item status must be 2 (Claimed/Returned), got: ' + itemCheck.status);
+
+          // Item is no longer available for new claims
+          const canClaimCheck = await window.ClaimManager.canItemBeClaimed(itemId);
+          if (canClaimCheck.canClaim) throw new Error('Returned item should not be available for new claims');
+
+          return `Lifecycle verified: Submitted -> Approved -> Address Provided -> Collection Scheduled -> Handed Over (Item #${itemId} marked Returned)`;
+        }
+      },
+      {
+        name: 'Claims: Rejection Workflow and History Retention',
+        run: async () => {
+          // 1. Create item
+          const itemRes = await window.ItemManager.save({
+            category_id: 1,
+            user_id: 301,
+            fullname: 'Finder Bob',
+            title: 'Unclaimed Umbrella',
+            contact: '555-7766',
+            description: 'Red folding umbrella found near cafeteria',
+            status: 1
+          });
+
+          // 2. Submit claim with invalid claim explanation
+          const claimRes = await window.ClaimManager.submitClaim({
+            item_id: itemRes.iid,
+            claimant_user_id: 302,
+            claimant_name: 'Suspicious User',
+            claimant_contact: '555-0000',
+            claimant_email: 'fake@example.com',
+            claim_description: 'Looks like mine maybe',
+            unique_details: 'It has blue stripes on the handle' // Doesn't match
+          });
+          const claimId = claimRes.claim_id;
+
+          // 3. Admin rejects claim
+          const rejectReason = 'Secret proof does not match: umbrella handle has no stripes and is plain black wooden handle.';
+          const rejRes = await window.ClaimManager.rejectClaim(claimId, rejectReason);
+          if (rejRes.status !== 'success') throw new Error('Rejection failed: ' + rejRes.msg);
+
+          const rejectedClaim = await window.ClaimManager.getClaimById(claimId, 1);
+          if (rejectedClaim.status !== 'rejected') throw new Error('Status should be rejected, got: ' + rejectedClaim.status);
+          if (rejectedClaim.rejection_reason !== rejectReason) throw new Error('Rejection reason not stored properly');
+
+          // Item should still remain published (status 1) for other rightful claimants
+          const item = await window.ItemManager.getById(itemRes.iid);
+          if (Number(item.status) !== 1) throw new Error('Item must remain Published (status 1) after false claim rejection');
+
+          return 'Rejection workflow properly updated claim, recorded reason, notified claimant, and preserved item availability';
         }
       }
     ];

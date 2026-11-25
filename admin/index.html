@@ -86,6 +86,8 @@
   <script src="../scripts/auth.js"></script>
   <script src="../scripts/categories.js"></script>
   <script src="../scripts/items.js"></script>
+  <script src="../scripts/notifications.js"></script>
+  <script src="../scripts/claims.js"></script>
   <script src="../scripts/inquiries.js"></script>
   <script src="../scripts/cms.js"></script>
   <script src="../scripts/admin.js"></script>
@@ -98,7 +100,7 @@
     <div class="d-flex align-items-center justify-content-between">
       <a href="./" class="logo d-flex align-items-center">
         <img src="../uploads/logo.png" alt="System Logo">
-        <span class="d-none d-lg-block" data-sys-short-name>PHP - LFIS</span>
+        <span class="d-none d-lg-block" data-sys-short-name>LFIS Admin</span>
       </a>
       <i class="bi bi-list toggle-sidebar-btn"></i>
     </div><!-- End Logo -->
@@ -188,6 +190,13 @@
           </li>
         </ul>
       </li><!-- End Items Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" id="side-claims" href="./?page=claims">
+          <i class="bi bi-shield-check"></i><span>Item Claims</span>
+          <span class="badge rounded-pill bg-danger text-light ms-4" id="badge-pending-claims" style="display:none;">0</span>
+        </a>
+      </li><!-- End Claims Nav -->
 
       <li class="nav-item">
         <a class="nav-link collapsed" id="side-cms" href="./?page=cms">
@@ -372,6 +381,12 @@
         $('#badge-pending-items').hide();
       }
 
+      if (stats.pendingClaims > 0) {
+        $('#badge-pending-claims').text(stats.pendingClaims).show();
+      } else {
+        $('#badge-pending-claims').hide();
+      }
+
       if (stats.unreadMessages > 0) {
         $('#badge-unread-msgs').text(stats.unreadMessages).show();
       } else {
@@ -423,6 +438,11 @@
         $('#page-heading-title').text('Item Details');
         $('#breadcrumb-list').html('<li class="breadcrumb-item"><a href="./">Dashboard</a></li><li class="breadcrumb-item"><a href="./?page=items">Items</a></li><li class="breadcrumb-item active">View Item</li>');
         renderViewItem(id);
+      } else if (page === 'claims') {
+        $('#side-claims').removeClass('collapsed');
+        $('#page-heading-title').text('Item Claims & Verification Management');
+        $('#breadcrumb-list').html('<li class="breadcrumb-item"><a href="./">Dashboard</a></li><li class="breadcrumb-item active">Item Claims</li>');
+        renderAdminClaims();
       } else if (page === 'inquiries') {
         $('#side-messages').removeClass('collapsed');
         $('#page-heading-title').text('Inquiries List');
@@ -502,48 +522,54 @@
           <div class="row">
             <div class="col-lg-12 col-md-12 col-sm-12 col-12">
               <div class="row">
-                <!-- Active Categories -->
-                <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+
+                <!-- Section Header: Items & Reports -->
+                <div class="col-12 mb-2">
+                  <h6 class="text-uppercase fw-bold text-muted small"><i class="bi bi-box-seam me-1 text-primary"></i> Found Items & Inventory</h6>
+                </div>
+
+                <!-- Total Found Items -->
+                <div class="col-xxl-3 col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12">
                   <div class="card info-card">
                     <div class="card-body">
-                      <h5 class="card-title">Categories <span>| Active</span></h5>
+                      <h5 class="card-title">Found Items <span>| Total</span></h5>
                       <div class="d-flex align-items-center justify-content-between">
-                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-success bg-opacity-25 text-success">
-                          <i class="bi bi-menu-button-wide"></i>
+                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-info bg-opacity-25 text-info">
+                          <i class="bi bi-box-seam"></i>
                         </div>
                         <div class="ps-3">
-                          <h6>${format_num(stats.activeCategories)}</h6>
+                          <h6>${format_num(stats.totalFoundItems)}</h6>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <!-- Inactive Categories -->
-                <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                <!-- Published Items -->
+                <div class="col-xxl-3 col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12">
                   <div class="card info-card">
                     <div class="card-body">
-                      <h5 class="card-title">Categories <span>| Inactive</span></h5>
+                      <h5 class="card-title">Listings <span>| Published</span></h5>
                       <div class="d-flex align-items-center justify-content-between">
-                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-dark bg-opacity-25 text-dark">
-                          <i class="bi bi-menu-button-wide"></i>
+                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-primary bg-opacity-25 text-primary">
+                          <i class="bi bi-eye"></i>
                         </div>
                         <div class="ps-3">
-                          <h6>${format_num(stats.inactiveCategories)}</h6>
+                          <h6>${format_num(stats.publishedItems)}</h6>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <!-- Item Entry | Pending -->
-                <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                <!-- Pending Item Moderation -->
+                <div class="col-xxl-3 col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12">
                   <div class="card info-card">
                     <div class="card-body">
-                      <h5 class="card-title">Item Entry <span>| Pending</span></h5>
+                      <h5 class="card-title">Item Reports <span>| Pending</span></h5>
                       <div class="d-flex align-items-center justify-content-between">
-                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-dark bg-opacity-25 text-dark">
-                          <i class="bi bi-question-octagon"></i>
+                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-warning bg-opacity-25 text-warning">
+                          <i class="bi bi-hourglass-split"></i>
                         </div>
                         <div class="ps-3">
                           <h6>${format_num(stats.pendingItems)}</h6>
@@ -553,17 +579,135 @@
                   </div>
                 </div>
 
-                <!-- Item Entry | Published -->
+                <!-- Returned Items -->
+                <div class="col-xxl-3 col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12">
+                  <div class="card info-card">
+                    <div class="card-body">
+                      <h5 class="card-title">Returned <span>| To Owners</span></h5>
+                      <div class="d-flex align-items-center justify-content-between">
+                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-success bg-opacity-25 text-success">
+                          <i class="bi bi-check2-circle"></i>
+                        </div>
+                        <div class="ps-3">
+                          <h6>${format_num(stats.returnedItems)}</h6>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Section Header: Claims & Recovery -->
+                <div class="col-12 mt-2 mb-2">
+                  <h6 class="text-uppercase fw-bold text-muted small"><i class="bi bi-shield-check me-1 text-teal"></i> Claims & Ownership Verification</h6>
+                </div>
+
+                <!-- Pending Claims -->
+                <div class="col-xxl-3 col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12">
+                  <div class="card info-card">
+                    <div class="card-body">
+                      <h5 class="card-title">Claims <span>| Pending Review</span></h5>
+                      <div class="d-flex align-items-center justify-content-between">
+                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-danger bg-opacity-25 text-danger">
+                          <i class="bi bi-shield-exclamation"></i>
+                        </div>
+                        <div class="ps-3">
+                          <h6>${format_num(stats.pendingClaims)}</h6>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Approved Claims -->
+                <div class="col-xxl-3 col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12">
+                  <div class="card info-card">
+                    <div class="card-body">
+                      <h5 class="card-title">Claims <span>| Approved</span></h5>
+                      <div class="d-flex align-items-center justify-content-between">
+                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-info bg-opacity-25 text-info">
+                          <i class="bi bi-shield-check"></i>
+                        </div>
+                        <div class="ps-3">
+                          <h6>${format_num(stats.approvedClaims)}</h6>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Awaiting Collection -->
+                <div class="col-xxl-3 col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12">
+                  <div class="card info-card">
+                    <div class="card-body">
+                      <h5 class="card-title">Handover <span>| Awaiting Collection</span></h5>
+                      <div class="d-flex align-items-center justify-content-between">
+                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-primary bg-opacity-25 text-primary">
+                          <i class="bi bi-geo-alt"></i>
+                        </div>
+                        <div class="ps-3">
+                          <h6>${format_num(stats.awaitingCollection)}</h6>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Rejected Claims -->
+                <div class="col-xxl-3 col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12">
+                  <div class="card info-card">
+                    <div class="card-body">
+                      <h5 class="card-title">Claims <span>| Rejected</span></h5>
+                      <div class="d-flex align-items-center justify-content-between">
+                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-secondary bg-opacity-25 text-secondary">
+                          <i class="bi bi-shield-x"></i>
+                        </div>
+                        <div class="ps-3">
+                          <h6>${format_num(stats.rejectedClaims)}</h6>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Action Prompt Banner -->
+                <div class="col-12 mb-3">
+                  <div class="p-3 bg-white rounded shadow-sm border d-flex justify-content-between align-items-center flex-wrap gap-2">
+                    <div>
+                      <strong class="text-dark"><i class="bi bi-shield-lock-fill me-1 text-danger"></i> Claims Action Center:</strong>
+                      <span class="text-muted ms-2">${stats.pendingClaims > 0 ? `${stats.pendingClaims} ownership claim(s) awaiting verification inspection.` : 'All ownership claims are up to date.'}</span>
+                    </div>
+                    <a href="./?page=claims" class="btn btn-sm btn-primary bg-gradient-teal border-0"><i class="bi bi-shield-check me-1"></i> Manage Claims & Recovery</a>
+                  </div>
+                </div>
+
+                <!-- Active Categories -->
                 <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
                   <div class="card info-card">
                     <div class="card-body">
-                      <h5 class="card-title">Item Entry <span>| Published</span></h5>
+                      <h5 class="card-title">Categories <span>| Active (${format_num(stats.activeCategories)}) / Inactive (${format_num(stats.inactiveCategories)})</span></h5>
                       <div class="d-flex align-items-center justify-content-between">
-                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-primary bg-opacity-25 text-primary">
-                          <i class="bi bi-question-octagon"></i>
+                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-success bg-opacity-25 text-success">
+                          <i class="bi bi-menu-button-wide"></i>
                         </div>
                         <div class="ps-3">
-                          <h6>${format_num(stats.publishedItems)}</h6>
+                          <h6>${format_num(stats.activeCategories)} Active</h6>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Inquiries / Messages -->
+                <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                  <div class="card info-card">
+                    <div class="card-body">
+                      <h5 class="card-title">Messages <span>| Unread Inquiries</span></h5>
+                      <div class="d-flex align-items-center justify-content-between">
+                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-dark bg-opacity-25 text-dark">
+                          <i class="bi bi-inbox"></i>
+                        </div>
+                        <div class="ps-3">
+                          <h6>${format_num(stats.unreadMessages)}</h6>
                         </div>
                       </div>
                     </div>
@@ -936,6 +1080,16 @@
                       </div>
                     </div>
                     <div class="row mb-3">
+                      <div class="form-group col-md-6 col-12">
+                        <label for="item_date" class="control-label">Date Found</label>
+                        <input type="date" name="item_date" id="item_date" class="form-control form-control-sm rounded-0" value="${item.item_date || ''}"/>
+                      </div>
+                      <div class="form-group col-md-6 col-12">
+                        <label for="location" class="control-label">Location Found</label>
+                        <input type="text" name="location" id="location" class="form-control form-control-sm rounded-0" value="${item.location || ''}" placeholder="e.g. 2nd Floor, Main Building"/>
+                      </div>
+                    </div>
+                    <div class="row mb-3">
                       <div class="form-group col-12">
                         <label for="description" class="control-label">Description</label>
                         <textarea rows="5" name="description" id="description" class="form-control form-control-sm rounded-0" required>${item.description || ''}</textarea>
@@ -1000,6 +1154,8 @@
           fullname: $('#fullname').val(),
           title: $('#title').val(),
           contact: $('#contact').val(),
+          item_date: $('#item_date').val(),
+          location: $('#location').val(),
           description: $('#description').val(),
           status: $('#status').val(),
           image_path: uploadedItemImage
@@ -1051,6 +1207,10 @@
                     <dd class="ps-4">${item.fullname}</dd>
                     <dt class="text-muted">Contact No.</dt>
                     <dd class="ps-4">${item.contact}</dd>
+                    <dt class="text-muted">Date Found</dt>
+                    <dd class="ps-4">${item.item_date || 'N/A'}</dd>
+                    <dt class="text-muted">Location Found</dt>
+                    <dd class="ps-4">${item.location || 'N/A'}</dd>
                     <dt class="text-muted">Description</dt>
                     <dd class="ps-4">${(item.description || '').replace(/\n/g, '<br>')}</dd>
                     <dt class="text-muted">Status</dt>
@@ -2904,6 +3064,518 @@
         await window.AdminManager.updateSystemInfo(contactData);
         end_loader();
         alert_toast('Contact Information updated successfully.', 'success');
+      });
+    }
+
+    // Helper: Escape HTML
+    function escapeHtml(str) {
+      if (!str) return '';
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    // 15B. Item Claims & Verification Management
+    async function renderAdminClaims(activeTab = 'all') {
+      start_loader();
+      const allClaims = await window.ClaimManager.getAllClaims();
+      const stats = await window.AdminManager.getDashboardStats();
+
+      // Count by tab
+      const countAll = allClaims.length;
+      const countPending = allClaims.filter(c => c.status === 'pending' || c.status === 'info_requested').length;
+      const countApproved = allClaims.filter(c => c.status === 'approved').length;
+      const countScheduled = allClaims.filter(c => c.status === 'ready_for_scheduling' || c.status === 'scheduled').length;
+      const countCompleted = allClaims.filter(c => c.status === 'completed').length;
+      const countRejected = allClaims.filter(c => c.status === 'rejected').length;
+
+      // Filtered list
+      let filteredClaims = allClaims;
+      if (activeTab === 'pending') {
+        filteredClaims = allClaims.filter(c => c.status === 'pending' || c.status === 'info_requested');
+      } else if (activeTab === 'approved') {
+        filteredClaims = allClaims.filter(c => c.status === 'approved');
+      } else if (activeTab === 'scheduled') {
+        filteredClaims = allClaims.filter(c => c.status === 'ready_for_scheduling' || c.status === 'scheduled');
+      } else if (activeTab === 'completed') {
+        filteredClaims = allClaims.filter(c => c.status === 'completed');
+      } else if (activeTab === 'rejected') {
+        filteredClaims = allClaims.filter(c => c.status === 'rejected');
+      }
+
+      // Group claims by item to detect competing claims
+      const claimsPerItem = {};
+      allClaims.forEach(c => {
+        claimsPerItem[c.item_id] = (claimsPerItem[c.item_id] || 0) + 1;
+      });
+
+      let claimsCardsHtml = '';
+      if (filteredClaims.length === 0) {
+        claimsCardsHtml = `
+          <div class="col-12">
+            <div class="card text-center py-5 border-0 shadow-sm">
+              <div class="card-body">
+                <i class="bi bi-shield-check text-muted" style="font-size: 3rem;"></i>
+                <h5 class="mt-3 text-muted">No Claims Found in this View</h5>
+                <p class="text-secondary small">Claims submitted by users will appear here for identity and secret proof verification.</p>
+              </div>
+            </div>
+          </div>
+        `;
+      } else {
+        claimsCardsHtml = filteredClaims.map(claim => {
+          const item = claim.item || {};
+          const itemImgUrl = window.StorageManager.getImageUrl(item.image_path, '../uploads/logo.png', '../');
+          const isCompeting = (claimsPerItem[claim.item_id] || 0) > 1;
+
+          // Status Badge
+          let statusBadge = '';
+          switch (claim.status) {
+            case 'pending':
+              statusBadge = '<span class="badge bg-warning text-dark"><i class="bi bi-clock-history me-1"></i> Pending Verification</span>';
+              break;
+            case 'info_requested':
+              statusBadge = '<span class="badge bg-secondary"><i class="bi bi-question-circle me-1"></i> More Info Requested</span>';
+              break;
+            case 'approved':
+              statusBadge = '<span class="badge bg-info text-white"><i class="bi bi-check-circle me-1"></i> Approved (Awaiting Address)</span>';
+              break;
+            case 'ready_for_scheduling':
+              statusBadge = '<span class="badge bg-primary"><i class="bi bi-pin-map me-1"></i> Address Received (Needs Desk)</span>';
+              break;
+            case 'scheduled':
+              statusBadge = '<span class="badge bg-primary text-light"><i class="bi bi-calendar-check me-1"></i> Collection Scheduled</span>';
+              break;
+            case 'completed':
+              statusBadge = '<span class="badge bg-success"><i class="bi bi-trophy-fill me-1"></i> Handover Completed</span>';
+              break;
+            case 'rejected':
+              statusBadge = '<span class="badge bg-danger"><i class="bi bi-x-circle me-1"></i> Rejected</span>';
+              break;
+            default:
+              statusBadge = `<span class="badge bg-secondary">${escapeHtml(claim.status)}</span>`;
+          }
+
+          // Action buttons
+          let actionButtons = '';
+          if (claim.status === 'pending' || claim.status === 'info_requested') {
+            actionButtons = `
+              <button class="btn btn-sm btn-success bg-gradient-success border-0 btn-approve-claim" data-id="${claim.id}">
+                <i class="bi bi-check-lg me-1"></i> Approve Claim
+              </button>
+              <button class="btn btn-sm btn-warning border-0 btn-info-claim" data-id="${claim.id}">
+                <i class="bi bi-chat-left-dots me-1"></i> Request Info
+              </button>
+              <button class="btn btn-sm btn-danger bg-gradient-danger border-0 btn-reject-claim" data-id="${claim.id}">
+                <i class="bi bi-x-lg me-1"></i> Reject Claim
+              </button>
+            `;
+          } else if (claim.status === 'approved' || claim.status === 'ready_for_scheduling') {
+            actionButtons = `
+              <button class="btn btn-sm btn-primary bg-gradient-teal border-0 btn-assign-location" data-id="${claim.id}">
+                <i class="bi bi-geo-alt-fill me-1"></i> Assign Collection Desk
+              </button>
+              <button class="btn btn-sm btn-outline-danger btn-reject-claim" data-id="${claim.id}">
+                <i class="bi bi-x-circle me-1"></i> Reject
+              </button>
+            `;
+          } else if (claim.status === 'scheduled') {
+            actionButtons = `
+              <button class="btn btn-sm btn-success bg-gradient-success border-0 btn-confirm-handover" data-id="${claim.id}">
+                <i class="bi bi-box-arrow-down me-1"></i> Confirm Handover & Complete Recovery
+              </button>
+              <button class="btn btn-sm btn-outline-primary btn-assign-location" data-id="${claim.id}">
+                <i class="bi bi-pencil-square me-1"></i> Update Collection Desk
+              </button>
+            `;
+          }
+
+          return `
+            <div class="col-12 mb-4">
+              <div class="card shadow-sm border ${claim.status === 'pending' ? 'border-warning' : (claim.status === 'completed' ? 'border-success' : '')}">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center flex-wrap gap-2 py-2">
+                  <div class="d-flex align-items-center gap-2">
+                    <span class="fw-bold text-dark"><i class="bi bi-shield-shaded text-primary me-1"></i> Claim #${claim.id}</span>
+                    <span class="text-muted small">| Submitted: ${formatDate(claim.created_at)}</span>
+                    ${isCompeting ? '<span class="badge bg-danger ms-2"><i class="bi bi-exclamation-triangle-fill me-1"></i> Multiple Claims for Item</span>' : ''}
+                  </div>
+                  <div>${statusBadge}</div>
+                </div>
+                <div class="card-body pt-3">
+                  <div class="row g-3">
+                    <!-- Item details -->
+                    <div class="col-md-4 border-end">
+                      <div class="d-flex gap-3">
+                        <img src="${itemImgUrl}" alt="${escapeHtml(item.title || 'Item')}" class="rounded border" style="width: 80px; height: 80px; object-fit: cover;">
+                        <div>
+                          <h6 class="fw-bold mb-1"><a href="./?page=items/view_item&id=${claim.item_id}" target="_blank" class="text-decoration-none">${escapeHtml(item.title || 'Unknown Item')}</a></h6>
+                          <div class="small text-muted mb-1"><i class="bi bi-tag me-1"></i> ${escapeHtml(item.category || 'General')}</div>
+                          <div class="small text-muted"><i class="bi bi-geo-alt me-1"></i> Found at: ${escapeHtml(item.location || 'Not specified')}</div>
+                          <div class="small text-muted"><i class="bi bi-calendar me-1"></i> Date: ${escapeHtml(item.item_date || 'N/A')}</div>
+                        </div>
+                      </div>
+                      <hr class="my-2">
+                      <div class="small">
+                        <strong>Founder:</strong> ${escapeHtml(item.fullname || 'Anonymous')} (${escapeHtml(item.contact || 'No contact')})
+                      </div>
+                      <div class="mt-2">
+                        <a href="./?page=items/view_item&id=${claim.item_id}" class="btn btn-xs btn-outline-secondary btn-sm py-0" style="font-size:0.75rem;"><i class="bi bi-box-arrow-up-right me-1"></i> Open Item Admin Page</a>
+                      </div>
+                    </div>
+
+                    <!-- Claimant and Verification Proof -->
+                    <div class="col-md-8">
+                      <div class="row">
+                        <div class="col-md-6 mb-2">
+                          <strong class="d-block text-secondary small">Claimant Name:</strong>
+                          <span class="fw-bold">${escapeHtml(claim.claimant_name)}</span>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                          <strong class="d-block text-secondary small">Contact / Email:</strong>
+                          <span>${escapeHtml(claim.claimant_contact)} | ${escapeHtml(claim.claimant_email)}</span>
+                        </div>
+                      </div>
+
+                      <div class="mb-2">
+                        <strong class="d-block text-secondary small">Claim Reason & Background:</strong>
+                        <div class="p-2 bg-light rounded text-dark small border">${escapeHtml(claim.claim_description)}</div>
+                      </div>
+
+                      <!-- HIGHLIGHTED COMPULSORY UNIQUE IDENTIFYING SECRET PROOF -->
+                      <div class="card bg-warning bg-opacity-10 border-warning mb-3">
+                        <div class="card-body p-2">
+                          <div class="d-flex align-items-center mb-1">
+                            <i class="bi bi-shield-lock-fill text-warning me-1"></i>
+                            <strong class="text-dark small">Compulsory Unique Identifying Secret Proof:</strong>
+                          </div>
+                          <div class="p-2 bg-white rounded border border-warning font-monospace text-dark fw-bold">
+                            ${escapeHtml(claim.unique_details)}
+                          </div>
+                          <small class="text-muted d-block mt-1" style="font-size:0.75rem;">
+                            <i class="bi bi-lock me-1"></i> Strict Privacy: This secret answer is hidden from public listings and only visible to authorized administrators.
+                          </small>
+                        </div>
+                      </div>
+
+                      <!-- Private claimant address if submitted -->
+                      ${claim.claimant_address ? `
+                        <div class="card bg-info bg-opacity-10 border-info mb-2">
+                          <div class="card-body p-2 small">
+                            <strong class="text-dark d-block mb-1"><i class="bi bi-person-lines-fill text-info me-1"></i> Claimant Private Address & ID Information:</strong>
+                            <div><strong>Address:</strong> ${escapeHtml(claim.claimant_address)}</div>
+                            <div><strong>ID Proof:</strong> ${escapeHtml(claim.id_proof_type || 'Government Photo ID')}</div>
+                          </div>
+                        </div>
+                      ` : ''}
+
+                      <!-- Official Collection Location if assigned -->
+                      ${claim.collection_location ? `
+                        <div class="card bg-success bg-opacity-10 border-success mb-2">
+                          <div class="card-body p-2 small">
+                            <strong class="text-success d-block mb-1"><i class="bi bi-geo-alt-fill me-1"></i> Official Collection Desk Assigned by Administrator:</strong>
+                            <div><strong>Location:</strong> ${escapeHtml(claim.collection_location.location_name)}</div>
+                            <div><strong>Physical Address:</strong> ${escapeHtml(claim.collection_location.address)}</div>
+                            <div><strong>Pickup Hours:</strong> ${escapeHtml(claim.collection_location.pickup_hours || 'Mon-Fri 9:00 AM - 5:00 PM')}</div>
+                            <div><strong>Instructions:</strong> ${escapeHtml(claim.collection_location.instructions || 'Bring physical photo ID')}</div>
+                          </div>
+                        </div>
+                      ` : ''}
+
+                      <!-- Rejection reason if rejected -->
+                      ${claim.rejection_reason ? `
+                        <div class="alert alert-danger py-2 mb-2 small">
+                          <strong>Rejection Reason:</strong> ${escapeHtml(claim.rejection_reason)}
+                        </div>
+                      ` : ''}
+
+                      <!-- Handover notes if completed -->
+                      ${claim.handover_notes ? `
+                        <div class="alert alert-success py-2 mb-2 small">
+                          <strong>Handover Completion Notes:</strong> ${escapeHtml(claim.handover_notes)}
+                          <div class="text-muted small mt-1">Completed on: ${formatDate(claim.completed_at || claim.date_updated)}</div>
+                        </div>
+                      ` : ''}
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Footer Actions -->
+                <div class="card-footer bg-light d-flex justify-content-between align-items-center flex-wrap gap-2 py-2">
+                  <div class="small text-muted">
+                    Claim Status: <strong>${escapeHtml(claim.status)}</strong>
+                  </div>
+                  <div class="d-flex gap-2 flex-wrap">
+                    ${actionButtons}
+                  </div>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      $('#admin-content-area').html(`
+        <section class="section">
+          <!-- Summary Metrics Bar -->
+          <div class="row mb-3">
+            <div class="col-12">
+              <div class="card rounded-0 shadow-sm border-0 mb-3">
+                <div class="card-body py-3">
+                  <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                    <div>
+                      <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-shield-check text-primary me-2"></i>Item Claims & Recovery Operations</h5>
+                      <span class="text-muted small">Verify ownership proof, assign official collection desks, and record verified handovers.</span>
+                    </div>
+                    <div class="d-flex gap-2 flex-wrap">
+                      <span class="badge bg-warning text-dark p-2 fs-7"><i class="bi bi-clock me-1"></i> ${stats.pendingClaims} Pending</span>
+                      <span class="badge bg-info text-white p-2 fs-7"><i class="bi bi-check2 me-1"></i> ${stats.approvedClaims} Approved</span>
+                      <span class="badge bg-primary p-2 fs-7"><i class="bi bi-geo-alt me-1"></i> ${stats.awaitingCollection} Awaiting Handover</span>
+                      <span class="badge bg-success p-2 fs-7"><i class="bi bi-trophy me-1"></i> ${stats.completedClaims || 0} Recovered</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Filter Navigation Tabs -->
+          <ul class="nav nav-tabs mb-4" id="claimsFilterTabs">
+            <li class="nav-item">
+              <a class="nav-link ${activeTab === 'all' ? 'active fw-bold' : ''}" href="javascript:void(0)" onclick="renderAdminClaims('all')">
+                All Claims <span class="badge bg-secondary ms-1">${countAll}</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link ${activeTab === 'pending' ? 'active fw-bold' : ''}" href="javascript:void(0)" onclick="renderAdminClaims('pending')">
+                Pending Verification <span class="badge bg-danger ms-1">${countPending}</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link ${activeTab === 'approved' ? 'active fw-bold' : ''}" href="javascript:void(0)" onclick="renderAdminClaims('approved')">
+                Approved <span class="badge bg-info ms-1">${countApproved}</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link ${activeTab === 'scheduled' ? 'active fw-bold' : ''}" href="javascript:void(0)" onclick="renderAdminClaims('scheduled')">
+                Awaiting Collection <span class="badge bg-primary ms-1">${countScheduled}</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link ${activeTab === 'completed' ? 'active fw-bold' : ''}" href="javascript:void(0)" onclick="renderAdminClaims('completed')">
+                Completed Handover <span class="badge bg-success ms-1">${countCompleted}</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link ${activeTab === 'rejected' ? 'active fw-bold' : ''}" href="javascript:void(0)" onclick="renderAdminClaims('rejected')">
+                Rejected <span class="badge bg-secondary ms-1">${countRejected}</span>
+              </a>
+            </li>
+          </ul>
+
+          <!-- Claims List -->
+          <div class="row">
+            ${claimsCardsHtml}
+          </div>
+        </section>
+
+        <!-- Modal: Assign Collection Location -->
+        <div class="modal fade" id="assignLocationModal" tabindex="-1">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content rounded-0">
+              <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title"><i class="bi bi-geo-alt-fill me-2"></i>Assign Official Collection Desk</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+              </div>
+              <div class="modal-body">
+                <p class="small text-muted mb-3">Specify the official administrative location where the verified owner must physically collect the item.</p>
+                <form id="assignLocationForm">
+                  <input type="hidden" id="modalClaimId">
+                  <div class="mb-3">
+                    <label class="form-label fw-bold">Collection Desk / Office Name <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="modalLocationName" placeholder="e.g. Campus Security & Lost and Found Desk" required>
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label fw-bold">Physical Address / Room Number <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="modalAddress" placeholder="e.g. Student Center, Ground Floor, Room 104" required>
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label fw-bold">Pickup Hours / Operational Window</label>
+                    <input type="text" class="form-control" id="modalHours" placeholder="e.g. Monday - Friday, 9:00 AM - 4:00 PM">
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label fw-bold">Handover Instructions for Claimant</label>
+                    <textarea class="form-control" id="modalInstructions" rows="3" placeholder="e.g. Please present valid Government photo ID and reference this Claim Number at the front desk."></textarea>
+                  </div>
+                </form>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary rounded-0" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary bg-gradient-teal border-0 rounded-0" id="btnSaveLocation">Save & Dispatch to Claimant</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal: Reject Claim -->
+        <div class="modal fade" id="rejectClaimModal" tabindex="-1">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content rounded-0">
+              <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title"><i class="bi bi-shield-x me-2"></i>Reject Ownership Claim</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+              </div>
+              <div class="modal-body">
+                <form id="rejectClaimForm">
+                  <input type="hidden" id="modalRejectClaimId">
+                  <div class="mb-3">
+                    <label class="form-label fw-bold">Compulsory Rejection Reason <span class="text-danger">*</span></label>
+                    <textarea class="form-control" id="modalRejectReason" rows="3" placeholder="Explain clearly why this claim is being rejected (e.g., Identifying details do not match item verification records)." required></textarea>
+                  </div>
+                </form>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary rounded-0" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger bg-gradient-danger border-0 rounded-0" id="btnConfirmReject">Confirm Rejection</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `);
+
+      end_loader();
+
+      // Action Handlers:
+      // 1. Approve Claim
+      $('.btn-approve-claim').on('click', function() {
+        const claimId = $(this).attr('data-id');
+        window._conf('Are you sure you want to approve this claim based on the unique secret proof?', async function() {
+          start_loader();
+          const resp = await window.ClaimManager.approveClaim(claimId, 'Admin verified unique secret proof.');
+          await updateSidebarBadges();
+          end_loader();
+          if (resp.status === 'success') {
+            alert_toast('Claim successfully approved. Claimant has been notified to submit contact/address details.', 'success');
+            renderAdminClaims(activeTab);
+          } else {
+            alert(resp.msg);
+          }
+        });
+      });
+
+      // 2. Reject Claim
+      $('.btn-reject-claim').on('click', function() {
+        const claimId = $(this).attr('data-id');
+        $('#modalRejectClaimId').val(claimId);
+        $('#modalRejectReason').val('');
+        const modal = new bootstrap.Modal(document.getElementById('rejectClaimModal'));
+        modal.show();
+      });
+
+      $('#btnConfirmReject').on('click', async function() {
+        const claimId = $('#modalRejectClaimId').val();
+        const reason = $('#modalRejectReason').val().trim();
+        if (!reason) {
+          alert('Please enter a rejection reason.');
+          return;
+        }
+        start_loader();
+        const resp = await window.ClaimManager.rejectClaim(claimId, reason);
+        await updateSidebarBadges();
+        end_loader();
+        bootstrap.Modal.getInstance(document.getElementById('rejectClaimModal')).hide();
+        if (resp.status === 'success') {
+          alert_toast('Claim has been rejected and claimant notified.', 'warning');
+          renderAdminClaims(activeTab);
+        } else {
+          alert(resp.msg);
+        }
+      });
+
+      // 3. Request More Info
+      $('.btn-info-claim').on('click', function() {
+        const claimId = $(this).attr('data-id');
+        const question = prompt('What additional information or proof is required from the claimant?');
+        if (question && question.trim()) {
+          (async () => {
+            start_loader();
+            const resp = await window.ClaimManager.requestMoreInfo(claimId, question.trim());
+            end_loader();
+            if (resp.status === 'success') {
+              alert_toast('Clarification request dispatched to claimant.', 'info');
+              renderAdminClaims(activeTab);
+            } else {
+              alert(resp.msg);
+            }
+          })();
+        }
+      });
+
+      // 4. Assign Location Modal
+      $('.btn-assign-location').on('click', function() {
+        const claimId = $(this).attr('data-id');
+        const claim = allClaims.find(c => Number(c.id) === Number(claimId));
+        $('#modalClaimId').val(claimId);
+        if (claim && claim.collection_location) {
+          $('#modalLocationName').val(claim.collection_location.location_name || '');
+          $('#modalAddress').val(claim.collection_location.address || '');
+          $('#modalHours').val(claim.collection_location.pickup_hours || '');
+          $('#modalInstructions').val(claim.collection_location.instructions || '');
+        } else {
+          $('#modalLocationName').val('Main Campus Lost and Found Desk');
+          $('#modalAddress').val('Administration Building, Ground Floor, Room 102');
+          $('#modalHours').val('Monday - Friday, 9:00 AM - 4:30 PM');
+          $('#modalInstructions').val('Please bring your official photo ID and reference this Claim ID upon arrival.');
+        }
+        const modal = new bootstrap.Modal(document.getElementById('assignLocationModal'));
+        modal.show();
+      });
+
+      $('#btnSaveLocation').on('click', async function() {
+        const claimId = $('#modalClaimId').val();
+        const locationName = $('#modalLocationName').val().trim();
+        const address = $('#modalAddress').val().trim();
+        const pickupHours = $('#modalHours').val().trim();
+        const instructions = $('#modalInstructions').val().trim();
+
+        if (!locationName || !address) {
+          alert('Location name and physical address are required.');
+          return;
+        }
+
+        start_loader();
+        const resp = await window.ClaimManager.assignCollectionLocation(claimId, {
+          location_name: locationName,
+          address: address,
+          pickup_hours: pickupHours,
+          instructions: instructions
+        });
+        await updateSidebarBadges();
+        end_loader();
+
+        bootstrap.Modal.getInstance(document.getElementById('assignLocationModal')).hide();
+        if (resp.status === 'success') {
+          alert_toast('Collection desk successfully assigned. Notification sent to claimant.', 'success');
+          renderAdminClaims(activeTab);
+        } else {
+          alert(resp.msg);
+        }
+      });
+
+      // 5. Confirm Handover & Complete Recovery
+      $('.btn-confirm-handover').on('click', function() {
+        const claimId = $(this).attr('data-id');
+        window._conf('Confirm that the claimant has physically received this item?<br><br><b>Important:</b> This will officially mark the item as RETURNED (Claimed) in public listings, close this claim, and reject any remaining competing claims.', async function() {
+          start_loader();
+          const resp = await window.ClaimManager.confirmHandover(claimId, 'Item physically collected by verified owner at designated collection desk.');
+          await updateSidebarBadges();
+          end_loader();
+          if (resp.status === 'success') {
+            alert_toast('Item successfully marked as Returned! Recovery process is complete.', 'success');
+            renderAdminClaims(activeTab);
+          } else {
+            alert(resp.msg);
+          }
+        });
       });
     }
 

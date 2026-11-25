@@ -360,6 +360,32 @@ class LfisDB {
     });
   }
 
+  async update(storeName, item) {
+    return await this.put(storeName, item);
+  }
+
+  async getAllByIndex(storeName, indexName, key) {
+    await this.ensureDB();
+    if (!this.db || !this.db.objectStoreNames.contains(storeName)) {
+      return [];
+    }
+    return new Promise((resolve) => {
+      try {
+        const tx = this.getTransaction(storeName, 'readonly');
+        const store = tx.objectStore(storeName);
+        if (!store.indexNames.contains(indexName)) {
+          return resolve([]);
+        }
+        const index = store.index(indexName);
+        const request = index.getAll(key);
+        request.onsuccess = () => resolve(request.result || []);
+        request.onerror = () => resolve([]);
+      } catch (e) {
+        resolve([]);
+      }
+    });
+  }
+
   async delete(storeName, id) {
     await this.ensureDB();
     return new Promise((resolve, reject) => {

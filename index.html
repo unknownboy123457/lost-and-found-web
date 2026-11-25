@@ -40,6 +40,8 @@
   <script src="database/seed.js"></script>
   <script src="database/db.js"></script>
   <script src="scripts/storage.js"></script>
+  <script src="scripts/notifications.js"></script>
+  <script src="scripts/claims.js"></script>
   <script src="scripts/otp.js"></script>
   <script src="scripts/otp-ui.js"></script>
   <script src="scripts/auth.js"></script>
@@ -89,11 +91,11 @@
       <div class="d-flex align-items-center justify-content-between">
         <a href="./" class="logo d-flex align-items-center">
           <img src="uploads/logo.png" alt="System Logo">
-          <span class="d-none d-lg-block" data-sys-short-name>PHP - LFIS</span>
+          <span class="d-none d-lg-block" data-sys-short-name>LFIS</span>
         </a>
       </div><!-- End Logo -->
       <nav class="header-nav me-auto">
-        <ul class="d-flex align-items-center h-100">
+        <ul class="d-flex align-items-center h-100 mb-0">
           <li class="nav-item pe-3">
               <a href="./" class="nav-link" id="nav-link-home">Home</a>
           </li>
@@ -101,10 +103,16 @@
               <a href="./?page=items" class="nav-link" id="nav-link-items">Lost and Found</a>
           </li>
           <li class="nav-item pe-3">
-              <a href="./?page=found" class="nav-link" id="nav-link-found">Post an Item</a>
+              <a href="./?page=found" class="nav-link" id="nav-link-found">Post Found Item</a>
+          </li>
+          <li class="nav-item pe-3" id="nav-item-my-reports" style="display:none;">
+              <a href="./?page=my-reports" class="nav-link position-relative" id="nav-link-my-reports">
+                My Reports & Claims
+                <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle d-none" id="nav-unread-dot"></span>
+              </a>
           </li>
           <li class="nav-item pe-3">
-              <a href="./?page=about" class="nav-link" id="nav-link-about">About</a>
+              <a href="./?page=about" class="nav-link" id="nav-link-about">About Us</a>
           </li>
           <li class="nav-item pe-3">
               <a href="./?page=contact" class="nav-link" id="nav-link-contact">Contact Us</a>
@@ -332,16 +340,32 @@
 
     $(document).ready(async function() {
       // Phase 1: Render dynamic navigation authentication state immediately
-      function renderNavAuth() {
+      async function renderNavAuth() {
         const currentUser = window.AuthManager.getCurrentUser();
         if (currentUser) {
           const userName = window.AuthManager.getUserDisplayName();
           const isAdmin = Number(currentUser.type) === 1;
+          $('#nav-item-my-reports').show();
+
+          let unreadNotifs = 0;
+          try {
+            if (window.NotificationManager) {
+              unreadNotifs = await window.NotificationManager.getUnreadCount(currentUser.id);
+            }
+          } catch(e) {}
+
+          if (unreadNotifs > 0) {
+            $('#nav-unread-dot').removeClass('d-none');
+          } else {
+            $('#nav-unread-dot').addClass('d-none');
+          }
+
           $('#nav-auth-container').html(`
             <div class="dropdown">
               <button class="btn btn-outline-primary btn-sm rounded-pill dropdown-toggle d-flex align-items-center px-3" type="button" id="userMenuDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="bi bi-person-circle fs-6 me-1"></i>
                 <span class="fw-semibold text-truncate" style="max-width: 140px;">${userName}</span>
+                ${unreadNotifs > 0 ? `<span class="badge bg-danger rounded-pill ms-1" style="font-size:0.65rem;">${unreadNotifs}</span>` : ''}
               </button>
               <ul class="dropdown-menu dropdown-menu-end shadow border-0" aria-labelledby="userMenuDropdown">
                 <li class="dropdown-header text-start">
@@ -358,8 +382,14 @@
                   </li>
                 ` : ''}
                 <li>
+                  <a class="dropdown-item py-2" href="./?page=my-reports">
+                    <i class="bi bi-folder2-open text-primary me-2"></i>My Reports & Claims
+                    ${unreadNotifs > 0 ? `<span class="badge bg-danger rounded-pill ms-auto">${unreadNotifs}</span>` : ''}
+                  </a>
+                </li>
+                <li>
                   <a class="dropdown-item py-2" href="./?page=found">
-                    <i class="bi bi-plus-circle text-primary me-2"></i>Post an Item
+                    <i class="bi bi-plus-circle text-success me-2"></i>Post Found Item
                   </a>
                 </li>
                 <li>
@@ -377,6 +407,7 @@
             </div>
           `);
         } else {
+          $('#nav-item-my-reports').hide();
           $('#nav-auth-container').html(`
             <button type="button" class="btn btn-primary btn-sm rounded-pill px-3 shadow-sm d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#otpLoginModal">
               <i class="bi bi-phone me-1"></i>
@@ -394,7 +425,7 @@
         start_loader();
         await window.db.init();
         const sysInfo = await window.syncSystemBranding('');
-        renderNavAuth();
+        await renderNavAuth();
 
         // Route handling
         const urlParams = new URLSearchParams(window.location.search);
@@ -405,6 +436,7 @@
         if (page === 'home') $('#nav-link-home').addClass('active');
         else if (page.startsWith('items')) $('#nav-link-items').addClass('active');
         else if (page === 'found') $('#nav-link-found').addClass('active');
+        else if (page === 'my-reports' || page === 'my-claims') $('#nav-link-my-reports').addClass('active');
         else if (page === 'about') $('#nav-link-about').addClass('active');
         else if (page === 'contact') $('#nav-link-contact').addClass('active');
 
@@ -421,10 +453,16 @@
             await renderItemViewPage(urlParams.get('id'));
           } else if (page === 'found') {
             await renderFoundPage();
+          } else if (page === 'my-reports' || page === 'my-claims' || page === 'my-submissions') {
+            await renderMySubmissionsPage();
           } else if (page === 'about') {
             renderAboutPage(sysInfo);
           } else if (page === 'contact') {
             renderContactPage(sysInfo);
+          } else {
+            render404Page();
+          }
+        }
           } else {
             render404Page();
           }
@@ -931,6 +969,7 @@
           (it.title && it.title.toLowerCase().includes(s)) ||
           (it.brand && it.brand.toLowerCase().includes(s)) ||
           (it.description && it.description.toLowerCase().includes(s)) ||
+          (it.location && it.location.toLowerCase().includes(s)) ||
           (it.fullname && it.fullname.toLowerCase().includes(s))
         );
       }
@@ -940,7 +979,10 @@
       }
 
       let catListHtml = categories.map(cat => `
-        <a href="./?page=items&cid=${cat.id}" class="list-group-item list-group-item-action ${selectedCatId === Number(cat.id) ? 'active' : ''}">${cat.name}</a>
+        <a href="./?page=items&cid=${cat.id}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center ${selectedCatId === Number(cat.id) ? 'active' : ''}">
+          <span>${cat.name}</span>
+          <i class="bi bi-chevron-right small"></i>
+        </a>
       `).join('');
 
       let itemsCardsHtml = '';
@@ -948,45 +990,109 @@
         itemsCardsHtml = items.map(row => {
           const imgUrl = window.StorageManager.getImageUrl(row.image_path, 'uploads/logo.png');
           const cleanDesc = (row.description || '').replace(/<[^>]*>?/gm, '');
+          const locStr = row.location || 'Location upon request';
+          const dateStr = row.item_date || (row.created_at ? row.created_at.split(' ')[0] : 'Recent');
+          const isReturned = Number(row.status) === 2;
+
           return `
-            <a href="./?page=items/view&id=${row.id}" class="item-item text-decoration-none text-reset">
-              <div class="card">
-                <div class="item-card-img">
-                  <img src="${imgUrl}" alt="${row.title}">
+            <div class="col-lg-4 col-md-6 col-sm-12 mb-4 item-item">
+              <div class="card h-100 shadow-sm border-0 item-card-interactive">
+                <div class="position-relative">
+                  <div class="item-card-img-wrap" style="height: 200px; overflow: hidden; background: #f8f9fa;">
+                    <img src="${imgUrl}" alt="${row.title}" class="w-100 h-100" style="object-fit: cover;">
+                  </div>
+                  <span class="badge bg-primary position-absolute top-0 start-0 m-2 shadow-sm">${row.category || 'General'}</span>
+                  ${isReturned ? '<span class="badge bg-secondary position-absolute top-0 end-0 m-2 shadow-sm"><i class="bi bi-check2-all me-1"></i>Returned</span>' : '<span class="badge bg-success position-absolute top-0 end-0 m-2 shadow-sm"><i class="bi bi-shield-check me-1"></i>Available</span>'}
                 </div>
-                <div class="card-body pt-3">
-                  <h4 class="card-title">${row.title}</h4>
-                  <p class="truncate-3">${cleanDesc}</p>
+                <div class="card-body d-flex flex-column pt-3">
+                  <h5 class="card-title fw-bold mb-1 text-truncate" title="${row.title}">${row.title}</h5>
+                  <div class="small text-muted mb-2 d-flex align-items-center gap-2">
+                    <span><i class="bi bi-geo-alt text-danger"></i> ${locStr}</span>
+                    <span>•</span>
+                    <span><i class="bi bi-calendar-event text-primary"></i> ${dateStr}</span>
+                  </div>
+                  <p class="card-text small text-muted truncate-3 mb-3">${cleanDesc}</p>
+                  <div class="mt-auto pt-2 border-top d-flex justify-content-between align-items-center">
+                    <span class="small text-muted">By: ${row.fullname || 'Anonymous'}</span>
+                    <a href="./?page=items/view&id=${row.id}" class="btn btn-outline-primary btn-sm rounded-pill px-3">
+                      View Details <i class="bi bi-arrow-right"></i>
+                    </a>
+                  </div>
                 </div>
               </div>
-            </a>
+            </div>
           `;
         }).join('');
       } else {
-        itemsCardsHtml = '<div class="text-muted text-center py-4">No items matched your search criteria.</div>';
+        itemsCardsHtml = `
+          <div class="col-12 text-center py-5">
+            <div class="display-5 text-muted mb-3"><i class="bi bi-search"></i></div>
+            <h4 class="fw-bold text-dark">No Items Found</h4>
+            <p class="text-muted">No published items matched your search criteria. Try a different keyword or category.</p>
+            <a href="./?page=items" class="btn btn-outline-primary btn-sm rounded-pill px-4 mt-2">Reset All Filters</a>
+          </div>
+        `;
       }
 
       $('#page-content-area').html(`
-        <h1 class="pageTitle text-center titleTxt">Lost and Found Items</h1>
-        <hr class="mx-auto bg-primary border-primary opacity-100" style="width:50px">
+        <div class="text-center mb-4">
+          <h2 class="fw-bold titleTxt mb-1">Lost & Found Catalog</h2>
+          <p class="text-muted small">Browse verified items discovered across public transport, campuses, and venues</p>
+          <hr class="mx-auto bg-primary border-primary opacity-100" style="width:50px">
+        </div>
 
-        <div class="container-sm">
+        <div class="container-xl">
           <div class="row">
-            <div class="col-lg-3 col-md-4 col-sm-12 col-12">
-              <div class="list-group mb-4">
-                <a href="./?page=items" class="list-group-item list-group-item-action ${!selectedCatId ? 'active' : ''}">All Categories</a>
-                ${catListHtml}
+            <div class="col-lg-3 col-md-4 col-sm-12 col-12 mb-4">
+              <div class="card shadow-sm border-0 sticky-top" style="top: 85px;">
+                <div class="card-header bg-white fw-bold py-3 border-bottom d-flex align-items-center">
+                  <i class="bi bi-funnel-fill text-primary me-2"></i> Filter by Category
+                </div>
+                <div class="list-group list-group-flush">
+                  <a href="./?page=items" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center ${!selectedCatId ? 'active' : ''}">
+                    <span>All Categories</span>
+                    <i class="bi bi-chevron-right small"></i>
+                  </a>
+                  ${catListHtml}
+                </div>
+                <div class="p-3 bg-light border-top text-center">
+                  <small class="text-muted d-block mb-2">Did you find someone's lost property?</small>
+                  <a href="./?page=found" class="btn btn-success btn-sm w-100 rounded-pill">
+                    <i class="bi bi-plus-circle me-1"></i> Post Found Item
+                  </a>
+                </div>
               </div>
             </div>
+
             <div class="col-lg-9 col-md-8 col-sm-12 col-12">
-              ${selectedCat ? `<h3 class="titleTxt">${selectedCat.name}</h3>` : ''}
-              ${selectedCat && selectedCat.description ? `<div>${selectedCat.description.replace(/\\n/g, '<br>')}</div>` : ''}
-              
-              <div class="mb-3">
-                <input type="text" id="item-search" class="form-control" placeholder="Search items by title, description, or founder..." value="${searchParam || ''}">
+              <div class="card shadow-sm border-0 p-3 mb-4 bg-white">
+                <div class="row g-2">
+                  <div class="col-md-8">
+                    <div class="input-group">
+                      <span class="input-group-text bg-light border-end-0"><i class="bi bi-search text-muted"></i></span>
+                      <input type="text" id="item-search" class="form-control border-start-0" placeholder="Search title, brand, description, location..." value="${searchParam || ''}">
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="input-group">
+                      <span class="input-group-text bg-light border-end-0"><i class="bi bi-geo-alt text-muted"></i></span>
+                      <input type="text" id="location-search" class="form-control border-start-0" placeholder="City or venue..." value="${locationParam || ''}">
+                    </div>
+                  </div>
+                </div>
               </div>
 
-              <div id="item-list">
+              ${selectedCat ? `
+                <div class="alert alert-light border d-flex justify-content-between align-items-center mb-4 p-3">
+                  <div>
+                    <h5 class="fw-bold mb-1 text-primary">${selectedCat.name}</h5>
+                    <p class="small text-muted mb-0">${selectedCat.description || 'Verified item reports under this category.'}</p>
+                  </div>
+                  <a href="./?page=items" class="btn btn-sm btn-outline-secondary rounded-pill">View All</a>
+                </div>
+              ` : ''}
+
+              <div class="row" id="item-list">
                 ${itemsCardsHtml}
               </div>
             </div>
@@ -994,65 +1100,370 @@
         </div>
       `);
 
-      // Realtime search
-      $('#item-search').on('input', function() {
-        const query = $(this).val().toLowerCase().trim();
+      // Realtime search handlers
+      function filterCatalogView() {
+        const query = $('#item-search').val().toLowerCase().trim();
+        const loc = $('#location-search').val().toLowerCase().trim();
         $('.item-item').each(function() {
-          const text = $(this).text().toLowerCase();
-          $(this).toggle(text.includes(query));
+          const cardText = $(this).text().toLowerCase();
+          const matchesQuery = !query || cardText.includes(query);
+          const matchesLoc = !loc || cardText.includes(loc);
+          $(this).toggle(matchesQuery && matchesLoc);
         });
-      });
+      }
+
+      $('#item-search, #location-search').on('input', filterCatalogView);
     }
 
-    // 3. Render Item View Page
+    // 3. Render Item View Page & Ownership Claim Workflow
     async function renderItemViewPage(id) {
       $('#site-header-container').empty();
       if (!id) {
-        alert('Item ID is Required.');
+        alert_toast('Item ID is required.', 'danger');
         window.location.href = './?page=items';
         return;
       }
 
+      start_loader();
       const item = await window.ItemManager.getById(id);
+      end_loader();
+
       if (!item) {
-        alert('Item ID is not valid.');
+        alert_toast('Item not found in catalog.', 'danger');
         window.location.href = './?page=items';
         return;
       }
 
-      const imgUrl = window.StorageManager.getImageUrl(item.image_path, 'uploads/logo.png');
-      const descHtml = (item.description || '').replace(/\n/g, '<br>');
+      const currentUser = window.AuthManager.getCurrentUser();
+      const isReturned = Number(item.status) === 2;
+      const isFounder = currentUser && item.user_id && Number(item.user_id) === Number(currentUser.id);
+
+      // Multiple photos support
+      const images = (Array.isArray(item.images) && item.images.length > 0) 
+        ? item.images 
+        : (item.image_path ? [item.image_path] : ['uploads/logo.png']);
+      const primaryImgUrl = window.StorageManager.getImageUrl(images[0], 'uploads/logo.png');
+
+      const descHtml = (item.description || 'No detailed description provided.').replace(/\n/g, '<br>');
+      const locStr = item.location || 'Location details available upon authorized claim review';
+      const dateStr = item.item_date || (item.created_at ? item.created_at.split(' ')[0] : 'Recently recorded');
+
+      // Check if current user already submitted a claim for this item
+      let userExistingClaim = null;
+      if (currentUser && window.ClaimManager) {
+        const userClaims = await window.ClaimManager.getClaimsByUser(currentUser.id);
+        userExistingClaim = userClaims.find(c => Number(c.item_id) === Number(item.id));
+      }
+
+      let thumbnailsHtml = '';
+      if (images.length > 1) {
+        thumbnailsHtml = `
+          <div class="d-flex gap-2 justify-content-center mt-2 flex-wrap">
+            ${images.map((img, idx) => {
+              const tUrl = window.StorageManager.getImageUrl(img, 'uploads/logo.png');
+              return `
+                <img src="${tUrl}" class="item-thumb-btn img-thumbnail ${idx === 0 ? 'border-primary' : ''}" style="width: 60px; height: 60px; object-fit: cover; cursor: pointer;" data-full="${tUrl}">
+              `;
+            }).join('')}
+          </div>
+        `;
+      }
+
+      let claimActionHtml = '';
+      if (isReturned) {
+        claimActionHtml = `
+          <div class="alert alert-secondary border-0 d-flex align-items-center p-3 mb-0">
+            <i class="bi bi-patch-check-fill fs-3 text-secondary me-3"></i>
+            <div>
+              <h6 class="fw-bold mb-0">Item Returned to Verified Owner</h6>
+              <small class="text-muted">This item has been officially authenticated, scheduled, and handed over to its rightful owner. New claims are closed.</small>
+            </div>
+          </div>
+        `;
+      } else if (isFounder) {
+        claimActionHtml = `
+          <div class="alert alert-info border-0 d-flex align-items-center p-3 mb-0">
+            <i class="bi bi-info-circle-fill fs-3 text-primary me-3"></i>
+            <div>
+              <h6 class="fw-bold mb-0">You Reported This Found Item</h6>
+              <small class="text-muted">Thank you for helping reunite belongings. You can track this report in <a href="./?page=my-reports" class="fw-bold">My Reports & Claims</a>.</small>
+            </div>
+          </div>
+        `;
+      } else if (userExistingClaim) {
+        const st = userExistingClaim.status;
+        let badgeClass = 'bg-warning text-dark';
+        let stMsg = 'Your ownership claim is currently pending administrative review.';
+        let actionBtn = '';
+
+        if (st === 'approved' || st === 'ready_for_scheduling') {
+          badgeClass = 'bg-success text-white';
+          stMsg = 'Your claim has been verified and approved! Please provide your handover address details.';
+          actionBtn = `<a href="./?page=my-reports" class="btn btn-sm btn-success rounded-pill ms-auto"><i class="bi bi-pencil-square me-1"></i> Submit Handover Info</a>`;
+        } else if (st === 'scheduled') {
+          badgeClass = 'bg-primary text-white';
+          stMsg = 'Official pickup has been scheduled! View assigned collection point and instructions.';
+          actionBtn = `<a href="./?page=my-reports" class="btn btn-sm btn-primary rounded-pill ms-auto"><i class="bi bi-geo-alt me-1"></i> View Collection Desk</a>`;
+        } else if (st === 'rejected') {
+          badgeClass = 'bg-danger text-white';
+          stMsg = `Your claim was declined: ${userExistingClaim.rejection_reason || 'Insufficient proof of ownership.'}`;
+        }
+
+        claimActionHtml = `
+          <div class="alert alert-light border shadow-sm p-3 mb-0">
+            <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-2">
+              <span class="badge ${badgeClass} px-3 py-2 fs-6 text-uppercase font-monospace">Claim #${userExistingClaim.id}: ${st.replace(/_/g, ' ')}</span>
+              <span class="small text-muted">Submitted on ${new Date(userExistingClaim.created_at).toLocaleDateString()}</span>
+            </div>
+            <p class="small mb-2">${stMsg}</p>
+            <div class="d-flex justify-content-between align-items-center">
+              <a href="./?page=my-reports" class="btn btn-outline-primary btn-sm rounded-pill"><i class="bi bi-folder2-open me-1"></i> View in My Claims</a>
+              ${actionBtn}
+            </div>
+          </div>
+        `;
+      } else {
+        claimActionHtml = `
+          <div class="card bg-light border-0 p-4 text-center">
+            <h5 class="fw-bold mb-1">Does this item belong to you?</h5>
+            <p class="text-muted small mb-3">To protect true owners from unauthorized claims, you will be required to provide a unique identifying secret mark or feature not shown in the public listing.</p>
+            <div>
+              <button type="button" class="btn btn-primary btn-lg rounded-pill px-5 shadow-sm" id="btn-start-claim">
+                <i class="bi bi-hand-index-thumb me-2"></i> Claim This Item
+              </button>
+            </div>
+          </div>
+        `;
+      }
 
       $('#page-content-area').html(`
-        <div class="row mt-lg-n4 mt-md-n4 justify-content-center">
-          <div class="col-lg-10 col-md-12 col-sm-12 col-xs-12">
-            <div class="card rounded-0">
-              <div class="card-body">
-                <div class="container-fluid mt-4">
-                  <div class="lf-image">
-                    <img src="${imgUrl}" alt="${item.title}">
+        <div class="container-xl">
+          <nav aria-label="breadcrumb" class="mb-3">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item"><a href="./">Home</a></li>
+              <li class="breadcrumb-item"><a href="./?page=items">Lost & Found</a></li>
+              <li class="breadcrumb-item active">${item.title}</li>
+            </ol>
+          </nav>
+
+          <div class="row g-4 justify-content-center">
+            <!-- Left: Photos -->
+            <div class="col-lg-5 col-md-6 col-12">
+              <div class="card shadow-sm border-0 p-3">
+                <div class="main-photo-wrap text-center bg-dark rounded position-relative" style="height: 340px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                  <img src="${primaryImgUrl}" id="main-item-view-img" alt="${item.title}" class="img-fluid" style="max-height: 100%; max-width: 100%; object-fit: contain; cursor: zoom-in;" title="Click to enlarge">
+                  <button type="button" class="btn btn-sm btn-light position-absolute bottom-0 end-0 m-2 rounded-circle" id="btn-zoom-main-img" title="Zoom Photo">
+                    <i class="bi bi-arrows-fullscreen"></i>
+                  </button>
+                </div>
+                ${thumbnailsHtml}
+              </div>
+            </div>
+
+            <!-- Right: Item Details & Verification -->
+            <div class="col-lg-7 col-md-6 col-12">
+              <div class="card shadow-sm border-0 p-4">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                  <span class="badge bg-primary px-3 py-2 rounded-pill font-monospace">${item.category || 'Category'}</span>
+                  ${isReturned ? '<span class="badge bg-secondary px-3 py-2 rounded-pill"><i class="bi bi-check2-all me-1"></i>Returned to Owner</span>' : '<span class="badge bg-success px-3 py-2 rounded-pill"><i class="bi bi-shield-check me-1"></i>Active / In Custody</span>'}
+                </div>
+
+                <h2 class="fw-bold text-dark mb-3">${item.title}</h2>
+
+                <div class="row g-3 py-3 border-top border-bottom my-3">
+                  <div class="col-6">
+                    <small class="text-muted d-block"><i class="bi bi-calendar3 text-primary me-1"></i> Date Discovered</small>
+                    <span class="fw-semibold text-dark">${dateStr}</span>
                   </div>
-                  <h2 class="titleTxt">${item.title} <span>| ${item.category}</span></h2>
-                  <dl>
-                    <dt class="text-muted">Founder Name</dt>
-                    <dd class="ps-4">${item.fullname}</dd>
-                    <dt class="text-muted">Contact No.</dt>
-                    <dd class="ps-4">${item.contact}</dd>
-                    <dt class="text-muted">Description</dt>
-                    <dd class="ps-4">${descHtml}</dd>
-                  </dl>
+                  <div class="col-6">
+                    <small class="text-muted d-block"><i class="bi bi-geo-alt text-danger me-1"></i> Location Where Found</small>
+                    <span class="fw-semibold text-dark">${locStr}</span>
+                  </div>
+                  <div class="col-6">
+                    <small class="text-muted d-block"><i class="bi bi-person text-secondary me-1"></i> Founder Name</small>
+                    <span class="fw-semibold text-dark">${item.fullname || 'Anonymous Good Samaritan'}</span>
+                  </div>
+                  <div class="col-6">
+                    <small class="text-muted d-block"><i class="bi bi-shield-lock text-warning me-1"></i> Verification Policy</small>
+                    <span class="fw-semibold text-dark">Strict Owner Proof Req.</span>
+                  </div>
+                </div>
+
+                <div class="mb-4">
+                  <h6 class="fw-bold text-dark mb-2">Public Description:</h6>
+                  <p class="text-muted leading-relaxed">${descHtml}</p>
+                </div>
+
+                <div class="mt-auto">
+                  ${claimActionHtml}
                 </div>
               </div>
-              <div class="card-footer py-2 text-center">
-                <a href="./?page=items" class="btn btn-light btn-sm border rounded-0"><i class="bi bi-arrow-left"></i> Back to Items</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Ownership Claim Modal -->
+        <div class="modal fade" id="claimItemModal" tabindex="-1" aria-labelledby="claimItemModalLabel" aria-hidden="true" data-bs-backdrop="static">
+          <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 shadow-lg">
+              <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title fw-bold" id="claimItemModalLabel">
+                  <i class="bi bi-shield-lock-fill me-2"></i> Submit Ownership Claim
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body p-4">
+                <div class="alert alert-primary bg-opacity-10 border-primary d-flex align-items-center mb-3 p-3">
+                  <i class="bi bi-info-circle-fill fs-4 text-primary me-3"></i>
+                  <div class="small">
+                    <strong>Claiming:</strong> ${item.title} (${item.category})<br>
+                    <span class="text-muted">Found at: ${locStr} on ${dateStr}</span>
+                  </div>
+                </div>
+
+                <div id="claimModalAlert"></div>
+
+                <form id="claimSubmissionForm">
+                  <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                      <label class="form-label fw-semibold">Your Full Name *</label>
+                      <input type="text" class="form-control" id="claimantName" required value="${currentUser ? window.AuthManager.getUserDisplayName() : ''}">
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label fw-semibold">Your Contact Number *</label>
+                      <input type="tel" class="form-control" id="claimantContact" required value="${currentUser ? (currentUser.mobile || '') : ''}">
+                    </div>
+                  </div>
+
+                  <div class="mb-3">
+                    <label class="form-label fw-semibold">Email Address (Optional)</label>
+                    <input type="email" class="form-control" id="claimantEmail" placeholder="name@example.com" value="${currentUser ? (currentUser.email || '') : ''}">
+                  </div>
+
+                  <div class="mb-3">
+                    <label class="form-label fw-semibold">How and where did you lose this item? *</label>
+                    <textarea class="form-control" id="claimDescription" rows="3" placeholder="Describe the circumstance of when and where you lost it..." required></textarea>
+                  </div>
+
+                  <!-- Compulsory Unique Identifying Detail -->
+                  <div class="card border-warning bg-warning bg-opacity-10 p-3 mb-3">
+                    <label class="form-label fw-bold text-dark d-flex align-items-center mb-1">
+                      <i class="bi bi-key-fill text-danger me-2 fs-5"></i>
+                      Unique Identifying Detail (COMPULSORY) *
+                    </label>
+                    <p class="small text-muted mb-2">
+                      To prevent false claims and prove you are the genuine owner, describe something specific not visible in the public photos — such as a secret scratch, engraved initials, serial number, keychain charm, or exact items kept inside. 
+                      <span class="fw-bold text-dark d-block mt-1">This answer is kept strictly private and will only be inspected by administrators during verification.</span>
+                    </p>
+                    <textarea class="form-control border-warning" id="claimUniqueDetails" rows="3" placeholder="Enter specific secret characteristics (e.g. 'Inside the front zipper there is a student ID #4492 and a brass latchkey')..." required></textarea>
+                  </div>
+
+                  <div class="mb-3">
+                    <label class="form-label fw-semibold">Proof Photograph / Receipt (Optional)</label>
+                    <input type="file" class="form-control" id="claimProofFile" accept="image/png, image/jpeg, image/webp">
+                    <div class="form-text">Attach a previous photo showing you with the item, original purchase bill, or warranty card if available.</div>
+                  </div>
+
+                  <div class="d-grid mt-4">
+                    <button type="submit" class="btn btn-primary btn-lg rounded-pill shadow" id="btnSubmitClaim">
+                      <span class="spinner-border spinner-border-sm d-none me-2" role="status"></span>
+                      <i class="bi bi-check2-circle me-1"></i> Submit Ownership Claim for Verification
+                    </button>
+                  </div>
+                </form>
               </div>
             </div>
           </div>
         </div>
       `);
+
+      // Thumbnail switch handler
+      $('.item-thumb-btn').on('click', function() {
+        $('.item-thumb-btn').removeClass('border-primary');
+        $(this).addClass('border-primary');
+        const fullUrl = $(this).data('full');
+        $('#main-item-view-img').attr('src', fullUrl);
+      });
+
+      // Zoom photo
+      $('#main-item-view-img, #btn-zoom-main-img').on('click', function() {
+        const curSrc = $('#main-item-view-img').attr('src');
+        if (window.viewer_modal) {
+          window.viewer_modal(curSrc);
+        }
+      });
+
+      // Start claim button handler
+      $('#btn-start-claim').on('click', function() {
+        const user = window.AuthManager.getCurrentUser();
+        if (!user) {
+          const otpModal = new bootstrap.Modal(document.getElementById('otpLoginModal'));
+          otpModal.show();
+          return;
+        }
+        const claimModal = new bootstrap.Modal(document.getElementById('claimItemModal'));
+        claimModal.show();
+      });
+
+      let claimProofBase64 = '';
+      $('#claimProofFile').on('change', async function() {
+        if (this.files && this.files[0]) {
+          claimProofBase64 = await window.StorageManager.fileToDataURL(this.files[0]);
+        }
+      });
+
+      // Submit claim handler
+      $('#claimSubmissionForm').on('submit', async function(e) {
+        e.preventDefault();
+        $('#claimModalAlert').empty();
+        const $btn = $('#btnSubmitClaim');
+        $btn.prop('disabled', true);
+        $btn.find('.spinner-border').removeClass('d-none');
+
+        const user = window.AuthManager.getCurrentUser();
+        if (!user) {
+          $('#claimModalAlert').html('<div class="alert alert-danger">Session expired. Please log in again.</div>');
+          $btn.prop('disabled', false);
+          $btn.find('.spinner-border').addClass('d-none');
+          return;
+        }
+
+        const payload = {
+          itemId: item.id,
+          claimantId: user.id,
+          claimantName: $('#claimantName').val(),
+          claimantContact: $('#claimantContact').val(),
+          claimantEmail: $('#claimantEmail').val(),
+          description: $('#claimDescription').val(),
+          uniqueDetails: $('#claimUniqueDetails').val(),
+          proofImage: claimProofBase64
+        };
+
+        try {
+          const resp = await window.ClaimManager.submitClaim(payload);
+          $btn.prop('disabled', false);
+          $btn.find('.spinner-border').addClass('d-none');
+
+          if (resp.status === 'success') {
+            const modalEl = document.getElementById('claimItemModal');
+            const modalInstance = bootstrap.Modal.getInstance(modalEl);
+            if (modalInstance) modalInstance.hide();
+            alert_toast(resp.msg, 'success');
+            setTimeout(() => {
+              renderItemViewPage(item.id);
+            }, 800);
+          } else {
+            $('#claimModalAlert').html(`<div class="alert alert-danger"><i class="bi bi-exclamation-triangle-fill me-2"></i>${resp.msg}</div>`);
+          }
+        } catch (err) {
+          $btn.prop('disabled', false);
+          $btn.find('.spinner-border').addClass('d-none');
+          $('#claimModalAlert').html(`<div class="alert alert-danger">Error submitting claim: ${err.message}</div>`);
+        }
+      });
     }
 
-    // 4. Render Found Item submission form (Phase 1 Auth Protected)
+    // 4. Render Found Item submission form (TASK 1: Complete Found Item System)
     async function renderFoundPage() {
       $('#site-header-container').empty();
       const currentUser = window.AuthManager.getCurrentUser();
@@ -1062,11 +1473,11 @@
         $('#page-content-area').html(`
           <div class="row justify-content-center py-5">
             <div class="col-lg-6 col-md-8 col-sm-10 text-center">
-              <div class="card shadow border-0 p-4">
-                <div class="display-4 text-primary mb-3"><i class="bi bi-shield-lock"></i></div>
-                <h3 class="fw-bold mb-2">Authentication Compulsory</h3>
-                <p class="text-muted mb-4">To protect our community and ensure integrity, posting lost or found items requires verified mobile login.</p>
-                <div class="d-grid gap-2 col-8 mx-auto">
+              <div class="card shadow border-0 p-5 rounded-4">
+                <div class="display-3 text-primary mb-3"><i class="bi bi-shield-lock"></i></div>
+                <h3 class="fw-bold mb-2">Sign In Required to Report</h3>
+                <p class="text-muted mb-4">To safeguard community integrity and prevent spam submissions, reporting found belongings requires verified mobile authentication.</p>
+                <div class="d-grid gap-2 col-md-8 col-12 mx-auto">
                   <button type="button" class="btn btn-primary btn-lg rounded-pill shadow-sm" data-bs-toggle="modal" data-bs-target="#otpLoginModal">
                     <i class="bi bi-phone me-1"></i> Sign In with Mobile Number
                   </button>
@@ -1085,133 +1496,602 @@
       const userMobile = currentUser.mobile || '';
       const categories = await window.CategoryManager.getAll(true);
       const catOptions = categories.map(cat => `<option value="${cat.id}">${cat.name}</option>`).join('');
+      const todayIso = new Date().toISOString().split('T')[0];
 
       $('#page-content-area').html(`
-        <h1 class="pageTitle text-center">Post Found Item</h1>
-        <hr class="mx-auto bg-primary border-primary opacity-100" style="width:50px">
+        <div class="text-center mb-4">
+          <h2 class="fw-bold titleTxt mb-1">Report a Found Item</h2>
+          <p class="text-muted small">Help reunite discovered property with its rightful owner</p>
+          <hr class="mx-auto bg-primary border-primary opacity-100" style="width:50px">
+        </div>
+
         <div class="row justify-content-center">
-          <div class="col-lg-8 col-md-8 col-sm-12 col-12">
-            <div class="card shadow-sm border-0">
-              <div class="card-body py-4">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                  <h4 class="pageTitle mb-0">Please fill all the required fields</h4>
-                  <span class="badge bg-light text-primary border"><i class="bi bi-person-check me-1"></i> Logged in as: ${userName}</span>
+          <div class="col-lg-8 col-md-10 col-12">
+            <div class="card shadow-sm border-0 rounded-3">
+              <div class="card-body p-4 p-md-5">
+                <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom flex-wrap gap-2">
+                  <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-clipboard-plus text-primary me-2"></i>Found Item Registration Form</h5>
+                  <span class="badge bg-light text-primary border px-3 py-2 rounded-pill"><i class="bi bi-person-check me-1"></i> Reporting as: ${userName}</span>
                 </div>
-                <form action="" id="item-form">
-                  <input type="hidden" name="id" value="">
+
+                <div id="found-form-alert"></div>
+
+                <form id="item-form" class="needs-validation">
                   <input type="hidden" name="founder" value="true">
                   <input type="hidden" name="item_type" value="2">
                   <input type="hidden" name="user_id" value="${currentUser.id}">
 
-                  <div class="row">
-                    <div class="form-group col-lg-12 col-md-12 col-sm-12 col-xs-12 mb-3">
-                      <label for="category_id" class="form-label fw-semibold">Category *</label>
+                  <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                      <label for="category_id" class="form-label fw-semibold">Item Category *</label>
                       <select name="category_id" id="category_id" class="form-select" required>
-                        <option value="" disabled selected>Please Select Here</option>
+                        <option value="" disabled selected>Select Category</option>
                         ${catOptions}
                       </select>
                     </div>
-                  </div>
-                  <div class="row">
-                    <div class="form-group col-lg-12 col-md-12 col-sm-12 col-xs-12 mb-3">
-                      <label for="fullname" class="control-label fw-semibold">Founder Name *</label>
-                      <input type="text" name="fullname" id="fullname" class="form-control rounded-0" value="${userName}" required/>
+                    <div class="col-md-6">
+                      <label for="title" class="form-label fw-semibold">Item Name / Title *</label>
+                      <input type="text" name="title" id="title" class="form-control" placeholder="e.g. Navy Blue Backpack, iPhone 14 Pro, Set of Keys" required/>
                     </div>
                   </div>
-                  <div class="row">
-                    <div class="form-group col-lg-12 col-md-12 col-sm-12 col-xs-12 mb-3">
-                      <label for="title" class="control-label fw-semibold">Title *</label>
-                      <input type="text" name="title" id="title" class="form-control rounded-0" placeholder="e.g. Black Leather Wallet, iPhone 14 Pro" required/>
+
+                  <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                      <label for="item_date" class="form-label fw-semibold">Date Discovered *</label>
+                      <input type="date" name="item_date" id="item_date" class="form-control" value="${todayIso}" max="${todayIso}" required/>
+                    </div>
+                    <div class="col-md-6">
+                      <label for="location" class="form-label fw-semibold">Location Where Found *</label>
+                      <input type="text" name="location" id="location" class="form-control" placeholder="e.g. Science Library 2nd Floor, Room 204 or Bus #42" required/>
                     </div>
                   </div>
-                  <div class="row">
-                    <div class="form-group col-lg-12 col-md-12 col-sm-12 col-xs-12 mb-3">
-                      <label for="contact" class="control-label fw-semibold">Contact # *</label>
-                      <input type="text" name="contact" id="contact" class="form-control rounded-0" value="${userMobile}" required/>
+
+                  <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                      <label for="fullname" class="form-label fw-semibold">Finder Name *</label>
+                      <input type="text" name="fullname" id="fullname" class="form-control" value="${userName}" required/>
+                    </div>
+                    <div class="col-md-6">
+                      <label for="contact" class="form-label fw-semibold">Contact Telephone *</label>
+                      <input type="tel" name="contact" id="contact" class="form-control" value="${userMobile}" required/>
                     </div>
                   </div>
-                  <div class="row">
-                    <div class="form-group col-lg-12 col-md-12 col-sm-12 col-xs-12 mb-3">
-                      <label for="description" class="control-label fw-semibold">Description *</label>
-                      <textarea rows="5" name="description" id="description" class="form-control rounded-0" placeholder="Provide general details about where and how the item was found..." required></textarea>
+
+                  <div class="mb-3">
+                    <label for="description" class="form-label fw-semibold">Detailed Description *</label>
+                    <textarea rows="4" name="description" id="description" class="form-control" placeholder="Provide general details such as color, brand, condition, and any accessories found with it..." required></textarea>
+                    <div class="form-text text-muted">Note: Keep unique identifying secrets (like serial numbers or bag contents) out of this description so administrators can use them to test claimants.</div>
+                  </div>
+
+                  <!-- Multiple Photographs Upload -->
+                  <div class="mb-4">
+                    <label class="form-label fw-semibold d-flex justify-content-between">
+                      <span>Item Photographs (Upload 1 or more) *</span>
+                      <small class="text-muted">Max 5 photos, 5MB each (JPEG, PNG, WebP)</small>
+                    </label>
+                    <div class="border rounded p-3 bg-light text-center">
+                      <input type="file" class="form-control" id="foundImagesInput" multiple accept="image/png, image/jpeg, image/webp">
+                      <div id="multi-preview-container" class="d-flex gap-2 flex-wrap justify-content-center mt-3"></div>
                     </div>
                   </div>
-                  <div class="row">
-                    <div class="form-group mb-3">
-                      <label for="customFile" class="control-label fw-semibold">Item Image</label>
-                      <div class="custom-file">
-                        <input type="file" class="form-control" id="customFile" name="image" accept="image/png, image/jpeg">
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="form-group d-flex justify-content-center mb-3">
-                      <img src="uploads/logo.png" alt="preview" id="cimg" class="img-fluid img-thumbnail" style="max-height: 200px; max-width: 200px; object-fit: cover;">
-                    </div>
+
+                  <div class="d-grid gap-2 col-md-6 col-12 mx-auto pt-2">
+                    <button type="submit" class="btn btn-primary btn-lg rounded-pill shadow-sm" id="btnSubmitFound">
+                      <span class="spinner-border spinner-border-sm d-none me-2" role="status"></span>
+                      <i class="bi bi-send-fill me-1"></i> Submit Found Item Report
+                    </button>
                   </div>
                 </form>
-              </div>
-              <div class="card-footer bg-white border-top py-3">
-                <div class="col-lg-4 col-md-6 col-sm-10 col-12 mx-auto">
-                  <button class="btn btn-primary btn-lg w-100 rounded-pill shadow-sm" form="item-form"><i class="bi bi-send me-1"></i> Submit Found Item</button>
-                </div>
               </div>
             </div>
           </div>
         </div>
       `);
 
-      // Initialize select2 if available
-      $('#category_id').select2({
-        placeholder: 'Please Select Here',
-        width: '100%'
-      });
+      $('#category_id').select2({ placeholder: 'Select Category', width: '100%' });
 
-      let uploadedImageData = '';
+      let selectedImagesBase64 = [];
 
-      // Image preview
-      $('#customFile').on('change', async function() {
-        if (this.files && this.files[0]) {
-          const file = this.files[0];
-          const val = window.StorageManager.validateImage(file);
-          if (!val.valid) {
-            alert(val.error);
-            $(this).val('');
-            return;
-          }
-          uploadedImageData = await window.StorageManager.fileToDataURL(file);
-          $('#cimg').attr('src', uploadedImageData);
-        } else {
-          uploadedImageData = '';
-          $('#cimg').attr('src', 'uploads/logo.png');
+      // Multiple images preview handler
+      $('#foundImagesInput').on('change', async function() {
+        const files = this.files;
+        if (files && files.length > 0) {
+          selectedImagesBase64 = await window.StorageManager.filesToDataURLs(files, 5);
+          renderImagePreviews();
         }
       });
 
-      // Submit handler
+      function renderImagePreviews() {
+        const container = $('#multi-preview-container');
+        container.empty();
+        if (selectedImagesBase64.length === 0) {
+          container.html('<span class="text-muted small">No photos selected yet.</span>');
+          return;
+        }
+        selectedImagesBase64.forEach((src, idx) => {
+          container.append(`
+            <div class="position-relative d-inline-block border rounded shadow-sm overflow-hidden" style="width: 90px; height: 90px;">
+              <img src="${src}" class="w-100 h-100" style="object-fit: cover;">
+              <button type="button" class="btn btn-danger btn-sm p-0 position-absolute top-0 end-0 m-1 rounded-circle btn-remove-preview" data-idx="${idx}" style="width: 20px; height: 20px; line-height: 18px; font-size: 11px;">
+                ×
+              </button>
+            </div>
+          `);
+        });
+
+        $('.btn-remove-preview').on('click', function() {
+          const idx = Number($(this).data('idx'));
+          selectedImagesBase64.splice(idx, 1);
+          renderImagePreviews();
+        });
+      }
+
+      // Form submission
       $('#item-form').on('submit', async function(e) {
         e.preventDefault();
+        $('#found-form-alert').empty();
+
+        const title = $('#title').val().trim();
+        const catId = $('#category_id').val();
+        const dateVal = $('#item_date').val();
+        const locVal = $('#location').val().trim();
+        const descVal = $('#description').val().trim();
+        const contactVal = $('#contact').val().trim();
+        const fullnameVal = $('#fullname').val().trim();
+
+        if (!title || !catId || !dateVal || !locVal || !descVal || !contactVal || !fullnameVal) {
+          $('#found-form-alert').html('<div class="alert alert-danger">Please fill in all compulsory fields marked with *.</div>');
+          return;
+        }
+
+        const $btn = $('#btnSubmitFound');
+        $btn.prop('disabled', true);
+        $btn.find('.spinner-border').removeClass('d-none');
         start_loader();
+
         const data = {
           founder: true,
           item_type: 2,
           user_id: currentUser.id,
-          category_id: $('#category_id').val(),
-          fullname: $('#fullname').val(),
-          title: $('#title').val(),
-          contact: $('#contact').val(),
-          description: $('#description').val(),
-          image_path: uploadedImageData
+          category_id: catId,
+          fullname: fullnameVal,
+          title: title,
+          location: locVal,
+          item_date: dateVal,
+          contact: contactVal,
+          description: descVal,
+          images: selectedImagesBase64,
+          image_path: selectedImagesBase64.length > 0 ? selectedImagesBase64[0] : ''
         };
 
         const resp = await window.ItemManager.save(data);
         end_loader();
+        $btn.prop('disabled', false);
+        $btn.find('.spinner-border').addClass('d-none');
+
         if (resp.status === 'success') {
-          alert_toast(resp.msg, 'success');
-          setTimeout(() => {
-            window.location.href = './?page=found';
-          }, 1500);
+          $('#page-content-area').html(`
+            <div class="row justify-content-center py-5">
+              <div class="col-lg-6 col-md-8 col-12 text-center">
+                <div class="card shadow-sm border-0 p-5 rounded-4">
+                  <div class="display-3 text-success mb-3"><i class="bi bi-check-circle-fill"></i></div>
+                  <h3 class="fw-bold mb-2">Report Submitted Successfully!</h3>
+                  <p class="text-muted mb-4">${resp.msg}</p>
+                  <div class="d-grid gap-2 col-md-8 col-12 mx-auto">
+                    <a href="./?page=my-reports" class="btn btn-primary btn-lg rounded-pill shadow-sm">
+                      <i class="bi bi-folder2-open me-1"></i> Track Status in My Reports
+                    </a>
+                    <a href="./?page=found" class="btn btn-outline-secondary rounded-pill">
+                      <i class="bi bi-plus-circle me-1"></i> Report Another Item
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          `);
         } else {
-          alert_toast(resp.msg || 'An error occurred.', 'danger');
+          $('#found-form-alert').html(`<div class="alert alert-danger">${resp.msg || 'An error occurred.'}</div>`);
+        }
+      });
+    }
+
+    // 4b. Render User Submissions & Claims Dashboard (TASK 1 & TASK 3D)
+    async function renderMySubmissionsPage() {
+      $('#site-header-container').empty();
+      const currentUser = window.AuthManager.getCurrentUser();
+      if (!currentUser) {
+        window.location.href = './';
+        return;
+      }
+
+      start_loader();
+      await window.db.init();
+
+      // Fetch user's found reports, claims, and notifications
+      const myItems = await window.ItemManager.getByUser(currentUser.id);
+      const myClaims = await window.ClaimManager.getClaimsByUser(currentUser.id);
+      const myNotifs = window.NotificationManager ? (await window.NotificationManager.getByUser(currentUser.id)) : [];
+      end_loader();
+
+      const userName = window.AuthManager.getUserDisplayName();
+
+      // Render Items Tab
+      let myItemsHtml = '';
+      if (myItems.length > 0) {
+        myItemsHtml = `
+          <div class="table-responsive">
+            <table class="table table-hover align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th>Photo</th>
+                  <th>Item Details</th>
+                  <th>Discovered</th>
+                  <th>Status</th>
+                  <th class="text-end">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${myItems.map(it => {
+                  const img = window.StorageManager.getImageUrl(it.image_path, 'uploads/logo.png');
+                  let stBadge = '<span class="badge bg-warning text-dark"><i class="bi bi-clock me-1"></i>Pending Review</span>';
+                  if (Number(it.status) === 1) stBadge = '<span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>Published Live</span>';
+                  if (Number(it.status) === 2) stBadge = '<span class="badge bg-primary"><i class="bi bi-patch-check me-1"></i>Claimed & Returned</span>';
+
+                  return `
+                    <tr>
+                      <td style="width: 70px;">
+                        <img src="${img}" style="width: 55px; height: 55px; object-fit: cover;" class="rounded border">
+                      </td>
+                      <td>
+                        <div class="fw-bold text-dark">${it.title}</div>
+                        <small class="text-muted"><i class="bi bi-tag"></i> ${it.category || 'General'}</small>
+                      </td>
+                      <td>
+                        <div class="small fw-semibold"><i class="bi bi-geo-alt text-danger"></i> ${it.location || 'N/A'}</div>
+                        <small class="text-muted">${it.item_date || 'N/A'}</small>
+                      </td>
+                      <td>${stBadge}</td>
+                      <td class="text-end">
+                        ${Number(it.status) === 1 ? `<a href="./?page=items/view&id=${it.id}" class="btn btn-sm btn-outline-primary rounded-pill">View in Catalog</a>` : '<span class="text-muted small">Under Review</span>'}
+                      </td>
+                    </tr>
+                  `;
+                }).join('')}
+              </tbody>
+            </table>
+          </div>
+        `;
+      } else {
+        myItemsHtml = `
+          <div class="text-center py-5">
+            <i class="bi bi-inbox fs-1 text-muted"></i>
+            <h5 class="fw-bold mt-2">No Found Items Reported Yet</h5>
+            <p class="text-muted small">Have you discovered an unattended belonging? Report it now to help find its owner.</p>
+            <a href="./?page=found" class="btn btn-primary btn-sm rounded-pill px-4">Post Found Item</a>
+          </div>
+        `;
+      }
+
+      // Render Claims Tab
+      let myClaimsHtml = '';
+      if (myClaims.length > 0) {
+        myClaimsHtml = `
+          <div class="row g-3">
+            ${myClaims.map(c => {
+              const img = window.StorageManager.getImageUrl(c.item_image, 'uploads/logo.png');
+              const st = c.status;
+              let badge = '<span class="badge bg-warning text-dark">Under Review</span>';
+              let actionHtml = '';
+
+              if (st === 'approved') {
+                badge = '<span class="badge bg-success">Claim Approved — Action Required</span>';
+                actionHtml = `
+                  <button type="button" class="btn btn-success btn-sm rounded-pill px-3 btn-open-address-modal" data-claim-id="${c.id}">
+                    <i class="bi bi-pencil-square me-1"></i> Submit Handover Address
+                  </button>
+                `;
+              } else if (st === 'ready_for_scheduling') {
+                badge = '<span class="badge bg-info text-dark">Address Submitted — Awaiting Official Schedule</span>';
+                actionHtml = `<span class="badge bg-light text-muted border">Address logged. Admin will assign collection point.</span>`;
+              } else if (st === 'scheduled') {
+                badge = '<span class="badge bg-primary">Collection Point Assigned</span>';
+                const sched = c.collection_schedule || {};
+                actionHtml = `
+                  <button type="button" class="btn btn-outline-primary btn-sm rounded-pill px-3 btn-view-pickup-modal" data-claim-id="${c.id}">
+                    <i class="bi bi-geo-alt-fill me-1"></i> View Pickup Location
+                  </button>
+                `;
+              } else if (st === 'completed') {
+                badge = '<span class="badge bg-dark">Item Handover Completed 🎉</span>';
+                actionHtml = `<span class="text-success small fw-semibold"><i class="bi bi-check-all"></i> Received on ${c.completed_at ? new Date(c.completed_at).toLocaleDateString() : 'Confirmed'}</span>`;
+              } else if (st === 'rejected') {
+                badge = '<span class="badge bg-danger">Claim Declined</span>';
+                actionHtml = `<small class="text-danger fw-semibold">Reason: ${c.rejection_reason || 'Insufficient proof'}</small>`;
+              } else if (st === 'info_requested') {
+                badge = '<span class="badge bg-warning text-dark">Additional Info Needed</span>';
+                actionHtml = `
+                  <button type="button" class="btn btn-warning btn-sm rounded-pill px-3 btn-open-address-modal" data-claim-id="${c.id}">
+                    <i class="bi bi-chat-square-dots me-1"></i> Respond with Details
+                  </button>
+                `;
+              }
+
+              return `
+                <div class="col-12">
+                  <div class="card shadow-sm border p-3">
+                    <div class="row align-items-center">
+                      <div class="col-auto">
+                        <img src="${img}" style="width: 75px; height: 75px; object-fit: cover;" class="rounded border">
+                      </div>
+                      <div class="col">
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-1">
+                          <h6 class="fw-bold mb-0 text-dark">${c.item_title}</h6>
+                          ${badge}
+                        </div>
+                        <div class="small text-muted mb-2">
+                          <span>Claim #${c.id}</span> • <span>Filed on ${new Date(c.created_at).toLocaleDateString()}</span>
+                        </div>
+                        <p class="small text-muted mb-0 truncate-2"><strong>Your Statement:</strong> ${c.description}</p>
+                      </div>
+                      <div class="col-12 col-md-auto text-md-end mt-2 mt-md-0 border-top border-md-0 pt-2 pt-md-0">
+                        ${actionHtml}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        `;
+      } else {
+        myClaimsHtml = `
+          <div class="text-center py-5">
+            <i class="bi bi-shield-check fs-1 text-muted"></i>
+            <h5 class="fw-bold mt-2">No Ownership Claims Submitted</h5>
+            <p class="text-muted small">If you recognize an item that belongs to you, open its listing in the catalog and click "Claim This Item".</p>
+            <a href="./?page=items" class="btn btn-outline-primary btn-sm rounded-pill px-4">Browse Catalog</a>
+          </div>
+        `;
+      }
+
+      // Render Notifications Tab
+      let notifsHtml = '';
+      if (myNotifs.length > 0) {
+        notifsHtml = `
+          <div class="d-flex justify-content-end mb-3">
+            <button class="btn btn-sm btn-outline-secondary rounded-pill" id="btn-mark-all-notifs">
+              <i class="bi bi-check2-all me-1"></i> Mark All as Read
+            </button>
+          </div>
+          <div class="list-group list-group-flush border rounded shadow-sm">
+            ${myNotifs.map(n => {
+              const isUnread = Number(n.is_read) === 0;
+              return `
+                <div class="list-group-item p-3 ${isUnread ? 'bg-light border-start border-primary border-4' : ''}">
+                  <div class="d-flex justify-content-between align-items-center mb-1">
+                    <h6 class="fw-bold mb-0 text-dark ${isUnread ? 'text-primary' : ''}">${n.title}</h6>
+                    <small class="text-muted">${new Date(n.created_at).toLocaleString()}</small>
+                  </div>
+                  <p class="small text-muted mb-1">${n.message}</p>
+                  ${n.link ? `<a href="${n.link}" class="btn btn-link btn-sm p-0 text-decoration-none">View Related Record <i class="bi bi-arrow-right"></i></a>` : ''}
+                </div>
+              `;
+            }).join('')}
+          </div>
+        `;
+      } else {
+        notifsHtml = '<div class="text-center text-muted py-5"><i class="bi bi-bell-slash fs-2 mb-2 d-block"></i>No notifications yet.</div>';
+      }
+
+      $('#page-content-area').html(`
+        <div class="container-xl">
+          <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+            <div>
+              <h2 class="fw-bold text-dark mb-1">My Reports & Claims</h2>
+              <p class="text-muted small mb-0">Track the review status of your found items and manage ownership recovery handovers</p>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+              <span class="badge bg-light text-primary border px-3 py-2 rounded-pill">
+                <i class="bi bi-person-circle me-1"></i> ${userName} (+91 ${currentUser.mobile || ''})
+              </span>
+            </div>
+          </div>
+
+          <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-white border-bottom p-0">
+              <ul class="nav nav-tabs card-header-tabs m-0 px-3" id="myDashboardTabs" role="tablist">
+                <li class="nav-item">
+                  <button class="nav-link active py-3 fw-semibold" id="tab-claims-btn" data-bs-toggle="tab" data-bs-target="#tab-claims" type="button" role="tab">
+                    <i class="bi bi-shield-check me-2"></i>My Ownership Claims
+                    <span class="badge bg-primary rounded-pill ms-1">${myClaims.length}</span>
+                  </button>
+                </li>
+                <li class="nav-item">
+                  <button class="nav-link py-3 fw-semibold" id="tab-found-btn" data-bs-toggle="tab" data-bs-target="#tab-found" type="button" role="tab">
+                    <i class="bi bi-clipboard-plus me-2"></i>My Found Item Reports
+                    <span class="badge bg-secondary rounded-pill ms-1">${myItems.length}</span>
+                  </button>
+                </li>
+                <li class="nav-item">
+                  <button class="nav-link py-3 fw-semibold" id="tab-notifs-btn" data-bs-toggle="tab" data-bs-target="#tab-notifs" type="button" role="tab">
+                    <i class="bi bi-bell me-2"></i>Notifications
+                    ${myNotifs.filter(n => Number(n.is_read) === 0).length > 0 ? `<span class="badge bg-danger rounded-pill ms-1">${myNotifs.filter(n => Number(n.is_read) === 0).length}</span>` : ''}
+                  </button>
+                </li>
+              </ul>
+            </div>
+            <div class="card-body p-4">
+              <div class="tab-content" id="myDashboardContent">
+                <div class="tab-pane fade show active" id="tab-claims" role="tabpanel">
+                  ${myClaimsHtml}
+                </div>
+                <div class="tab-pane fade" id="tab-found" role="tabpanel">
+                  ${myItemsHtml}
+                </div>
+                <div class="tab-pane fade" id="tab-notifs" role="tabpanel">
+                  ${notifsHtml}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal: Submit Handover Contact & Address Information (Private) -->
+        <div class="modal fade" id="claimantAddressModal" tabindex="-1" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+              <div class="modal-header bg-success text-white">
+                <h5 class="modal-title fw-bold"><i class="bi bi-geo-alt-fill me-2"></i> Handover Address & Contact Details</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+              </div>
+              <div class="modal-body p-4">
+                <div class="alert alert-info border-0 small mb-3">
+                  <i class="bi bi-shield-lock-fill me-1"></i> Your address and contact details are stored securely and used exclusively by administrators to prepare your official collection handover.
+                </div>
+                <div id="addressModalAlert"></div>
+                <form id="handoverAddressForm">
+                  <input type="hidden" id="targetClaimId" value="">
+                  <div class="mb-3">
+                    <label class="form-label fw-semibold">Residential / Delivery Address *</label>
+                    <textarea class="form-control" id="claimantAddress" rows="3" placeholder="Full street address, apartment/block, city, and postal code..." required></textarea>
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label fw-semibold">Photo ID You Will Present at Handover *</label>
+                    <select class="form-select" id="claimantIdType" required>
+                      <option value="Government National ID Card" selected>Government National ID Card</option>
+                      <option value="Driver's License">Driver's License</option>
+                      <option value="Passport">Passport</option>
+                      <option value="University / Student ID">University / Student ID</option>
+                      <option value="Employee Corporate ID">Employee Corporate ID</option>
+                    </select>
+                  </div>
+                  <div class="row g-2 mb-3">
+                    <div class="col-6">
+                      <label class="form-label fw-semibold">Alternate Phone</label>
+                      <input type="tel" class="form-control" id="alternatePhone" placeholder="Optional backup number">
+                    </div>
+                    <div class="col-6">
+                      <label class="form-label fw-semibold">Preferred Pickup Date</label>
+                      <input type="date" class="form-control" id="preferredDate" min="${new Date().toISOString().split('T')[0]}">
+                    </div>
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label fw-semibold">Additional Notes for Administration</label>
+                    <textarea class="form-control" id="additionalNotes" rows="2" placeholder="Any specific scheduling preferences or inquiries..."></textarea>
+                  </div>
+                  <div class="d-grid mt-4">
+                    <button type="submit" class="btn btn-success btn-lg rounded-pill shadow-sm" id="btnSaveHandoverDetails">
+                      <span class="spinner-border spinner-border-sm d-none me-2"></span>
+                      Submit Handover Details
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal: View Official Pickup Location -->
+        <div class="modal fade" id="viewPickupModal" tabindex="-1" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+              <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title fw-bold"><i class="bi bi-building-check me-2"></i> Official Assigned Collection Point</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+              </div>
+              <div class="modal-body p-4" id="viewPickupModalBody">
+              </div>
+              <div class="modal-footer bg-light py-2">
+                <button type="button" class="btn btn-secondary rounded-pill btn-sm px-4" data-bs-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `);
+
+      // Address modal trigger
+      $('.btn-open-address-modal').on('click', function() {
+        const claimId = $(this).data('claim-id');
+        $('#targetClaimId').val(claimId);
+        $('#addressModalAlert').empty();
+        const modal = new bootstrap.Modal(document.getElementById('claimantAddressModal'));
+        modal.show();
+      });
+
+      // Submit address form
+      $('#handoverAddressForm').on('submit', async function(e) {
+        e.preventDefault();
+        $('#addressModalAlert').empty();
+        const claimId = $('#targetClaimId').val();
+        const address = $('#claimantAddress').val().trim();
+        const idType = $('#claimantIdType').val();
+        const altPhone = $('#alternatePhone').val().trim();
+        const prefDate = $('#preferredDate').val();
+        const notes = $('#additionalNotes').val().trim();
+
+        if (!address) {
+          $('#addressModalAlert').html('<div class="alert alert-danger">Please enter your full address.</div>');
+          return;
+        }
+
+        const $btn = $('#btnSaveHandoverDetails');
+        $btn.prop('disabled', true);
+        $btn.find('.spinner-border').removeClass('d-none');
+
+        const resp = await window.ClaimManager.submitContactAndAddress(claimId, currentUser, {
+          address,
+          idProofType: idType,
+          alternateContact: altPhone,
+          preferredDate: prefDate,
+          notes
+        });
+
+        $btn.prop('disabled', false);
+        $btn.find('.spinner-border').addClass('d-none');
+
+        if (resp.status === 'success') {
+          const modalInstance = bootstrap.Modal.getInstance(document.getElementById('claimantAddressModal'));
+          if (modalInstance) modalInstance.hide();
+          alert_toast(resp.msg, 'success');
+          setTimeout(() => renderMySubmissionsPage(), 800);
+        } else {
+          $('#addressModalAlert').html(`<div class="alert alert-danger">${resp.msg}</div>`);
+        }
+      });
+
+      // View pickup modal trigger
+      $('.btn-view-pickup-modal').on('click', function() {
+        const claimId = Number($(this).data('claim-id'));
+        const claim = myClaims.find(c => Number(c.id) === claimId);
+        if (claim && claim.collection_schedule) {
+          const s = claim.collection_schedule;
+          $('#viewPickupModalBody').html(`
+            <div class="text-center mb-3">
+              <div class="display-6 text-primary mb-1"><i class="bi bi-geo-alt-fill"></i></div>
+              <h5 class="fw-bold mb-0">${s.location_name}</h5>
+              <p class="text-muted small">${s.address}</p>
+            </div>
+            <div class="bg-light p-3 rounded mb-3">
+              <div class="mb-2"><strong><i class="bi bi-clock me-1 text-primary"></i> Operating Hours:</strong> ${s.available_hours || 'Mon-Fri 9:00 AM - 5:00 PM'}</div>
+              ${s.scheduled_date ? `<div class="mb-2"><strong><i class="bi bi-calendar-check me-1 text-success"></i> Assigned Date:</strong> ${s.scheduled_date}</div>` : ''}
+              <div><strong><i class="bi bi-info-circle me-1 text-secondary"></i> Handover Instructions:</strong></div>
+              <p class="small text-muted mb-0 mt-1">${s.instructions || 'Bring your valid government ID for verification.'}</p>
+            </div>
+            <div class="alert alert-warning border-0 small mb-0">
+              <i class="bi bi-exclamation-triangle-fill me-1"></i> Please note: The item will only be released upon matching the photo ID of ${claim.claimant_name}.
+            </div>
+          `);
+          const modal = new bootstrap.Modal(document.getElementById('viewPickupModal'));
+          modal.show();
+        }
+      });
+
+      // Mark all notifications read
+      $('#btn-mark-all-notifs').on('click', async function() {
+        if (window.NotificationManager) {
+          await window.NotificationManager.markAllAsRead(currentUser.id);
+          renderNavAuth();
+          renderMySubmissionsPage();
         }
       });
     }

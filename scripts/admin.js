@@ -6,13 +6,22 @@ const AdminManager = {
     const categories = await window.db.getAll('category_list');
     const items = await window.db.getAll('item_list');
     const inquiries = await window.db.getAll('inquiry_list');
+    const claims = await window.db.getAll('claims');
 
+    const totalFoundItems = items.length;
     const activeCategories = categories.filter(c => Number(c.status) === 1).length;
     const inactiveCategories = categories.filter(c => Number(c.status) === 0).length;
     const pendingItems = items.filter(i => Number(i.status) === 0).length;
     const publishedItems = items.filter(i => Number(i.status) === 1).length;
-    const claimedItems = items.filter(i => Number(i.status) === 2).length;
+    const returnedItems = items.filter(i => Number(i.status) === 2).length;
     const unreadMessages = inquiries.filter(inq => Number(inq.status) === 0).length;
+
+    // Claims breakdown
+    const pendingClaims = claims.filter(c => c.status === 'pending' || c.status === 'info_requested').length;
+    const approvedClaims = claims.filter(c => c.status === 'approved').length;
+    const awaitingCollection = claims.filter(c => c.status === 'ready_for_scheduling' || c.status === 'scheduled').length;
+    const rejectedClaims = claims.filter(c => c.status === 'rejected').length;
+    const completedClaims = claims.filter(c => c.status === 'completed').length;
 
     const sysInfo = await window.db.getSystemInfo();
     let bannerImages = [];
@@ -23,12 +32,20 @@ const AdminManager = {
     }
 
     return {
+      totalFoundItems,
       activeCategories,
       inactiveCategories,
       pendingItems,
       publishedItems,
-      claimedItems,
+      claimedItems: returnedItems,
+      returnedItems,
       unreadMessages,
+      totalClaims: claims.length,
+      pendingClaims,
+      approvedClaims,
+      awaitingCollection,
+      rejectedClaims,
+      completedClaims,
       bannerImages
     };
   },

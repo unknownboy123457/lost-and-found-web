@@ -13,6 +13,11 @@ const ItemManager = {
       category: catMap.get(Number(item.category_id)) || 'N/A'
     }));
 
+    // Filter by user_id if specified
+    if (options.userId) {
+      items = items.filter(item => Number(item.user_id) === Number(options.userId));
+    }
+
     // Filter by status if specified
     if (options.status !== undefined && options.status !== null && options.status !== '') {
       items = items.filter(item => Number(item.status) === Number(options.status));
@@ -59,6 +64,16 @@ const ItemManager = {
     await window.db.init();
     const isPublicFounder = data.founder !== undefined;
 
+    // Handle multiple photos or single image
+    let images = [];
+    if (Array.isArray(data.images) && data.images.length > 0) {
+      images = data.images;
+    } else if (data.image_path) {
+      images = [data.image_path];
+    }
+
+    const primaryImage = images.length > 0 ? images[0] : (data.image_path || '');
+
     const record = {
       category_id: Number(data.category_id),
       item_type: data.item_type !== undefined ? Number(data.item_type) : 2,
@@ -72,7 +87,8 @@ const ItemManager = {
       contact: data.contact ? data.contact.trim() : '',
       description: data.description ? data.description.trim() : '',
       identifying_details: data.identifying_details ? data.identifying_details.trim() : '',
-      image_path: data.image_path !== undefined ? data.image_path : '',
+      image_path: primaryImage,
+      images: images,
       // If submitted by public founder, status is 0 (Pending review). Otherwise, take from data.status or default 0.
       status: isPublicFounder ? 0 : (data.status !== undefined ? Number(data.status) : 0),
       updated: new Date().toISOString().replace('T', ' ').substring(0, 19)
@@ -85,6 +101,9 @@ const ItemManager = {
       if (!record.image_path && original && original.image_path) {
         record.image_path = original.image_path;
       }
+      if ((!record.images || record.images.length === 0) && original && original.images) {
+        record.images = original.images;
+      }
       await window.db.put('item_list', record);
       return { 
         status: 'success', 
@@ -95,7 +114,7 @@ const ItemManager = {
       record.created_at = new Date().toISOString().replace('T', ' ').substring(0, 19);
       const newId = await window.db.add('item_list', record);
       const successMsg = isPublicFounder
-        ? "Found Item Data successfully submitted. We'll review your submitted details first before publishing it to the public."
+        ? "Found Item report successfully submitted! Our team will review the details before publishing it to the public catalog."
         : "New Item Data has been saved successfully.";
       return { 
         status: 'success', 
@@ -103,6 +122,11 @@ const ItemManager = {
         msg: successMsg 
       };
     }
+  },
+
+  async getByUser(userId) {
+    if (!userId) return [];
+    return await this.getAll({ userId: Number(userId) });
   },
 
   async delete(id) {

@@ -3,27 +3,43 @@ const SEED_DATA = {
   categories: [
     {
       id: 1,
-      name: 'Mobile Phones',
-      description: '<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec id est enim. Fusce malesuada dapibus lobortis. Maecenas commodo cursus ante, a efficitur lorem ultrices a. Cras tincidunt, leo at consequat viverra, lacus elit tempus diam, sed scelerisque turpis purus eu ex. Sed placerat, sem vel accumsan maximus, nibh massa rhoncus mi, quis lacinia nisl quam eu purus.</p>',
+      name: 'Mobile Phones & Tablets',
+      description: 'Smartphones, cellular devices, tablets, and e-readers recovered across campus facilities, stations, and public spaces.',
       status: 1,
-      created_at: '2023-05-01 10:32:44',
+      created_at: '2026-11-01 10:32:44',
       updated_at: null
     },
     {
       id: 2,
-      name: 'Keys',
-      description: '<p>Nulla at tellus tristique, venenatis mauris a, commodo urna. Integer arcu quam, maximus id nulla vitae, eleifend lacinia tellus. Proin nec consequat risus. Sed et felis justo. Duis quis magna vel felis volutpat consectetur ut et enim. Integer nec auctor felis. Fusce nec mauris luctus, lacinia erat in, porttitor tellus. Nunc quis mauris velit. Sed nec libero vitae leo blandit mattis.</p>',
+      name: 'Keys & Keychains',
+      description: 'House keys, vehicle key fobs, office access cards, and distinctive keychains handed in to our security desks.',
       status: 1,
-      created_at: '2023-05-01 10:34:27',
+      created_at: '2026-11-01 10:34:27',
       updated_at: null
     },
     {
       id: 3,
-      name: 'Watches',
-      description: '<p>Etiam volutpat dictum tempor. Nulla rutrum arcu eu volutpat pharetra. Aliquam non luctus ex. Maecenas nibh ipsum, efficitur in dui at, rhoncus convallis orci. Duis bibendum tempor sapien, non sollicitudin massa porttitor sed.</p>',
+      name: 'Watches & Jewelry',
+      description: 'Wristwatches, smart bands, rings, necklaces, and jewelry items discovered in recreational and study areas.',
       status: 1,
-      created_at: '2023-05-01 10:35:58',
-      updated_at: '2023-05-01 10:36:15'
+      created_at: '2026-11-01 10:35:58',
+      updated_at: '2026-11-01 10:36:15'
+    },
+    {
+      id: 4,
+      name: 'Bags & Backpacks',
+      description: 'School bags, laptop backpacks, luggage, gym duffels, and tote bags found unattended in halls and terminals.',
+      status: 1,
+      created_at: '2026-11-01 11:00:00',
+      updated_at: null
+    },
+    {
+      id: 5,
+      name: 'Wallets & IDs',
+      description: 'Wallets, purses, government photo IDs, student cards, and credit card pouches kept in secure administrative hold.',
+      status: 1,
+      created_at: '2026-11-01 11:15:00',
+      updated_at: null
     }
   ],
 
@@ -31,50 +47,66 @@ const SEED_DATA = {
     {
       id: 1,
       category_id: 2,
-      fullname: 'Mark Cooper',
-      title: 'Found Keys at Central Park',
-      description: 'Suspendisse nisl diam, pretium ut placerat nec, pellentesque in tortor. Suspendisse vitae arcu a mi dapibus elementum ac dignissim tellus. Duis vitae molestie lacus, porttitor lacinia justo. Ut vulputate, ipsum interdum consequat mollis, odio nisl vulputate est, quis ornare nisi massa a odio.',
+      user_id: null,
+      fullname: 'Officer Mark Cooper',
+      title: 'Found Keys with Navy Carabiner',
+      location: 'Central Park North Track near 72nd Street',
+      item_date: '2026-11-20',
+      description: 'Set of 3 house keys attached to a navy blue metallic carabiner clip with a small silver bottle opener. Found on the running path bench.',
       contact: '09123564789',
       image_path: 'uploads/items/1.png',
+      images: ['uploads/items/1.png'],
       status: 1,
-      created_at: '2023-05-01 11:48:45',
-      updated: '2023-05-01 11:48:45'
+      created_at: '2026-11-20 11:48:45',
+      updated: '2026-11-20 11:48:45'
     },
     {
       id: 3,
       category_id: 1,
+      user_id: null,
       fullname: 'Claire Blake',
-      title: 'Found an Android Phone @ Restaurant Parking Lot',
-      description: 'Etiam accumsan quis augue a pulvinar. Etiam pretium sodales ipsum, cursus venenatis urna fringilla vel. Nunc fringilla non magna sit amet pharetra. Nam iaculis rutrum eleifend. Mauris rutrum, urna eget rhoncus consequat, purus mauris luctus orci, at venenatis ex elit sed risus.',
+      title: 'Found Android Smartphone in Parking Lot',
+      location: 'Campus West Parking Lot Section B',
+      item_date: '2026-11-22',
+      description: 'Black Android smartphone with a dark textured protective case discovered on the asphalt near parking bay 42.',
       contact: '09123654897',
       image_path: 'uploads/items/3.png',
+      images: ['uploads/items/3.png'],
       status: 1,
-      created_at: '2023-05-01 12:55:48',
-      updated: '2023-05-01 12:55:49'
+      created_at: '2026-11-22 12:55:48',
+      updated: '2026-11-22 12:55:49'
     },
     {
       id: 5,
       category_id: 3,
+      user_id: null,
       fullname: 'Samantha Lou',
-      title: 'Found a Watch left @ Room 101',
-      description: 'Sed ultricies turpis eget commodo condimentum. Nam ac lorem vitae nulla fringilla imperdiet sit amet a arcu. Maecenas malesuada felis eleifend condimentum porttitor. Cras sed metus nec nibh interdum bibendum sit amet at sem.',
+      title: 'Classic Analog Wristwatch in Room 101',
+      location: 'Main Science Building Lecture Hall 101',
+      item_date: '2026-11-23',
+      description: 'Stainless steel analog wristwatch with genuine dark brown leather strap left on a study desk after afternoon lectures.',
       contact: '09457778988',
       image_path: 'uploads/items/5.png',
+      images: ['uploads/items/5.png'],
       status: 1,
-      created_at: '2023-05-01 13:03:47',
-      updated: '2023-05-01 13:03:47'
+      created_at: '2026-11-23 13:03:47',
+      updated: '2026-11-23 13:03:47'
     },
     {
       id: 6,
-      category_id: 1,
-      fullname: 'Wilson Smith',
-      title: 'Found Something @ The Mall',
-      description: 'Donec metus sem, volutpat id mi in, fringilla aliquet odio. Donec eleifend sem et ex maximus tristique. Donec porttitor venenatis aliquet. Aliquam tristique est sed nulla fermentum aliquam eget sed ex',
+      category_id: 5,
+      user_id: null,
+      fullname: 'Security Staff Wilson',
+      title: 'Brown Leather Bifold Wallet',
+      location: 'Grand Concourse Ticket Hall',
+      item_date: '2026-11-18',
+      description: 'Dark brown leather wallet with contrast stitching recovered near the ticket counter. Kept securely in the station safe.',
       contact: '09123564789',
       image_path: '',
+      images: [],
       status: 2,
-      created_at: '2023-05-01 13:34:29',
-      updated: '2023-05-01 14:04:10'
+      created_at: '2026-11-18 13:34:29',
+      updated: '2026-11-24 14:04:10'
     }
   ],
 
@@ -84,17 +116,17 @@ const SEED_DATA = {
       fullname: 'Jane Doe',
       contact: '09123546788',
       email: 'jdoe@mail.com',
-      message: 'Vestibulum suscipit felis at magna congue gravida. Quisque interdum eu odio sed vulputate.',
+      message: 'Hello, I lost my blue umbrella in the library cafeteria yesterday. Did anyone turn it in?',
       status: 1,
-      created_at: '2023-05-01 14:11:19',
-      updated_at: '2023-05-01 14:25:47'
+      created_at: '2026-11-24 14:11:19',
+      updated_at: '2026-11-24 14:25:47'
     }
   ],
 
   users: [
     {
       id: 1,
-      firstname: 'Adminstrator',
+      firstname: 'Administrator',
       middlename: '',
       lastname: 'Admin',
       username: 'admin',
@@ -102,8 +134,8 @@ const SEED_DATA = {
       password_hash: '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9',
       avatar: 'uploads/avatars/1.png',
       type: 1,
-      date_added: '2021-01-20 14:02:37',
-      date_updated: '2023-04-26 16:01:02'
+      date_added: '2026-01-20 14:02:37',
+      date_updated: '2026-11-25 10:00:00'
     },
     {
       id: 2,
@@ -115,35 +147,33 @@ const SEED_DATA = {
       password_hash: 'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f',
       avatar: 'uploads/avatars/2.png',
       type: 2,
-      date_added: '2023-04-26 15:54:27',
-      date_updated: '2023-04-26 16:02:36'
+      date_added: '2026-04-26 15:54:27',
+      date_updated: '2026-11-25 10:00:00'
     }
   ],
 
   system_info: [
     { meta_field: 'name', meta_value: 'Lost and Found Information System' },
-    { meta_field: 'short_name', meta_value: 'PHP - LFIS' },
+    { meta_field: 'short_name', meta_value: 'LFIS' },
     { meta_field: 'logo', meta_value: 'uploads/logo.png' },
     { meta_field: 'user_avatar', meta_value: 'uploads/user_avatar.jpg' },
     { meta_field: 'cover', meta_value: 'uploads/cover.png' },
     { meta_field: 'phone', meta_value: '903-436-9356' },
     { meta_field: 'mobile', meta_value: '0917-351-8047' },
-    { meta_field: 'email', meta_value: 'info@simpleorganization.org' },
-    { meta_field: 'address', meta_value: '4226 Florence Street, Arlington, Texas, 76011' },
+    { meta_field: 'email', meta_value: 'support@lostandfound.local' },
+    { meta_field: 'address', meta_value: 'Central Lost & Found Office, Arlington, Texas, 76011' },
     {
       meta_field: 'welcome',
-      meta_value: `<h1 style="text-align: center;">Home Page</h1>
-<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris mattis purus accumsan mattis interdum. Integer elementum quam sapien, nec egestas lorem rhoncus sit amet. Suspendisse quis blandit augue. Fusce eget lacus euismod eros eleifend elementum. Suspendisse vulputate pretium sapien, in fringilla lacus feugiat quis. Vivamus non vulputate leo, quis fermentum felis. Vivamus pharetra risus sagittis tortor bibendum, id dictum odio tristique. Aenean non malesuada mauris. Praesent nisi turpis, molestie sed cursus ut, consequat ac sapien. Phasellus euismod magna justo, eu blandit nunc condimentum nec. Vivamus hendrerit, nunc eu bibendum tempus, urna turpis ornare neque, vel lobortis est mi non lectus. Nulla dictum mi vel ligula posuere feugiat.</p>
-<p>Proin vulputate sapien sed purus eleifend rhoncus. Mauris dapibus ex id mi vestibulum eleifend. Ut pretium elit sed ex maximus, at dictum purus tristique. Suspendisse eu urna ex. In placerat enim quam, porttitor bibendum augue consequat ultricies. Phasellus vel lacus lacinia, dignissim quam in, porttitor risus. Pellentesque commodo neque a metus vulputate, a rhoncus magna blandit. Donec congue nunc quis vulputate convallis. Nullam enim enim, porta ut euismod a, mollis vel augue. Cras metus quam, maximus at sollicitudin et, laoreet at lacus. Integer vel mattis eros, id hendrerit nulla. Maecenas vitae sollicitudin urna, in mattis risus. Morbi eleifend, augue non mollis dictum, lacus felis hendrerit dui, ac eleifend tortor massa in elit.</p>
-<p>Sed nisi diam, feugiat ut leo vel, eleifend tempor nunc. Etiam ut magna porta, malesuada nunc sed, dignissim nisi. Quisque sed est vitae elit pulvinar finibus in a massa. Mauris ullamcorper mattis mi, id pulvinar tellus. Maecenas dignissim purus vitae tortor efficitur dictum. Fusce ac imperdiet quam. Vivamus nulla eros, fermentum eu sapien quis, cursus faucibus erat. Nunc placerat augue eu viverra iaculis. Nunc nec lorem a elit tristique porta non in odio. Donec vel porta nulla. In varius quam vitae dui consectetur consequat. Cras egestas metus at libero sodales facilisis. Proin ac ipsum nec enim bibendum accumsan. Proin faucibus blandit justo. Donec dapibus hendrerit massa, vel congue velit ornare ac. Phasellus tincidunt finibus hendrerit.</p>
-<p>Aenean nisi urna, tincidunt eu blandit egestas, ornare in ipsum. Aenean vulputate eros eu turpis lobortis, a facilisis mauris placerat. Aenean libero nibh, molestie vitae ligula sed, rhoncus dapibus augue. Curabitur malesuada aliquet semper. Sed a eros libero. Cras faucibus id libero ut bibendum. Praesent et purus urna. Etiam lectus leo, ornare at imperdiet sit amet, rhoncus cursus odio. Vestibulum facilisis lorem at ultricies fringilla. Duis quis feugiat ex. Fusce efficitur vulputate lorem, quis malesuada leo porttitor a. Curabitur quis sapien molestie, consequat neque nec, vestibulum mauris.</p>`
+      meta_value: `<h1 style="text-align: center;">Welcome to the Official Lost and Found Hub</h1>
+<p class="lead text-center mt-3">Connecting individuals with lost property through verified community reporting and secure administrative handovers.</p>
+<p class="text-center text-muted">Browse our live catalog to search for recently discovered belongings, or sign in to submit a found item report. To prevent fraudulent claims, claimants must provide unique identifying proof before receiving collection clearance.</p>`
     },
     {
       meta_field: 'about',
-      meta_value: `<h1 style="text-align: center;">About Us</h1>
-<p>Phasellus tempus ante tristique laoreet imperdiet. Nam fermentum sapien a leo consectetur ultricies. Etiam nec ultrices lectus, aliquam scelerisque lectus. Quisque tristique euismod rutrum. Nam scelerisque commodo nibh, ut finibus velit pulvinar at. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Suspendisse interdum neque sit amet interdum venenatis. Nunc ut dolor sapien. Nunc rutrum imperdiet venenatis. Morbi vehicula lacus vel purus pretium molestie vel iaculis ante. Integer dignissim congue fringilla. Cras non tempor urna. Cras et magna quis ipsum sollicitudin maximus a a lorem. Aliquam blandit lobortis metus eu volutpat.</p>
-<p>Nullam ut viverra velit. Phasellus felis massa, mattis sed lacus id, aliquam venenatis quam. Mauris vulputate orci ac lectus hendrerit, tincidunt aliquam nunc egestas. Pellentesque tempor consequat aliquet. Duis porttitor imperdiet feugiat. Sed a odio at nisi molestie congue. Aenean accumsan eleifend porta. Donec tempus rhoncus mi, vel gravida neque pretium non. Pellentesque mattis massa vel varius placerat. Mauris nisl velit, eleifend dignissim velit vitae, ullamcorper mattis magna. Aenean auctor nisi sed libero commodo rhoncus. Curabitur libero ante, vulputate vel nisi a, finibus sagittis mi. Vestibulum sollicitudin, eros quis bibendum dapibus, sapien sem eleifend mi, sit amet pellentesque libero risus a nunc. Aliquam non rutrum nisi. Donec feugiat dui quis semper condimentum.</p>
-<p>Vestibulum tristique a ligula vitae posuere. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Ut malesuada, elit vel porttitor feugiat, sapien sem pharetra urna, nec tempus enim tortor eu lorem. Curabitur pulvinar quam eu metus pretium, ut consequat ligula placerat. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Cras facilisis est nec diam tristique tempor. Cras id augue vestibulum velit commodo tristique.</p>`
+      meta_value: `<h1 style="text-align: center;">About Our Lost & Found Network</h1>
+<p class="lead text-center mt-3">We provide a centralized, secure platform to catalog, safeguard, and return lost property effectively.</p>
+<p>Every year, thousands of valuable personal items are misplaced in public venues, campuses, and transit stations. Our system offers an organized digital registry where finders can report discovered items and rightful owners can reclaim them safely.</p>
+<p>To uphold the highest level of community trust, our team requires unique identifying details that only the true owner would know before authorizing an item handover at our official collection points.</p>`
     },
     {
       meta_field: 'banner_images',

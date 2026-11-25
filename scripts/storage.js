@@ -20,6 +20,26 @@ const StorageManager = {
   },
 
   /**
+   * Converts multiple File objects to an array of base64 Data URLs
+   * @param {FileList|File[]} files
+   * @param {number} maxFiles
+   * @returns {Promise<string[]>}
+   */
+  async filesToDataURLs(files, maxFiles = 5) {
+    if (!files || files.length === 0) return [];
+    const arr = Array.from(files).slice(0, maxFiles);
+    const results = [];
+    for (const f of arr) {
+      const val = this.validateImage(f);
+      if (val.valid) {
+        const url = await this.fileToDataURL(f);
+        if (url) results.push(url);
+      }
+    }
+    return results;
+  },
+
+  /**
    * Validates if a file is an acceptable image (JPEG, PNG, WebP)
    * @param {File} file
    * @param {number} maxSizeBytes
